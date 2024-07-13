@@ -27,13 +27,13 @@ public partial class FinanclickDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=DESKTOP-A32CI88; Initial Catalog=FinanclickDB; user id=sa; password=root;TrustServerCertificate=true");
+        => optionsBuilder.UseSqlServer("Server=DESKTOP-VQKOVT2\\SQLEXPRESS; Initial Catalog=FinanclickDB; user id=sa; password=root;TrustServerCertificate=true");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Cliente>(entity =>
         {
-            entity.HasKey(e => e.IdCliente).HasName("PK__Cliente__D5946642DF235F53");
+            entity.HasKey(e => e.IdCliente).HasName("PK__Cliente__D594664202C84A07");
 
             entity.ToTable("Cliente");
 
@@ -42,12 +42,12 @@ public partial class FinanclickDbContext : DbContext
 
             entity.HasOne(d => d.IdEmpresaNavigation).WithMany(p => p.Clientes)
                 .HasForeignKey(d => d.IdEmpresa)
-                .HasConstraintName("FK__Cliente__idEmpre__4D94879B");
+                .HasConstraintName("FK__Cliente__idEmpre__571DF1D5");
         });
 
         modelBuilder.Entity<Empresa>(entity =>
         {
-            entity.HasKey(e => e.IdEmpresa).HasName("PK__Empresa__5EF4033EF3A3FD3B");
+            entity.HasKey(e => e.IdEmpresa).HasName("PK__Empresa__5EF4033EC6B28C24");
 
             entity.ToTable("Empresa");
 
@@ -73,7 +73,7 @@ public partial class FinanclickDbContext : DbContext
 
         modelBuilder.Entity<Modulo>(entity =>
         {
-            entity.HasKey(e => e.IdModulo).HasName("PK__Modulo__D9F153151E446F3E");
+            entity.HasKey(e => e.IdModulo).HasName("PK__Modulo__D9F1531565122577");
 
             entity.ToTable("Modulo");
 
@@ -87,21 +87,21 @@ public partial class FinanclickDbContext : DbContext
                     r => r.HasOne<Usuario>().WithMany()
                         .HasForeignKey("IdUsuario")
                         .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__DetalleMo__IdUsu__47DBAE45"),
+                        .HasConstraintName("FK__DetalleMo__IdUsu__5441852A"),
                     l => l.HasOne<Modulo>().WithMany()
                         .HasForeignKey("IdModulo")
                         .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__DetalleMo__IdMod__46E78A0C"),
+                        .HasConstraintName("FK__DetalleMo__IdMod__534D60F1"),
                     j =>
                     {
-                        j.HasKey("IdModulo", "IdUsuario").HasName("PK__DetalleM__BC4708ECC48CFC34");
+                        j.HasKey("IdModulo", "IdUsuario").HasName("PK__DetalleM__BC4708EC053005F0");
                         j.ToTable("DetalleModuloUsuario");
                     });
         });
 
         modelBuilder.Entity<Rol>(entity =>
         {
-            entity.HasKey(e => e.IdRol).HasName("PK__Rol__2A49584C90796678");
+            entity.HasKey(e => e.IdRol).HasName("PK__Rol__2A49584C0157A088");
 
             entity.ToTable("Rol");
 
@@ -112,7 +112,7 @@ public partial class FinanclickDbContext : DbContext
 
         modelBuilder.Entity<Usuario>(entity =>
         {
-            entity.HasKey(e => e.IdUsuario).HasName("PK__Usuario__5B65BF9749BA4FAE");
+            entity.HasKey(e => e.IdUsuario).HasName("PK__Usuario__5B65BF977E2FB890");
 
             entity.ToTable("Usuario");
 
@@ -120,17 +120,18 @@ public partial class FinanclickDbContext : DbContext
             entity.Property(e => e.ApellidoMaterno).HasMaxLength(255);
             entity.Property(e => e.ApellidoPaterno).HasMaxLength(255);
             entity.Property(e => e.Contrasenia).HasMaxLength(255);
+            entity.Property(e => e.Nombre).HasMaxLength(35);
             entity.Property(e => e.Usuario1)
                 .HasMaxLength(255)
                 .HasColumnName("Usuario");
 
             entity.HasOne(d => d.IdEmpresaNavigation).WithMany(p => p.Usuarios)
                 .HasForeignKey(d => d.IdEmpresa)
-                .HasConstraintName("FK__Usuario__IdEmpre__440B1D61");
+                .HasConstraintName("FK__Usuario__IdEmpre__5070F446");
 
             entity.HasOne(d => d.IdRolNavigation).WithMany(p => p.Usuarios)
                 .HasForeignKey(d => d.IdRol)
-                .HasConstraintName("FK__Usuario__IdRol__4316F928");
+                .HasConstraintName("FK__Usuario__IdRol__4F7CD00D");
         });
 
         OnModelCreatingPartial(modelBuilder);

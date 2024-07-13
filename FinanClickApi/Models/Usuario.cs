@@ -11,6 +11,8 @@ public partial class Usuario
 
     public string Contrasenia { get; set; } = null!;
 
+    public string Nombre { get; set; } = null!;
+
     public string ApellidoPaterno { get; set; } = null!;
 
     public string ApellidoMaterno { get; set; } = null!;
