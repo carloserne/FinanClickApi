@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace FinanClickApi.Models;
 
@@ -49,7 +50,9 @@ public partial class Empresa
 
     public byte[]? Logo { get; set; }
 
+    [JsonIgnore]
     public virtual ICollection<Cliente> Clientes { get; set; } = new List<Cliente>();
-
+    
+    [JsonIgnore]
     public virtual ICollection<Usuario> Usuarios { get; set; } = new List<Usuario>();
 }

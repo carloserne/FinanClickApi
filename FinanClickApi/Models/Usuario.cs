@@ -21,8 +21,6 @@ public partial class Usuario
 
     public string Usuario1 { get; set; } = null!;
 
-    public string? Nombre { get; set; }
-
     public string? Imagen { get; set; }
 
     public virtual Empresa? IdEmpresaNavigation { get; set; }
