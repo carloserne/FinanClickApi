@@ -25,10 +25,7 @@ public partial class FinanclickDbContext : DbContext
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=DESKTOP-A32CI88; Initial Catalog=FinanclickDB; user id=sa; password=root;TrustServerCertificate=true");
-
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Cliente>(entity =>
@@ -120,6 +117,9 @@ public partial class FinanclickDbContext : DbContext
             entity.Property(e => e.ApellidoMaterno).HasMaxLength(255);
             entity.Property(e => e.ApellidoPaterno).HasMaxLength(255);
             entity.Property(e => e.Contrasenia).HasMaxLength(255);
+            entity.Property(e => e.Nombre).HasMaxLength(35);
+            entity.Property(e => e.Imagen);
+
             entity.Property(e => e.Usuario1)
                 .HasMaxLength(255)
                 .HasColumnName("Usuario");

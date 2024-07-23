@@ -25,6 +25,7 @@ CREATE TABLE Usuario (
     ApellidoMaterno NVARCHAR(255) NOT NULL,
     IdEmpresa INT,
     Usuario NVARCHAR(255) NOT NULL,
+    Imagen NVARCHAR (max) null, 
     FOREIGN KEY (IdRol) REFERENCES Rol(IdRol),
     FOREIGN KEY (IdEmpresa) REFERENCES Empresa(IdEmpresa)
 );
@@ -60,3 +61,10 @@ CREATE TABLE Cliente (
     idEmpresa INT                       -- idEmpresa de tipo entero, presumiblemente una clave foránea
 	FOREIGN KEY (idEmpresa) REFERENCES Empresa(idEmpresa),
 );
+
+IF NOT EXISTS (SELECT * FROM sys.columns 
+               WHERE Name = N'Imagen' 
+               AND Object_ID = Object_ID(N'Usuario'))
+BEGIN
+    ALTER TABLE Usuario ADD Imagen NVARCHAR(MAX) NULL;
+END
