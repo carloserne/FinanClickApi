@@ -21,6 +21,7 @@ CREATE TABLE Usuario (
     IdUsuario INT PRIMARY KEY,
     IdRol INT,
     Contrasenia NVARCHAR(255) NOT NULL,
+	Nombre NVARCHAR(35) NOT NULL,
     ApellidoPaterno NVARCHAR(255) NOT NULL,
     ApellidoMaterno NVARCHAR(255) NOT NULL,
     IdEmpresa INT,
