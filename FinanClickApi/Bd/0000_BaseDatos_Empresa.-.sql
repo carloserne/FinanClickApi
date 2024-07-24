@@ -2,10 +2,9 @@ create database FinanclickDB;
 
 use FinanclickDB;
 
-Drop table Empresa;
 
 CREATE TABLE Empresa (
-    IdEmpresa INT PRIMARY KEY,
+    IdEmpresa INT PRIMARY KEY identity,
     RazonSocial NVARCHAR(255) NOT NULL,
     FechaConstitucion DATE NOT NULL,
     NumeroEscritura NVARCHAR(50) NOT NULL,

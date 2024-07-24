@@ -2,7 +2,7 @@
 
 -- Crear tabla Rol
 CREATE TABLE Rol (
-    IdRol INT PRIMARY KEY,
+    IdRol INT PRIMARY KEY IDENTITY,
     NombreRol NVARCHAR(255) NOT NULL,
     Estatus BIT NOT NULL,
     Descripcion NVARCHAR(255) NOT NULL
@@ -10,7 +10,7 @@ CREATE TABLE Rol (
 
 -- Crear tabla Modulo
 CREATE TABLE Modulo (
-    IdModulo INT PRIMARY KEY,
+    IdModulo INT PRIMARY KEY IDENTITY,
     NombreModulo NVARCHAR(255) NOT NULL,
     Estatus BIT NOT NULL,
     Descripcion NVARCHAR(255) NOT NULL
@@ -18,7 +18,7 @@ CREATE TABLE Modulo (
 
 -- Crear tabla Usuario
 CREATE TABLE Usuario (
-    IdUsuario INT PRIMARY KEY,
+    IdUsuario INT PRIMARY KEY IDENTITY,
     IdRol INT,
     Contrasenia NVARCHAR(255) NOT NULL,
 	Nombre NVARCHAR(35) NOT NULL,
@@ -57,11 +57,13 @@ INSERT INTO DetalleModuloUsuario (IdModulo, IdUsuario) VALUES
 (1, 1);
 
 CREATE TABLE Cliente (
-    IdCliente INT PRIMARY KEY,          -- Clave primaria de tipo entero
-    RegimenFiscal BIT,                  -- RegimenFiscal de tipo bit (0 o 1)
-    idEmpresa INT                       -- idEmpresa de tipo entero, presumiblemente una clave foránea
+    IdCliente INT PRIMARY KEY identity,          -- Clave primaria de tipo entero
+    RegimenFiscal varchar(10),                  -- RegimenFiscal de tipo bit (0 o 1)
+    idEmpresa INT,
+    Estatus int not null, -- idEmpresa de tipo entero, presumiblemente una clave foránea
 	FOREIGN KEY (idEmpresa) REFERENCES Empresa(idEmpresa),
 );
+
 
 IF NOT EXISTS (SELECT * FROM sys.columns 
                WHERE Name = N'Imagen' 
