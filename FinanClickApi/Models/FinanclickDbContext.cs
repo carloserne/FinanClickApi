@@ -15,31 +15,113 @@ public partial class FinanclickDbContext : DbContext
     {
     }
 
+    public virtual DbSet<CatalogoDocumento> CatalogoDocumentos { get; set; }
+
     public virtual DbSet<Cliente> Clientes { get; set; }
+
+    public virtual DbSet<DatosClienteFisica> DatosClienteFisicas { get; set; }
+
+    public virtual DbSet<DatosClienteMoral> DatosClienteMorals { get; set; }
+
+    public virtual DbSet<DocumentosCliente> DocumentosClientes { get; set; }
 
     public virtual DbSet<Empresa> Empresas { get; set; }
 
     public virtual DbSet<Modulo> Modulos { get; set; }
+
+    public virtual DbSet<Persona> Personas { get; set; }
+
+    public virtual DbSet<PersonaMoral> PersonaMorals { get; set; }
 
     public virtual DbSet<Rol> Rols { get; set; }
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<CatalogoDocumento>(entity =>
+        {
+            entity.HasKey(e => e.IdCatalogoDocumento).HasName("PK__Catalogo__661C085CB02BF800");
+
+            entity.Property(e => e.Nombre)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.Tipo)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+        });
+
         modelBuilder.Entity<Cliente>(entity =>
         {
-            entity.HasKey(e => e.IdCliente).HasName("PK__Cliente__D5946642DF235F53");
+            entity.HasKey(e => e.IdCliente).HasName("PK__Cliente__D594664231FDEEB9");
 
             entity.ToTable("Cliente");
 
-            entity.Property(e => e.IdCliente).ValueGeneratedNever();
             entity.Property(e => e.IdEmpresa).HasColumnName("idEmpresa");
+            entity.Property(e => e.RegimenFiscal)
+                .HasMaxLength(10)
+                .IsUnicode(false);
 
             entity.HasOne(d => d.IdEmpresaNavigation).WithMany(p => p.Clientes)
                 .HasForeignKey(d => d.IdEmpresa)
-                .HasConstraintName("FK__Cliente__idEmpre__4D94879B");
+                .HasConstraintName("FK__Cliente__idEmpre__6C190EBB");
+        });
+
+        modelBuilder.Entity<DatosClienteFisica>(entity =>
+        {
+            entity.HasKey(e => e.IdClienteFisica).HasName("PK__DatosCli__0F2855A9BD3241AF");
+
+            entity.ToTable("DatosClienteFisica");
+
+            entity.HasOne(d => d.IdClienteNavigation).WithMany(p => p.DatosClienteFisicas)
+                .HasForeignKey(d => d.IdCliente)
+                .HasConstraintName("FK__DatosClie__IdCli__778AC167");
+
+            entity.HasOne(d => d.IdPersonaNavigation).WithMany(p => p.DatosClienteFisicas)
+                .HasForeignKey(d => d.IdPersona)
+                .HasConstraintName("FK__DatosClie__IdPer__76969D2E");
+        });
+
+        modelBuilder.Entity<DatosClienteMoral>(entity =>
+        {
+            entity.HasKey(e => e.IdClienteMoral).HasName("PK__DatosCli__5A0ACC3D5431E273");
+
+            entity.ToTable("DatosClienteMoral");
+
+            entity.Property(e => e.NombreRepLegal)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.RfcrepLegal)
+                .HasMaxLength(13)
+                .IsUnicode(false)
+                .HasColumnName("RFCRepLegal");
+
+            entity.HasOne(d => d.IdClienteNavigation).WithMany(p => p.DatosClienteMorals)
+                .HasForeignKey(d => d.IdCliente)
+                .HasConstraintName("FK__DatosClie__IdCli__02084FDA");
+
+            entity.HasOne(d => d.IdPersonaMoralNavigation).WithMany(p => p.DatosClienteMorals)
+                .HasForeignKey(d => d.IdPersonaMoral)
+                .HasConstraintName("FK__DatosClie__IdPer__01142BA1");
+        });
+
+        modelBuilder.Entity<DocumentosCliente>(entity =>
+        {
+            entity.HasKey(e => e.IdDocumentoCliente).HasName("PK__Document__232F0845D31D05C3");
+
+            entity.ToTable("DocumentosCliente");
+
+            entity.Property(e => e.DocumentoBase64).HasColumnType("text");
+
+            entity.HasOne(d => d.IdClienteNavigation).WithMany(p => p.DocumentosClientes)
+                .HasForeignKey(d => d.IdCliente)
+                .HasConstraintName("FK__Documento__IdCli__71D1E811");
+
+            entity.HasOne(d => d.IdDocumentoNavigation).WithMany(p => p.DocumentosClientes)
+                .HasForeignKey(d => d.IdDocumento)
+                .HasConstraintName("FK__Documento__IdDoc__70DDC3D8");
         });
 
         modelBuilder.Entity<Empresa>(entity =>
@@ -93,7 +175,154 @@ public partial class FinanclickDbContext : DbContext
                     {
                         j.HasKey("IdModulo", "IdUsuario").HasName("PK__DetalleM__BC4708ECC48CFC34");
                         j.ToTable("DetalleModuloUsuario");
+                        j.HasIndex(new[] { "IdUsuario" }, "IX_DetalleModuloUsuario_IdUsuario");
                     });
+        });
+
+        modelBuilder.Entity<Persona>(entity =>
+        {
+            entity.HasKey(e => e.IdPersona).HasName("PK__Persona__2EC8D2AC8A73447C");
+
+            entity.ToTable("Persona");
+
+            entity.Property(e => e.ApellidoMaterno)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.ApellidoPaterno)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.Calle)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.CiudadResidencia)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.ClaveElector)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.CodigoPostal)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+            entity.Property(e => e.Colonia)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.Curp)
+                .HasMaxLength(18)
+                .IsUnicode(false)
+                .HasColumnName("CURP");
+            entity.Property(e => e.Email)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.EstadoCivil)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.EstadoNacimiento)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.EstadoResidencia)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.Genero)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Nacionalidad)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.Nombre)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.NombreConyuge)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.NumExterior)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.NumInterior)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.PaisNacimiento)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.PaisResidencia)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.RegimenMatrimonial)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Rfc)
+                .HasMaxLength(13)
+                .IsUnicode(false)
+                .HasColumnName("RFC");
+            entity.Property(e => e.Telefono)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<PersonaMoral>(entity =>
+        {
+            entity.HasKey(e => e.IdPersonaMoral).HasName("PK__PersonaM__D333C18CA44A9D18");
+
+            entity.ToTable("PersonaMoral");
+
+            entity.Property(e => e.Calle)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.CiudadRegistro)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.CiudadResidencia)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.CodigoPostal)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+            entity.Property(e => e.Colonia)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.EstadoRegistro)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.EstadoResidencia)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.FechaRppc).HasColumnName("FechaRPPC");
+            entity.Property(e => e.FolioMercantil)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.Nacionalidad)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.NombreNotario)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.NumEscritura)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.NumExterior)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.NumInterior)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.NumNotario)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.PaisRegistro)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.PaisResidencia)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.RazonComercial)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.RazonSocial)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.Rfc)
+                .HasMaxLength(13)
+                .IsUnicode(false)
+                .HasColumnName("RFC");
         });
 
         modelBuilder.Entity<Rol>(entity =>
@@ -113,13 +342,15 @@ public partial class FinanclickDbContext : DbContext
 
             entity.ToTable("Usuario");
 
+            entity.HasIndex(e => e.IdEmpresa, "IX_Usuario_IdEmpresa");
+
+            entity.HasIndex(e => e.IdRol, "IX_Usuario_IdRol");
+
             entity.Property(e => e.IdUsuario).ValueGeneratedNever();
             entity.Property(e => e.ApellidoMaterno).HasMaxLength(255);
             entity.Property(e => e.ApellidoPaterno).HasMaxLength(255);
             entity.Property(e => e.Contrasenia).HasMaxLength(255);
             entity.Property(e => e.Nombre).HasMaxLength(35);
-            entity.Property(e => e.Imagen);
-
             entity.Property(e => e.Usuario1)
                 .HasMaxLength(255)
                 .HasColumnName("Usuario");
