@@ -49,8 +49,8 @@ INSERT INTO Modulo (IdModulo, NombreModulo, Estatus, Descripcion) VALUES
 (1, 'Gestión de Usuarios', 1, 'Módulo para gestionar usuarios del sistema');
 
 -- Insertar registros en la tabla Usuario
-INSERT INTO Usuario (IdUsuario, IdRol, Contrasenia, ApellidoPaterno, ApellidoMaterno, IdEmpresa, Usuario) VALUES
-(1, 1, 'password123', 'García', 'López', 1, 'davidf');
+INSERT INTO Usuario (IdUsuario, IdRol, Contrasenia, Nombre, ApellidoPaterno, ApellidoMaterno, IdEmpresa, Usuario, Imagen) VALUES
+(1, 1, 'password123', 'David', 'García', 'López', 1, 'davidf', 'xd');
 
 -- Insertar registros en la tabla DetalleModuloUsuario
 INSERT INTO DetalleModuloUsuario (IdModulo, IdUsuario) VALUES
