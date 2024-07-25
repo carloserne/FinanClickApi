@@ -5,6 +5,7 @@ use FinanclickDB;
 
 CREATE TABLE Empresa (
     IdEmpresa INT PRIMARY KEY identity,
+	NombreEmpresa NVARCHAR(255),
     RazonSocial NVARCHAR(255) NOT NULL,
     FechaConstitucion DATE NOT NULL,
     NumeroEscritura NVARCHAR(50) NOT NULL,
@@ -31,7 +32,7 @@ CREATE TABLE Empresa (
 
 
 INSERT INTO Empresa (
-    IdEmpresa,
+NombreEmpresa,
     RazonSocial,
     FechaConstitucion,
     NumeroEscritura,
@@ -54,7 +55,7 @@ INSERT INTO Empresa (
     Estatus,
     Logo
 ) VALUES (
-    1, -- IdEmpresa
+'FINANCLICK',
     'SOFOM FinanClick S.A. de C.V.', -- RazonSocial
     '2020-01-01', -- FechaConstitucion
     '12345', -- NumeroEscritura

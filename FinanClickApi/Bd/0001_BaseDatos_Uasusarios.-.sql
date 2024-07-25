@@ -40,21 +40,6 @@ CREATE TABLE DetalleModuloUsuario (
     FOREIGN KEY (IdUsuario) REFERENCES Usuario(IdUsuario)
 );
 
--- Insertar registros en la tabla Rol
-INSERT INTO Rol (IdRol, NombreRol, Estatus, Descripcion) VALUES
-(1, 'Administrador', 1, 'Rol con privilegios administrativos');
-
--- Insertar registros en la tabla Modulo
-INSERT INTO Modulo (IdModulo, NombreModulo, Estatus, Descripcion) VALUES
-(1, 'Gestión de Usuarios', 1, 'Módulo para gestionar usuarios del sistema');
-
--- Insertar registros en la tabla Usuario
-INSERT INTO Usuario (IdUsuario, IdRol, Contrasenia, Nombre, ApellidoPaterno, ApellidoMaterno, IdEmpresa, Usuario, Imagen) VALUES
-(1, 1, 'password123', 'David', 'García', 'López', 1, 'davidf', 'xd');
-
--- Insertar registros en la tabla DetalleModuloUsuario
-INSERT INTO DetalleModuloUsuario (IdModulo, IdUsuario) VALUES
-(1, 1);
 
 CREATE TABLE Cliente (
     IdCliente INT PRIMARY KEY identity,          -- Clave primaria de tipo entero
@@ -65,9 +50,19 @@ CREATE TABLE Cliente (
 );
 
 
-IF NOT EXISTS (SELECT * FROM sys.columns 
-               WHERE Name = N'Imagen' 
-               AND Object_ID = Object_ID(N'Usuario'))
-BEGIN
-    ALTER TABLE Usuario ADD Imagen NVARCHAR(MAX) NULL;
-END
+
+-- Insertar registros en la tabla Rol
+INSERT INTO Rol ( NombreRol, Estatus, Descripcion) VALUES
+( 'Administrador', 1, 'Rol con privilegios administrativos');
+
+-- Insertar registros en la tabla Modulo
+INSERT INTO Modulo ( NombreModulo, Estatus, Descripcion) VALUES
+( 'Gestión de Usuarios', 1, 'Módulo para gestionar usuarios del sistema');
+
+-- Insertar registros en la tabla Usuario
+INSERT INTO Usuario ( IdRol, Contrasenia, ApellidoPaterno, ApellidoMaterno, IdEmpresa, Usuario, Nombre, Imagen) VALUES
+( 1, 'password123', 'García', 'López', 1, 'davidf', 'David', '');
+
+-- Insertar registros en la tabla DetalleModuloUsuario
+INSERT INTO DetalleModuloUsuario (IdModulo, IdUsuario) VALUES
+(1, 1);

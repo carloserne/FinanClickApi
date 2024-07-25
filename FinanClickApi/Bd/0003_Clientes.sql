@@ -1,5 +1,5 @@
-use FinanclickDB;
 
+select * from CatalogoDocumentos;
 
 CREATE TABLE CatalogoDocumentos (
     IdCatalogoDocumento INT PRIMARY KEY IDENTITY,
@@ -21,15 +21,18 @@ CREATE TABLE DocumentosCliente (
 
 
 
-select * from Cliente;
+select * from CatalogoDocumentos;
 --- Tabla inicial del Cliente  
 INSERT INTO Cliente (RegimenFiscal, IdEmpresa, Estatus)
 VALUES ('MORAL', 1, 1);
 
+INSERT INTO Cliente (RegimenFiscal, IdEmpresa, Estatus)
+VALUES ('FISICA', 1, 1);
+
 
 -- Documentos que tiene que subir el cliente
 INSERT INTO CatalogoDocumentos ( Nombre, Tipo, Estatus)
-VALUES ( 'ACTA CONSTITUTIVA', 'PDF', 1);
+VALUES ( 'ACTA CONSTITUTIVA', 'MORAL', 1);
 
 
 INSERT INTO DocumentosCliente ( DocumentoBase64, Estatus, IdDocumento, IdCliente)
@@ -126,4 +129,4 @@ INSERT INTO DatosClienteFisica ( IdPersona, IdCliente)
 VALUES ( 1, 2);
 
 INSERT INTO DatosClienteMoral ( IdPersonaMoral, NombreRepLegal, RFCRepLegal, IdCliente)
-VALUES ( 1, 'Juan Perez', 'PEJL800101HDF', 3);
+VALUES ( 1, 'Juan Perez', 'PEJL800101HDF', 1);
