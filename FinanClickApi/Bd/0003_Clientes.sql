@@ -1,3 +1,4 @@
+use FinanclickDB;
 
 select * from CatalogoDocumentos;
 

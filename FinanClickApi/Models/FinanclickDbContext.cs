@@ -147,7 +147,7 @@ public partial class FinanclickDbContext : DbContext
             entity.Property(e => e.NumeroNotario).HasMaxLength(50);
             entity.Property(e => e.RazonSocial).HasMaxLength(255);
             entity.Property(e => e.Rfc).HasMaxLength(50);
-            entity.Property(e => e.Teléfono).HasMaxLength(20);
+            entity.Property(e => e.Telefono).HasMaxLength(20);
         });
 
         modelBuilder.Entity<Modulo>(entity =>

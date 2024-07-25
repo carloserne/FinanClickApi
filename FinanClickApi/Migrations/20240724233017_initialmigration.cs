@@ -53,7 +53,7 @@ namespace FinanClickApi.Migrations
                     NumInterior = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Estatus = table.Column<int>(type: "int", nullable: false),
-                    Logo = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
+                    Logo = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {

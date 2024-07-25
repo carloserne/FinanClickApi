@@ -36,7 +36,7 @@ public partial class Empresa
 
     public string Cp { get; set; } = null!;
 
-    public string Teléfono { get; set; } = null!;
+    public string Telefono { get; set; } = null!;
 
     public string Estado { get; set; } = null!;
 
@@ -50,7 +50,7 @@ public partial class Empresa
 
     public int Estatus { get; set; }
 
-    public byte[]? Logo { get; set; }
+    public string? Logo { get; set; }
     [JsonIgnore]
     public virtual ICollection<Cliente> Clientes { get; set; } = new List<Cliente>();
 
