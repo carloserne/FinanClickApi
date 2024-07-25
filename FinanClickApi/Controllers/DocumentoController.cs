@@ -24,23 +24,9 @@ namespace FinanClickApi.Controllers
             return await _baseDatos.CatalogoDocumentos.ToListAsync();
         }
 
-        // GET: api/catalogodocumentos/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CatalogoDocumento>> GetCatalogoDocumentos(int id)
-        {
-            var catalogoDocumento = await _baseDatos.CatalogoDocumentos.FindAsync(id);
-
-            if (catalogoDocumento == null)
-            {
-                return NotFound();
-            }
-
-            return catalogoDocumento;
-        }
-
 
         // GET: api/catalogodocumentos/5
-        [HttpGet("{id}")]
+        [HttpGet("/{id}")]
         public async Task<ActionResult<CatalogoDocumento>> GetCatalogoDocumento(int id)
         {
             var catalogoDocumento = await _baseDatos.CatalogoDocumentos.FindAsync(id);
