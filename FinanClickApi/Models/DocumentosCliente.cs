@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace FinanClickApi.Models;
 
@@ -15,7 +16,9 @@ public partial class DocumentosCliente
 
     public int? IdCliente { get; set; }
 
-    public virtual Cliente? IdClienteNavigation { get; set; }
 
+    [JsonIgnore]
+    public virtual Cliente? IdClienteNavigation { get; set; }
+    [JsonIgnore]
     public virtual CatalogoDocumento? IdDocumentoNavigation { get; set; }
 }

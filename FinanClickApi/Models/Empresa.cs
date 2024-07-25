@@ -8,6 +8,8 @@ public partial class Empresa
 {
     public int IdEmpresa { get; set; }
 
+    public string? NombreEmpresa { get; set; }
+
     public string RazonSocial { get; set; } = null!;
 
     public DateOnly FechaConstitucion { get; set; }
@@ -49,7 +51,6 @@ public partial class Empresa
     public int Estatus { get; set; }
 
     public byte[]? Logo { get; set; }
-
     [JsonIgnore]
     public virtual ICollection<Cliente> Clientes { get; set; } = new List<Cliente>();
 

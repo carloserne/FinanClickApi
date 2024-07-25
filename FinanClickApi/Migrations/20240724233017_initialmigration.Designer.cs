@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinanClickApi.Migrations
 {
     [DbContext(typeof(FinanclickDbContext))]
-    [Migration("20240724040439_ClientesModificacion")]
-    partial class ClientesModificacion
+    [Migration("20240724233017_initialmigration")]
+    partial class initialmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,9 +34,9 @@ namespace FinanClickApi.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("IdModulo", "IdUsuario")
-                        .HasName("PK__DetalleM__BC4708ECC48CFC34");
+                        .HasName("PK__DetalleM__BC4708EC21F1C8DD");
 
-                    b.HasIndex(new[] { "IdUsuario" }, "IX_DetalleModuloUsuario_IdUsuario");
+                    b.HasIndex("IdUsuario");
 
                     b.ToTable("DetalleModuloUsuario", (string)null);
                 });
@@ -65,7 +65,7 @@ namespace FinanClickApi.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.HasKey("IdCatalogoDocumento")
-                        .HasName("PK__Catalogo__661C085CB02BF800");
+                        .HasName("PK__Catalogo__661C085CC0A69FBB");
 
                     b.ToTable("CatalogoDocumentos");
                 });
@@ -91,7 +91,7 @@ namespace FinanClickApi.Migrations
                         .HasColumnType("varchar(10)");
 
                     b.HasKey("IdCliente")
-                        .HasName("PK__Cliente__D594664231FDEEB9");
+                        .HasName("PK__Cliente__D594664253D4D0E5");
 
                     b.HasIndex("IdEmpresa");
 
@@ -113,7 +113,7 @@ namespace FinanClickApi.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("IdClienteFisica")
-                        .HasName("PK__DatosCli__0F2855A9BD3241AF");
+                        .HasName("PK__DatosCli__0F2855A92E6905D0");
 
                     b.HasIndex("IdCliente");
 
@@ -150,7 +150,7 @@ namespace FinanClickApi.Migrations
                         .HasColumnName("RFCRepLegal");
 
                     b.HasKey("IdClienteMoral")
-                        .HasName("PK__DatosCli__5A0ACC3D5431E273");
+                        .HasName("PK__DatosCli__5A0ACC3D6EF100FC");
 
                     b.HasIndex("IdCliente");
 
@@ -181,7 +181,7 @@ namespace FinanClickApi.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("IdDocumentoCliente")
-                        .HasName("PK__Document__232F0845D31D05C3");
+                        .HasName("PK__Document__232F08451D75BCC3");
 
                     b.HasIndex("IdCliente");
 
@@ -193,7 +193,10 @@ namespace FinanClickApi.Migrations
             modelBuilder.Entity("FinanClickApi.Models.Empresa", b =>
                 {
                     b.Property<int>("IdEmpresa")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdEmpresa"));
 
                     b.Property<string>("Calle")
                         .IsRequired()
@@ -241,6 +244,10 @@ namespace FinanClickApi.Migrations
 
                     b.Property<byte[]>("Logo")
                         .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("NombreEmpresa")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("NombreNotario")
                         .IsRequired()
@@ -293,7 +300,7 @@ namespace FinanClickApi.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.HasKey("IdEmpresa")
-                        .HasName("PK__Empresa__5EF4033EF3A3FD3B");
+                        .HasName("PK__Empresa__5EF4033EED026D14");
 
                     b.ToTable("Empresa", (string)null);
                 });
@@ -301,7 +308,10 @@ namespace FinanClickApi.Migrations
             modelBuilder.Entity("FinanClickApi.Models.Modulo", b =>
                 {
                     b.Property<int>("IdModulo")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdModulo"));
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
@@ -317,7 +327,7 @@ namespace FinanClickApi.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.HasKey("IdModulo")
-                        .HasName("PK__Modulo__D9F153151E446F3E");
+                        .HasName("PK__Modulo__D9F15315EB19A4AB");
 
                     b.ToTable("Modulo", (string)null);
                 });
@@ -468,7 +478,7 @@ namespace FinanClickApi.Migrations
                         .HasColumnType("varchar(20)");
 
                     b.HasKey("IdPersona")
-                        .HasName("PK__Persona__2EC8D2AC8A73447C");
+                        .HasName("PK__Persona__2EC8D2AC779D8E92");
 
                     b.ToTable("Persona", (string)null);
                 });
@@ -599,7 +609,7 @@ namespace FinanClickApi.Migrations
                         .HasColumnName("RFC");
 
                     b.HasKey("IdPersonaMoral")
-                        .HasName("PK__PersonaM__D333C18CA44A9D18");
+                        .HasName("PK__PersonaM__D333C18CD1FEDAC6");
 
                     b.ToTable("PersonaMoral", (string)null);
                 });
@@ -607,7 +617,10 @@ namespace FinanClickApi.Migrations
             modelBuilder.Entity("FinanClickApi.Models.Rol", b =>
                 {
                     b.Property<int>("IdRol")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdRol"));
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
@@ -623,7 +636,7 @@ namespace FinanClickApi.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.HasKey("IdRol")
-                        .HasName("PK__Rol__2A49584C90796678");
+                        .HasName("PK__Rol__2A49584C5977DB14");
 
                     b.ToTable("Rol", (string)null);
                 });
@@ -631,7 +644,10 @@ namespace FinanClickApi.Migrations
             modelBuilder.Entity("FinanClickApi.Models.Usuario", b =>
                 {
                     b.Property<int>("IdUsuario")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdUsuario"));
 
                     b.Property<string>("ApellidoMaterno")
                         .IsRequired()
@@ -668,11 +684,11 @@ namespace FinanClickApi.Migrations
                         .HasColumnName("Usuario");
 
                     b.HasKey("IdUsuario")
-                        .HasName("PK__Usuario__5B65BF9749BA4FAE");
+                        .HasName("PK__Usuario__5B65BF975403CE1B");
 
-                    b.HasIndex(new[] { "IdEmpresa" }, "IX_Usuario_IdEmpresa");
+                    b.HasIndex("IdEmpresa");
 
-                    b.HasIndex(new[] { "IdRol" }, "IX_Usuario_IdRol");
+                    b.HasIndex("IdRol");
 
                     b.ToTable("Usuario", (string)null);
                 });
@@ -683,13 +699,13 @@ namespace FinanClickApi.Migrations
                         .WithMany()
                         .HasForeignKey("IdModulo")
                         .IsRequired()
-                        .HasConstraintName("FK__DetalleMo__IdMod__46E78A0C");
+                        .HasConstraintName("FK__DetalleMo__IdMod__412EB0B6");
 
                     b.HasOne("FinanClickApi.Models.Usuario", null)
                         .WithMany()
                         .HasForeignKey("IdUsuario")
                         .IsRequired()
-                        .HasConstraintName("FK__DetalleMo__IdUsu__47DBAE45");
+                        .HasConstraintName("FK__DetalleMo__IdUsu__4222D4EF");
                 });
 
             modelBuilder.Entity("FinanClickApi.Models.Cliente", b =>
@@ -697,7 +713,7 @@ namespace FinanClickApi.Migrations
                     b.HasOne("FinanClickApi.Models.Empresa", "IdEmpresaNavigation")
                         .WithMany("Clientes")
                         .HasForeignKey("IdEmpresa")
-                        .HasConstraintName("FK__Cliente__idEmpre__6C190EBB");
+                        .HasConstraintName("FK__Cliente__idEmpre__44FF419A");
 
                     b.Navigation("IdEmpresaNavigation");
                 });
@@ -707,12 +723,12 @@ namespace FinanClickApi.Migrations
                     b.HasOne("FinanClickApi.Models.Cliente", "IdClienteNavigation")
                         .WithMany("DatosClienteFisicas")
                         .HasForeignKey("IdCliente")
-                        .HasConstraintName("FK__DatosClie__IdCli__778AC167");
+                        .HasConstraintName("FK__DatosClie__IdCli__52593CB8");
 
                     b.HasOne("FinanClickApi.Models.Persona", "IdPersonaNavigation")
                         .WithMany("DatosClienteFisicas")
                         .HasForeignKey("IdPersona")
-                        .HasConstraintName("FK__DatosClie__IdPer__76969D2E");
+                        .HasConstraintName("FK__DatosClie__IdPer__5165187F");
 
                     b.Navigation("IdClienteNavigation");
 
@@ -724,12 +740,12 @@ namespace FinanClickApi.Migrations
                     b.HasOne("FinanClickApi.Models.Cliente", "IdClienteNavigation")
                         .WithMany("DatosClienteMorals")
                         .HasForeignKey("IdCliente")
-                        .HasConstraintName("FK__DatosClie__IdCli__02084FDA");
+                        .HasConstraintName("FK__DatosClie__IdCli__5629CD9C");
 
                     b.HasOne("FinanClickApi.Models.PersonaMoral", "IdPersonaMoralNavigation")
                         .WithMany("DatosClienteMorals")
                         .HasForeignKey("IdPersonaMoral")
-                        .HasConstraintName("FK__DatosClie__IdPer__01142BA1");
+                        .HasConstraintName("FK__DatosClie__IdPer__5535A963");
 
                     b.Navigation("IdClienteNavigation");
 
@@ -741,12 +757,12 @@ namespace FinanClickApi.Migrations
                     b.HasOne("FinanClickApi.Models.Cliente", "IdClienteNavigation")
                         .WithMany("DocumentosClientes")
                         .HasForeignKey("IdCliente")
-                        .HasConstraintName("FK__Documento__IdCli__71D1E811");
+                        .HasConstraintName("FK__Documento__IdCli__4AB81AF0");
 
                     b.HasOne("FinanClickApi.Models.CatalogoDocumento", "IdDocumentoNavigation")
                         .WithMany("DocumentosClientes")
                         .HasForeignKey("IdDocumento")
-                        .HasConstraintName("FK__Documento__IdDoc__70DDC3D8");
+                        .HasConstraintName("FK__Documento__IdDoc__49C3F6B7");
 
                     b.Navigation("IdClienteNavigation");
 
@@ -758,12 +774,12 @@ namespace FinanClickApi.Migrations
                     b.HasOne("FinanClickApi.Models.Empresa", "IdEmpresaNavigation")
                         .WithMany("Usuarios")
                         .HasForeignKey("IdEmpresa")
-                        .HasConstraintName("FK__Usuario__IdEmpre__440B1D61");
+                        .HasConstraintName("FK__Usuario__IdEmpre__3E52440B");
 
                     b.HasOne("FinanClickApi.Models.Rol", "IdRolNavigation")
                         .WithMany("Usuarios")
                         .HasForeignKey("IdRol")
-                        .HasConstraintName("FK__Usuario__IdRol__4316F928");
+                        .HasConstraintName("FK__Usuario__IdRol__3D5E1FD2");
 
                     b.Navigation("IdEmpresaNavigation");
 
