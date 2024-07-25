@@ -1,4 +1,4 @@
-
+use FinanclickDB;
 
 -- Crear tabla Rol
 CREATE TABLE Rol (
