@@ -36,6 +36,7 @@ public partial class FinanclickDbContext : DbContext
     public virtual DbSet<Rol> Rols { get; set; }
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
+    public virtual DbSet<UsuarioCliente> UsuarioClientes { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
 
@@ -361,6 +362,25 @@ public partial class FinanclickDbContext : DbContext
                 .HasForeignKey(d => d.IdRol)
                 .HasConstraintName("FK__Usuario__IdRol__3D5E1FD2");
         });
+
+        modelBuilder.Entity<UsuarioCliente>(entity =>
+        {
+            entity.HasKey(e => e.IdUsuarioCliente).HasName("PK__UsuarioC__B128AB53C227D146");
+
+            entity.ToTable("UsuarioCliente");
+
+            entity.Property(e => e.Contrasenia)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.Usuario)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.IdClienteNavigation).WithMany(p => p.UsuarioClientes)
+                .HasForeignKey(d => d.IdCliente)
+                .HasConstraintName("FK__UsuarioCl__IdCli__72C60C4A");
+        });
+
 
         OnModelCreatingPartial(modelBuilder);
     }
