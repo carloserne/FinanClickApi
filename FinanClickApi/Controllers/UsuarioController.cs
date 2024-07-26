@@ -49,7 +49,7 @@ namespace FinanClickApi.Controllers
             {
                 return Unauthorized("Invalid credentials.");
             }
-            var token = GenerateJwtToken(usuario);
+             var token = GenerateJwtToken(usuario);
 
             return Ok(new { token });
             // Aquí podrías generar un token JWT u otra lógica de autenticación

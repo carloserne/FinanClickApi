@@ -55,11 +55,7 @@ namespace FinanClickApi.Controllers
 
         public async Task<IActionResult> PutEmpresa(int id, Empresa empresa)
         {
-            if (id != empresa.IdEmpresa)
-            {
-                return BadRequest();
-            }
-
+            empresa.IdEmpresa = id;
             _baseDatos.Entry(empresa).State = EntityState.Modified;
 
             try
@@ -92,7 +88,10 @@ namespace FinanClickApi.Controllers
                 return NotFound();
             }
 
-            _baseDatos.Empresas.Remove(empresa);
+            empresa.Estatus = 0;
+
+            _baseDatos.Entry(empresa).State = EntityState.Modified;
+
             await _baseDatos.SaveChangesAsync();
 
             return NoContent();

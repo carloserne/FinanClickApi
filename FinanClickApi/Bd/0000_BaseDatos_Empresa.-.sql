@@ -5,6 +5,7 @@ use FinanclickDB;
 
 CREATE TABLE Empresa (
     IdEmpresa INT PRIMARY KEY identity,
+	NombreEmpresa NVARCHAR(255),
     RazonSocial NVARCHAR(255) NOT NULL,
     FechaConstitucion DATE NOT NULL,
     NumeroEscritura NVARCHAR(50) NOT NULL,
@@ -18,20 +19,20 @@ CREATE TABLE Empresa (
     Calle NVARCHAR(255) NOT NULL,
     Colonia NVARCHAR(255) NOT NULL,
     Cp NVARCHAR(10) NOT NULL,
-    Teléfono NVARCHAR(20) NOT NULL,
+    Telefono NVARCHAR(20) NOT NULL,
     Estado NVARCHAR(50) NOT NULL,
     Localidad NVARCHAR(255) NOT NULL,
     NumExterior NVARCHAR(10) NOT NULL,
     NumInterior NVARCHAR(10) NOT NULL,
     Email NVARCHAR(255) NOT NULL,
     Estatus int NOT NULL,
-    Logo VARBINARY(MAX) NULL
+    Logo NVARCHAR(MAX) NULL
 );
 
 
 
 INSERT INTO Empresa (
-    IdEmpresa,
+NombreEmpresa,
     RazonSocial,
     FechaConstitucion,
     NumeroEscritura,
@@ -54,7 +55,7 @@ INSERT INTO Empresa (
     Estatus,
     Logo
 ) VALUES (
-    1, -- IdEmpresa
+'FINANCLICK',
     'SOFOM FinanClick S.A. de C.V.', -- RazonSocial
     '2020-01-01', -- FechaConstitucion
     '12345', -- NumeroEscritura
@@ -75,7 +76,7 @@ INSERT INTO Empresa (
     'A', -- NumInterior
     'contacto@sofomejemplo.com', -- Email
     1, -- Estatus
-    NULL -- Logo (asumiendo que no se tiene un logo para insertar)
+    'prueba' -- Logo (asumiendo que no se tiene un logo para insertar)
 );
 
 
