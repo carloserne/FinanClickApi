@@ -263,10 +263,5 @@ namespace FinanClickApi.Controllers
             return _baseDatos.Clientes.Any(e => e.IdCliente == id);
         }
 
-
-
-
-
-
     }
 }
