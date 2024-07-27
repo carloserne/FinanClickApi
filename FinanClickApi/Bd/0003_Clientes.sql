@@ -131,3 +131,14 @@ VALUES ( 1, 2);
 
 INSERT INTO DatosClienteMoral ( IdPersonaMoral, NombreRepLegal, RFCRepLegal, IdCliente)
 VALUES ( 1, 'Juan Perez', 'PEJL800101HDF', 1);
+
+
+CREATE TABLE UsuarioCliente (
+    IdUsuarioCliente INT PRIMARY KEY identity,
+    IdCliente INT,
+    Usuario VARCHAR(255),
+    Contrasenia VARCHAR(255),
+    Estatus INT,
+		    FOREIGN KEY (IdCliente) REFERENCES Cliente(IdCliente)
+
+);

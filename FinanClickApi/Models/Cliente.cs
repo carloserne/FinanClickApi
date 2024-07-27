@@ -23,4 +23,8 @@ public partial class Cliente
 
     [JsonIgnore]
     public virtual Empresa? IdEmpresaNavigation { get; set; }
+
+    [JsonIgnore]
+    public virtual ICollection<UsuarioCliente> UsuarioClientes { get; set; } = new List<UsuarioCliente>();
+
 }

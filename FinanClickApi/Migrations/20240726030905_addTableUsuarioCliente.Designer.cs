@@ -4,6 +4,7 @@ using FinanClickApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinanClickApi.Migrations
 {
     [DbContext(typeof(FinanclickDbContext))]
-    partial class FinanclickDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240726030905_addTableUsuarioCliente")]
+    partial class addTableUsuarioCliente
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -704,7 +707,7 @@ namespace FinanClickApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdUsuarioCliente"));
 
-                    b.Property<string>("Contrasenia")
+                    b.Property<string>("Contraseña")
                         .HasMaxLength(255)
                         .IsUnicode(false)
                         .HasColumnType("varchar(255)");
