@@ -14,6 +14,13 @@ public partial class CatalogoDocumento
 
     public int Estatus { get; set; }
 
+    public int? IdEmpresa { get; set; }
+
+    [JsonIgnore]
+    public virtual Empresa? IdEmpresaNavigation { get; set; }
+
     [JsonIgnore]
     public virtual ICollection<DocumentosCliente> DocumentosClientes { get; set; } = new List<DocumentosCliente>();
+
+
 }

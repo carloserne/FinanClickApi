@@ -51,6 +51,12 @@ public partial class FinanclickDbContext : DbContext
             entity.Property(e => e.Tipo)
                 .HasMaxLength(255)
                 .IsUnicode(false);
+            entity.Property(e => e.IdEmpresa).HasColumnName("idEmpresa");
+
+            entity.HasOne(d => d.IdEmpresaNavigation).WithMany(p => p.CatalogoDocumentos)
+                .HasForeignKey(d => d.IdEmpresa)
+                .HasConstraintName("FK__Cliente__idEmpresa_C4TEMPR354");
+
         });
 
         modelBuilder.Entity<Cliente>(entity =>

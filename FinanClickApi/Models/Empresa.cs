@@ -55,5 +55,8 @@ public partial class Empresa
     public virtual ICollection<Cliente> Clientes { get; set; } = new List<Cliente>();
 
     [JsonIgnore]
+    public virtual ICollection<CatalogoDocumento> CatalogoDocumentos { get; set; } = new List<CatalogoDocumento>();
+
+    [JsonIgnore]
     public virtual ICollection<Usuario> Usuarios { get; set; } = new List<Usuario>();
 }

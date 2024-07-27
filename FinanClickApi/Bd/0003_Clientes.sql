@@ -32,8 +32,8 @@ VALUES ('FISICA', 1, 1);
 
 
 -- Documentos que tiene que subir el cliente
-INSERT INTO CatalogoDocumentos ( Nombre, Tipo, Estatus)
-VALUES ( 'ACTA CONSTITUTIVA', 'MORAL', 1);
+INSERT INTO CatalogoDocumentos ( Nombre, Tipo, Estatus, idEmpresa)
+VALUES ( 'ACTA CONSTITUTIVA', 'MORAL', 1, 1);
 
 
 INSERT INTO DocumentosCliente ( DocumentoBase64, Estatus, IdDocumento, IdCliente)
