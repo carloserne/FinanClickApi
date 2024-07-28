@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using FinanClickApi.Models;
+using FinanClickApi.Modelss;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanClickApi.Models;
@@ -36,6 +38,13 @@ public partial class FinanclickDbContext : DbContext
     public virtual DbSet<Rol> Rols { get; set; }
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
+
+    public virtual DbSet<CatConcepto> CatConceptos { get; set; }
+
+    public virtual DbSet<DetalleProducto> DetalleProductos { get; set; }
+
+    public virtual DbSet<Producto> Productos { get; set; }
+
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
 
@@ -360,6 +369,72 @@ public partial class FinanclickDbContext : DbContext
             entity.HasOne(d => d.IdRolNavigation).WithMany(p => p.Usuarios)
                 .HasForeignKey(d => d.IdRol)
                 .HasConstraintName("FK__Usuario__IdRol__3D5E1FD2");
+        });
+        modelBuilder.Entity<CatConcepto>(entity =>
+        {
+            entity.HasKey(e => e.IdConcepto).HasName("PK__CatConce__367401534DDC30ED");
+
+            entity.Property(e => e.Iva)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("IVA");
+            entity.Property(e => e.NombreConcepto)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.TipoValor)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.Valor).HasColumnType("decimal(18, 2)");
+        });
+
+        modelBuilder.Entity<DetalleProducto>(entity =>
+        {
+            entity.HasKey(e => e.IdDetalleProductos).HasName("PK__DetalleP__C1FCE8FD435910E6");
+
+            entity.Property(e => e.Iva)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("IVA");
+            entity.Property(e => e.TipoValor)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.Valor).HasColumnType("decimal(18, 2)");
+
+            entity.HasOne(d => d.IdConceptoNavigation).WithMany(p => p.DetalleProductos)
+                .HasForeignKey(d => d.IdConcepto)
+                .HasConstraintName("FK__DetallePr__IdCon__18EBB532");
+
+            entity.HasOne(d => d.IdProductoNavigation).WithMany(p => p.DetalleProductos)
+                .HasForeignKey(d => d.IdProducto)
+                .HasConstraintName("FK__DetallePr__IdPro__17F790F9");
+        });
+
+        modelBuilder.Entity<Producto>(entity =>
+        {
+            entity.HasKey(e => e.IdProducto).HasName("PK__Producto__0988921069CC884B");
+
+            entity.ToTable("Producto");
+
+            entity.Property(e => e.AplicacionDePagos)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.InteresAnual).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.InteresMoratorio).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.Iva)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("IVA");
+            entity.Property(e => e.MetodoCalculo)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.Monto).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.NombreProducto)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.Periodicidad)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.Reca).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.SubMetodo)
+                .HasMaxLength(255)
+                .IsUnicode(false);
         });
 
         OnModelCreatingPartial(modelBuilder);
