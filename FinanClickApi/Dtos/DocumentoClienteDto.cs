@@ -2,8 +2,8 @@
 {
     public class DocumentoClienteDto
     {
-            public int IdDocumento { get; set; }
-            public int IdCliente { get; set; }
-       
+        public int IdCliente { get; set; }
+        public List<int> IdsDocumentos { get; set; } = new List<int>();
+
     }
 }

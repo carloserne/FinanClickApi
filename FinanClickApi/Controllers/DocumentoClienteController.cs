@@ -20,32 +20,42 @@ namespace FinanClickApi.Controllers
         }
 
         [HttpPost("asignar")]
-        public async Task<IActionResult> AsignarDocumento([FromBody] DocumentoClienteDto request)
+        public async Task<IActionResult> AsignarDocumentos([FromBody] DocumentoClienteDto request)
         {
-            var documento = await _baseDatos.CatalogoDocumentos.FindAsync(request.IdDocumento);
-            if (documento == null)
-            {
-                return NotFound("Documento no encontrado");
-            }
-
+            // Verificar si el cliente existe
             var cliente = await _baseDatos.Clientes.FindAsync(request.IdCliente);
             if (cliente == null)
             {
                 return NotFound("Cliente no encontrado");
             }
 
-            var documentoCliente = new DocumentosCliente
-            {
-                DocumentoBase64 = " ",
-                Estatus = 4, // Pendiente
-                IdDocumento = request.IdDocumento,
-                IdCliente = request.IdCliente
-            };
+            var documentosExistentes = _baseDatos.DocumentosClientes
+                .Where(dc => dc.IdCliente == request.IdCliente);
+            _baseDatos.DocumentosClientes.RemoveRange(documentosExistentes);
 
-            _baseDatos.DocumentosClientes.Add(documentoCliente);
+            // Asignar nuevos documentos al cliente
+            foreach (var idDocumento in request.IdsDocumentos)
+            {
+                var documento = await _baseDatos.CatalogoDocumentos.FindAsync(idDocumento);
+                if (documento == null)
+                {
+                    return NotFound($"Documento con ID {idDocumento} no encontrado");
+                }
+
+                var documentoCliente = new DocumentosCliente
+                {
+                    DocumentoBase64 = " ",
+                    Estatus = 4,
+                    IdDocumento = idDocumento,
+                    IdCliente = request.IdCliente
+                };
+
+                _baseDatos.DocumentosClientes.Add(documentoCliente);
+            }
+
             await _baseDatos.SaveChangesAsync();
 
-            return Ok(documentoCliente);
+            return Ok("Documentos asignados correctamente");
         }
 
         [HttpGet("cliente/{idCliente}")]
