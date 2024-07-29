@@ -26,5 +26,4 @@ public partial class Cliente
 
     [JsonIgnore]
     public virtual ICollection<UsuarioCliente> UsuarioClientes { get; set; } = new List<UsuarioCliente>();
-
 }

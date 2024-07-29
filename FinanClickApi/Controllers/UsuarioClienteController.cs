@@ -121,6 +121,66 @@ namespace FinanClickApi.Controllers
             return Ok(new { token });
         }
 
+        [Authorize]
+        [HttpGet("detail")]
+        public async Task<ActionResult<UsuarioClienteDto>> GetUserDetail()
+        {
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(currentUserId))
+            {
+                return Unauthorized();
+            }
+
+            var user = await _baseDatos.UsuarioClientes.FindAsync(int.Parse(currentUserId));
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var cliente = await _baseDatos.Clientes.FindAsync(user.IdCliente);
+            if (cliente == null)
+            {
+                return NotFound();
+            }
+
+            var userClienteDto = new UsuarioClienteDto
+            {
+                UsuarioCliente = user,
+                Cliente = cliente
+            };
+
+            if (cliente.RegimenFiscal == "FISICA")
+            {
+                var datosClienteFisica = await _baseDatos.DatosClienteFisicas
+                    .FirstOrDefaultAsync(d => d.IdCliente == user.IdCliente);
+                if (datosClienteFisica != null)
+                {
+                    userClienteDto.DatosClienteFisica = datosClienteFisica;
+                    userClienteDto.Persona = await _baseDatos.Personas
+                        .FindAsync(datosClienteFisica.IdPersona);
+                }
+            }
+            else if (cliente.RegimenFiscal == "MORAL")
+            {
+                var datosClienteMoral = await _baseDatos.DatosClienteMorals
+                    .FirstOrDefaultAsync(d => d.IdCliente == user.IdCliente);
+                if (datosClienteMoral != null)
+                {
+                    userClienteDto.DatosClienteMoral = datosClienteMoral;
+                    userClienteDto.PersonaMoral = await _baseDatos.PersonaMorals
+                        .FindAsync(datosClienteMoral.IdPersonaMoral);
+                }
+            }
+
+            // Eliminamos `Cliente` ya que los detalles de `Persona` ya están incluidos
+            userClienteDto.Cliente.DatosClienteFisicas = null;
+            userClienteDto.Cliente.DatosClienteMorals = null;
+
+            return Ok(userClienteDto);
+        }
+
+
+
         private string GenerateJwtToken(UsuarioCliente usuarioCliente)
         {
             var securityKey = Encoding.ASCII.GetBytes(_configuration.GetSection("Jwt").GetSection("Key").Value!);
@@ -128,7 +188,7 @@ namespace FinanClickApi.Controllers
 
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Name, usuarioCliente.Usuario),
+                new Claim(JwtRegisteredClaimNames.Name, usuarioCliente.Usuario??""),
                 new Claim(JwtRegisteredClaimNames.NameId, usuarioCliente.IdUsuarioCliente.ToString()),
                 new Claim(JwtRegisteredClaimNames.Aud, _configuration.GetSection("Jwt").GetSection("Audience").Value!),
                 new Claim(JwtRegisteredClaimNames.Iss, _configuration.GetSection("Jwt").GetSection("Issuer").Value!),
