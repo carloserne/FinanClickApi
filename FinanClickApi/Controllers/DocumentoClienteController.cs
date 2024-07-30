@@ -29,10 +29,6 @@ namespace FinanClickApi.Controllers
                 return NotFound("Cliente no encontrado");
             }
 
-            var documentosExistentes = _baseDatos.DocumentosClientes
-                .Where(dc => dc.IdCliente == request.IdCliente);
-            _baseDatos.DocumentosClientes.RemoveRange(documentosExistentes);
-
             // Asignar nuevos documentos al cliente
 
             var documento = await _baseDatos.CatalogoDocumentos.FindAsync(request.IdDocumento);
