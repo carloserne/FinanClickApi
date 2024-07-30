@@ -60,10 +60,8 @@ namespace FinanClickApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] Producto producto)
         {
-            if (id != producto.IdProducto)
-            {
-                return BadRequest();
-            }
+
+            producto.IdProducto = id;
 
             var existingProducto = await _baseDatos.Productos
                 .Include(p => p.DetalleProductos)

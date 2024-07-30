@@ -3,7 +3,7 @@
     public class DocumentoClienteDto
     {
         public int IdCliente { get; set; }
-        public List<int> IdsDocumentos { get; set; } = new List<int>();
+        public int IdDocumento { get; set; } 
 
     }
 }

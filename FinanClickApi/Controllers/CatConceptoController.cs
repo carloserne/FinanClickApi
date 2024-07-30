@@ -49,11 +49,8 @@ namespace FinanClickApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] CatConcepto concepto)
         {
-            if (id != concepto.IdConcepto)
-            {
-                return BadRequest();
-            }
-
+            concepto.IdConcepto = id;
+            
             var existingConcepto = await _baseDatos.CatConceptos.FindAsync(id);
             if (existingConcepto == null || existingConcepto.Estatus == 0)
             {
