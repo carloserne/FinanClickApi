@@ -142,3 +142,7 @@ CREATE TABLE UsuarioCliente (
 		    FOREIGN KEY (IdCliente) REFERENCES Cliente(IdCliente)
 
 );
+
+ INSERT INTO UsuarioCliente (IdCliente, Usuario, Contrasenia, Estatus) VALUES (1, 'empresaEjemplo', 'empresa123', 1);  
+
+ INSERT INTO UsuarioCliente (IdCliente, Usuario, Contrasenia, Estatus) VALUES (2, 'juanp', 'juanpe123', 1);

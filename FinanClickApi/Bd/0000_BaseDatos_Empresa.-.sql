@@ -32,7 +32,7 @@ CREATE TABLE Empresa (
 
 
 INSERT INTO Empresa (
-NombreEmpresa,
+	NombreEmpresa,
     RazonSocial,
     FechaConstitucion,
     NumeroEscritura,

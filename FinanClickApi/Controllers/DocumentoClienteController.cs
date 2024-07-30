@@ -34,29 +34,49 @@ namespace FinanClickApi.Controllers
             _baseDatos.DocumentosClientes.RemoveRange(documentosExistentes);
 
             // Asignar nuevos documentos al cliente
-            foreach (var idDocumento in request.IdsDocumentos)
-            {
-                var documento = await _baseDatos.CatalogoDocumentos.FindAsync(idDocumento);
-                if (documento == null)
-                {
-                    return NotFound($"Documento con ID {idDocumento} no encontrado");
-                }
 
-                var documentoCliente = new DocumentosCliente
-                {
+            var documento = await _baseDatos.CatalogoDocumentos.FindAsync(request.IdDocumento);
+            if (documento == null)
+            {
+                    return NotFound($"Documento con ID {request.IdDocumento} no encontrado");
+            }
+
+            var documentoCliente = new DocumentosCliente
+            {
                     DocumentoBase64 = " ",
                     Estatus = 4,
-                    IdDocumento = idDocumento,
+                    IdDocumento = request.IdDocumento,
                     IdCliente = request.IdCliente
-                };
+            };
 
                 _baseDatos.DocumentosClientes.Add(documentoCliente);
-            }
 
             await _baseDatos.SaveChangesAsync();
 
             return Ok("Documentos asignados correctamente");
         }
+
+        [HttpPost("desasignar")]
+        public async Task<IActionResult> DesAsignarDocumentos([FromBody] DocumentoClienteDto request)
+        {
+
+            var cliente = await _baseDatos.Clientes.FindAsync(request.IdCliente);
+            if (cliente == null)
+            {
+                return NotFound("Cliente no encontrado");
+            }
+
+            var documentosExistentes = _baseDatos.DocumentosClientes
+               .Where(dc => dc.IdCliente == request.IdCliente)
+               .Where(dc => dc.IdDocumento == request.IdDocumento);
+            _baseDatos.DocumentosClientes.RemoveRange(documentosExistentes);
+             
+            await _baseDatos.SaveChangesAsync();
+
+            return Ok("Documentos eliminados correctamente");
+
+        }
+
 
         [HttpGet("cliente/{idCliente}")]
         public async Task<IActionResult> ObtenerDocumentosPorCliente(int idCliente)

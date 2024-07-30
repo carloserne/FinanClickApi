@@ -1,4 +1,5 @@
 ﻿using FinanClickApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,6 +7,7 @@ namespace FinanClickApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class ProductoController : Controller
     {
         private readonly FinanclickDbContext _baseDatos;
@@ -60,10 +62,8 @@ namespace FinanClickApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] Producto producto)
         {
-            if (id != producto.IdProducto)
-            {
-                return BadRequest();
-            }
+
+            producto.IdProducto = id;
 
             var existingProducto = await _baseDatos.Productos
                 .Include(p => p.DetalleProductos)
