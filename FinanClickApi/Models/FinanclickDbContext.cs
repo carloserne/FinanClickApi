@@ -46,6 +46,11 @@ public partial class FinanclickDbContext : DbContext
 
     public virtual DbSet<Producto> Productos { get; set; }
 
+    public virtual DbSet<Aval> Avals { get; set; }
+
+    public virtual DbSet<Credito> Creditos { get; set; }
+
+    public virtual DbSet<Obligado> Obligados { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
 
@@ -429,6 +434,9 @@ public partial class FinanclickDbContext : DbContext
             entity.Property(e => e.NombreProducto)
                 .HasMaxLength(255)
                 .IsUnicode(false);
+            entity.Property(e => e.PagoAnticipado)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.Periodicidad)
                 .HasMaxLength(255)
                 .IsUnicode(false);
@@ -456,6 +464,81 @@ public partial class FinanclickDbContext : DbContext
                 .HasConstraintName("FK__UsuarioCl__IdCli__72C60C4A");
         });
 
+        modelBuilder.Entity<Aval>(entity =>
+        {
+            entity.HasKey(e => e.IdAval).HasName("PK__Aval__D8A6A80225CFEA8D");
+
+            entity.ToTable("Aval");
+
+            entity.Property(e => e.IdAval).HasColumnName("idAval");
+            entity.Property(e => e.IdCredito).HasColumnName("idCredito");
+            entity.Property(e => e.IdPersona).HasColumnName("idPersona");
+            entity.Property(e => e.IdPersonaMoral).HasColumnName("idPersonaMoral");
+
+            entity.HasOne(d => d.IdCreditoNavigation).WithMany(p => p.Avals)
+                .HasForeignKey(d => d.IdCredito)
+                .HasConstraintName("FK__Aval__idCredito__32AB8735");
+
+            entity.HasOne(d => d.IdPersonaNavigation)
+                        .WithMany(p => p.Avals)
+                       .HasForeignKey(d => d.IdPersona)
+                       .OnDelete(DeleteBehavior.ClientSetNull)
+                       .HasConstraintName("FK_Aval_Persona");
+
+            entity.HasOne(d => d.IdPersonaMoralNavigation)
+                .WithMany(p => p.Avals)
+                .HasForeignKey(d => d.IdPersonaMoral)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Aval_PersonaMoral");
+        });
+
+        modelBuilder.Entity<Credito>(entity =>
+        {
+            entity.HasKey(e => e.IdCredito).HasName("PK__Credito__EF6108CB209BE43B");
+
+            entity.ToTable("Credito");
+
+            entity.Property(e => e.InteresMoratorio).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.InteresOrdinario).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.Iva).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.Monto).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.Periodicidad)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.IdProductoNavigation).WithMany(p => p.Creditos)
+                .HasForeignKey(d => d.IdProducto)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Credito__IdProdu__2DE6D218");
+        });
+
+        modelBuilder.Entity<Obligado>(entity =>
+        {
+            entity.HasKey(e => e.IdObligado).HasName("PK__Obligado__E088162F78AC3B83");
+
+            entity.ToTable("Obligado");
+
+            entity.Property(e => e.IdObligado).HasColumnName("idObligado");
+            entity.Property(e => e.IdCredito).HasColumnName("idCredito");
+            entity.Property(e => e.IdPersona).HasColumnName("idPersona");
+            entity.Property(e => e.IdPersonaMoral).HasColumnName("idPersonaMoral");
+
+            entity.HasOne(d => d.IdCreditoNavigation).WithMany(p => p.Obligados)
+                .HasForeignKey(d => d.IdCredito)
+                .HasConstraintName("FK__Obligado__idCred__37703C52");
+
+            entity.HasOne(d => d.IdPersonaNavigation)
+                       .WithMany(p => p.Obligados)
+                      .HasForeignKey(d => d.IdPersona)
+                      .OnDelete(DeleteBehavior.ClientSetNull)
+                      .HasConstraintName("FK_Aval_Persona");
+
+            entity.HasOne(d => d.IdPersonaMoralNavigation)
+                        .WithMany(p => p.Obligados)
+                        .HasForeignKey(d => d.IdPersonaMoral)
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK_Aval_PersonaMoral");
+        });
 
         OnModelCreatingPartial(modelBuilder);
     }
