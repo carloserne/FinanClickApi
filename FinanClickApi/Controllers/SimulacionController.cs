@@ -41,47 +41,47 @@ namespace FinanClickApi.Controllers
             List<AmortizacionDto> schedule = new List<AmortizacionDto>();
             decimal saldoInicial = monto;
             decimal tasaPeriodica = GetPeriodicInterestRate(interesAnual, periodicidad);
-            TimeSpan periodo = GetPeriodSpan(periodicidad);
+            decimal tasaDeflactada = tasaPeriodica * 1.16m;
+            decimal pagoFijo = CalculatePeriodicPayment(monto, tasaDeflactada, numPagos);
+            DateTime fechaPago = fechaInicio;
 
-            if (subMetodoCalculo.ToLower() == "saldos globales")
+            for (int i = 0; i < numPagos; i++)
             {
-                decimal pagoPeriodico = CalculatePeriodicPayment(monto, tasaPeriodica, numPagos);
+                DateTime fechaPagoFin = GetNextPeriodDate(fechaPago, periodicidad);
 
-                for (int i = 0; i < numPagos; i++)
+                AmortizacionDto payment = new AmortizacionDto
                 {
-                    AmortizacionDto payment = new AmortizacionDto();
-                    payment.Fecha = fechaInicio.Add(periodo * i);
-                    payment.SaldoInicial = saldoInicial;
-                    payment.Interes = saldoInicial * tasaPeriodica;
-                    payment.Capital = pagoPeriodico - payment.Interes;
-                    payment.Iva = ivaExento ? 0 : payment.Interes * iva;
-                    payment.SaldoFinal = saldoInicial - payment.Capital;
-                    schedule.Add(payment);
+                    NumPago = i + 1,
+                    SaldoInsoluto = saldoInicial,
+                    FechaInicio = fechaPago,
+                    FechaFin = fechaPagoFin,
+                };
 
-                    saldoInicial = payment.SaldoFinal;
-                }
-            }
-            else if (subMetodoCalculo.ToLower() == "insolutos")
-            {
-                decimal amortizacionCapital = monto / numPagos;
-
-                for (int i = 0; i < numPagos; i++)
+                if (subMetodoCalculo.ToLower() == "insolutos")
                 {
-                    AmortizacionDto payment = new AmortizacionDto();
-                    payment.Fecha = fechaInicio.Add(periodo * i);
-                    payment.SaldoInicial = saldoInicial;
-                    payment.Interes = saldoInicial * tasaPeriodica;
-                    payment.Capital = amortizacionCapital;
-                    payment.Iva = ivaExento ? 0 : payment.Interes * iva;
-                    payment.SaldoFinal = saldoInicial - payment.Capital;
-                    schedule.Add(payment);
-
-                    saldoInicial = payment.SaldoFinal;
+                    payment.Interes = payment.SaldoInsoluto * tasaPeriodica;
+                    payment.IvaSobreInteres = ivaExento ? 0 : payment.Interes * (iva/100);
+                    payment.InteresMasIva = payment.Interes + payment.IvaSobreInteres;
+                    payment.Capital = pagoFijo - payment.InteresMasIva;
+                    payment.PagoFijo = pagoFijo;
                 }
-            }
-            else
-            {
-                throw new ArgumentException("Sub método de cálculo no válido");
+                else if (subMetodoCalculo.ToLower() == "globales")
+                {
+                    payment.Capital = monto / numPagos;
+                    payment.Interes = monto * tasaPeriodica;
+                    payment.IvaSobreInteres = ivaExento ? 0 : payment.Interes * (iva/100);
+                    payment.InteresMasIva = payment.Interes + payment.IvaSobreInteres;
+                    payment.PagoFijo = payment.Capital + payment.InteresMasIva;
+                }
+                else
+                {
+                    throw new ArgumentException("Sub método de cálculo no válido");
+                }
+
+                schedule.Add(payment);
+                saldoInicial -= payment.Capital;
+                fechaPago = fechaPagoFin;
+
             }
 
             return schedule;
@@ -110,16 +110,16 @@ namespace FinanClickApi.Controllers
             return monto * (tasaPeriodica * (decimal)Math.Pow(1 + (double)tasaPeriodica, numPagos)) / (decimal)(Math.Pow(1 + (double)tasaPeriodica, numPagos) - 1);
         }
 
-        private TimeSpan GetPeriodSpan(string periodicidad)
+        private DateTime GetNextPeriodDate(DateTime current, string periodicidad)
         {
             switch (periodicidad.ToLower())
             {
                 case "mensual":
-                    return TimeSpan.FromDays(30);
+                    return current.AddMonths(1);
                 case "anual":
-                    return TimeSpan.FromDays(365);
+                    return current.AddYears(1);
                 case "quincenal":
-                    return TimeSpan.FromDays(15);
+                    return current.AddDays(15);
                 default:
                     throw new ArgumentException("Periodicidad no válida");
             }

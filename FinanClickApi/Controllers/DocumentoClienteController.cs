@@ -65,6 +65,8 @@ namespace FinanClickApi.Controllers
             var documentosExistentes = _baseDatos.DocumentosClientes
                .Where(dc => dc.IdCliente == request.IdCliente)
                .Where(dc => dc.IdDocumento == request.IdDocumento);
+
+
             _baseDatos.DocumentosClientes.RemoveRange(documentosExistentes);
              
             await _baseDatos.SaveChangesAsync();
