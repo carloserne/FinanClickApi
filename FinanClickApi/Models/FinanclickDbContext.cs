@@ -531,13 +531,13 @@ public partial class FinanclickDbContext : DbContext
                        .WithMany(p => p.Obligados)
                       .HasForeignKey(d => d.IdPersona)
                       .OnDelete(DeleteBehavior.ClientSetNull)
-                      .HasConstraintName("FK_Aval_Persona");
+                      .HasConstraintName("FK_Obligado_Persona");
 
             entity.HasOne(d => d.IdPersonaMoralNavigation)
                         .WithMany(p => p.Obligados)
                         .HasForeignKey(d => d.IdPersonaMoral)
                         .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_Aval_PersonaMoral");
+                        .HasConstraintName("FK_Obligado_PersonaMoral");
         });
 
         OnModelCreatingPartial(modelBuilder);
