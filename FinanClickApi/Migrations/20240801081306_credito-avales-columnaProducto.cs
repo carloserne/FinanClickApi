@@ -95,12 +95,12 @@ namespace FinanClickApi.Migrations
                 {
                     table.PrimaryKey("PK__Obligado__E088162F78AC3B83", x => x.idObligado);
                     table.ForeignKey(
-                        name: "FK_Aval_Persona",
+                        name: "FK_Obligado_Persona",
                         column: x => x.idPersona,
                         principalTable: "Persona",
                         principalColumn: "IdPersona");
                     table.ForeignKey(
-                        name: "FK_Aval_PersonaMoral",
+                        name: "FK_Obligado_PersonaMoral",
                         column: x => x.idPersonaMoral,
                         principalTable: "PersonaMoral",
                         principalColumn: "IdPersonaMoral");
