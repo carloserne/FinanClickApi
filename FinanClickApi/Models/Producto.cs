@@ -1,6 +1,7 @@
 ﻿using FinanClickApi.Modelss;
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace FinanClickApi.Models;
 
@@ -28,7 +29,7 @@ public partial class Producto
 
     public decimal? InteresMoratorio { get; set; }
 
-    public bool? PagoAnticipado { get; set; }
+    public string? PagoAnticipado { get; set; }
 
     public string? AplicacionDePagos { get; set; }
 
@@ -39,4 +40,8 @@ public partial class Producto
     public int? Estatus { get; set; }
 
     public virtual ICollection<DetalleProducto> DetalleProductos { get; set; } = new List<DetalleProducto>();
+
+    [JsonIgnore]
+    public virtual ICollection<Credito> Creditos { get; set; } = new List<Credito>();
+
 }

@@ -58,4 +58,10 @@ public partial class Persona
 
     [JsonIgnore]
     public virtual ICollection<DatosClienteFisica> DatosClienteFisicas { get; set; } = new List<DatosClienteFisica>();
+
+    [JsonIgnore]
+    public virtual ICollection<Aval> Avals { get; set; } = new List<Aval>();
+
+    [JsonIgnore]
+    public virtual ICollection<Obligado> Obligados { get; set; } = new List<Obligado>();
 }

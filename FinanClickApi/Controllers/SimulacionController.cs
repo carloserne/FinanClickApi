@@ -60,7 +60,7 @@ namespace FinanClickApi.Controllers
                 if (subMetodoCalculo.ToLower() == "insolutos")
                 {
                     payment.Interes = payment.SaldoInsoluto * tasaPeriodica;
-                    payment.IvaSobreInteres = ivaExento ? 0 : payment.Interes * iva;
+                    payment.IvaSobreInteres = ivaExento ? 0 : payment.Interes * (iva/100);
                     payment.InteresMasIva = payment.Interes + payment.IvaSobreInteres;
                     payment.Capital = pagoFijo - payment.InteresMasIva;
                     payment.PagoFijo = pagoFijo;
@@ -69,7 +69,7 @@ namespace FinanClickApi.Controllers
                 {
                     payment.Capital = monto / numPagos;
                     payment.Interes = monto * tasaPeriodica;
-                    payment.IvaSobreInteres = ivaExento ? 0 : payment.Interes * iva;
+                    payment.IvaSobreInteres = ivaExento ? 0 : payment.Interes * (iva/100);
                     payment.InteresMasIva = payment.Interes + payment.IvaSobreInteres;
                     payment.PagoFijo = payment.Capital + payment.InteresMasIva;
                 }

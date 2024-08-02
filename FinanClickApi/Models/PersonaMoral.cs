@@ -52,4 +52,10 @@ public partial class PersonaMoral
 
     [JsonIgnore]
     public virtual ICollection<DatosClienteMoral> DatosClienteMorals { get; set; } = new List<DatosClienteMoral>();
+
+    [JsonIgnore]
+    public virtual ICollection<Aval> Avals { get; set; } = new List<Aval>();
+
+    [JsonIgnore]
+    public virtual ICollection<Obligado> Obligados { get; set; } = new List<Obligado>();
 }
