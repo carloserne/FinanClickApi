@@ -6,12 +6,13 @@ namespace FinanClickApi.Models;
 
 public partial class Aval
 {
+    [JsonIgnore]
     public int IdAval { get; set; }
-
+    [JsonIgnore]
     public int? IdCredito { get; set; }
-
+    [JsonIgnore]
     public int? IdPersona { get; set; }
-
+    [JsonIgnore]
     public int? IdPersonaMoral { get; set; }
 
     [JsonIgnore]
