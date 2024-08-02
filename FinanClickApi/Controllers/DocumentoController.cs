@@ -26,7 +26,7 @@ namespace FinanClickApi.Controllers
 
 
         // GET: api/catalogodocumentos/5
-        [HttpGet("/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<CatalogoDocumento>> GetCatalogoDocumento(int id)
         {
             var catalogoDocumento = await _baseDatos.CatalogoDocumentos.FindAsync(id);
