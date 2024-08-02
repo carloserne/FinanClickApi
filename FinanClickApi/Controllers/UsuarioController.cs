@@ -103,6 +103,220 @@ namespace FinanClickApi.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+
+        //Aqui empieza el método para registrar usuarios
+        //GET: api/usuario
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<object>>> GetUsuarios()
+        {
+            var usuarios = await _baseDatos.Usuarios
+                .Include(u => u.IdRolNavigation)
+                .ToListAsync();
+
+            if (!usuarios.Any())
+            {
+                return NotFound();
+            }
+
+            
+            var resultado = usuarios.Select(u => new
+            {
+                u.IdUsuario,
+                u.IdRol,
+                Rol = u.IdRolNavigation?.NombreRol,
+                u.ApellidoPaterno,
+                u.ApellidoMaterno,
+                u.IdEmpresa,
+                u.Usuario1,
+                u.Nombre,
+                u.Imagen
+            });
+
+            return Ok(resultado);
+        }
+
+
+        /*
+        [HttpPost]
+        public async Task<ActionResult> CreateUsuario([FromBody] UsuarioDto usuarioDto)
+        {
+            // Validar la entrada
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            // Verificar si el rol existe
+            var rol = await _baseDatos.Rols.FindAsync(usuarioDto.IdRol);
+            if (rol == null)
+            {
+                return NotFound(new { message = "Rol no encontrado" });
+            }
+
+            // Crear el nuevo usuario
+            var usuario = new Usuario
+            {
+                IdRol = usuarioDto.IdRol,
+                Contrasenia = usuarioDto.Contrasenia, // Implementar el método de hashing
+                ApellidoPaterno = usuarioDto.ApellidoPaterno,
+                ApellidoMaterno = usuarioDto.ApellidoMaterno,
+                IdEmpresa = usuarioDto.IdEmpresa,
+                Usuario1 = usuarioDto.Usuario1,
+                Nombre = usuarioDto.Nombre,
+                Imagen = usuarioDto.Imagen
+            };
+
+            try
+            {
+                // Guardar el usuario en la base de datos
+                _baseDatos.Usuarios.Add(usuario);
+                await _baseDatos.SaveChangesAsync();
+
+                // Devolver una respuesta exitosa con el usuario creado
+                return CreatedAtAction(nameof(GetUsuarios), new { id = usuario.IdUsuario }, usuario);
+            }
+            catch (Exception ex)
+            {
+                // Manejar excepciones y devolver una respuesta adecuada
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CrearUsuario([FromBody] UsuarioDto usuario)
+        {
+            if (usuario == null)
+            {
+                return BadRequest("El cliente no puede ser nulo.");
+            } else
+            {
+                _baseDatos.Usuarios.Add(usuario);
+                await _baseDatos.SaveChangesAsync();
+            }
+
+            return 
+        }*/
+
+        [HttpPost]
+        public async Task<IActionResult> CreateUsuario([FromBody] UsuarioDto usuarioDto)
+        {
+            if (usuarioDto == null)
+            {
+                return BadRequest("El usuario no puede ser nulo.");
+            }
+
+            // Verificar si el rol existe
+            var rol = await _baseDatos.Rols.FindAsync(usuarioDto.IdRol);
+            if (rol == null)
+            {
+                return NotFound(new { message = "Rol no encontrado" });
+            }
+
+            // Crear el nuevo usuario
+            var usuario = new Usuario
+            {
+                IdRol = usuarioDto.IdRol,
+                Contrasenia = usuarioDto.Contrasenia, // Implementar el método de hashing
+                ApellidoPaterno = usuarioDto.ApellidoPaterno,
+                ApellidoMaterno = usuarioDto.ApellidoMaterno,
+                IdEmpresa = usuarioDto.IdEmpresa,
+                Usuario1 = usuarioDto.Usuario1,
+                Nombre = usuarioDto.Nombre,
+                Imagen = usuarioDto.Imagen
+            };
+
+            try
+            {
+                _baseDatos.Usuarios.Add(usuario);
+                await _baseDatos.SaveChangesAsync();
+
+                // Devolver una respuesta exitosa con el usuario creado
+                return CreatedAtAction(nameof(GetUsuarios), new { id = usuario.IdUsuario }, usuario);
+            }
+            catch (Exception ex)
+            {
+                // Manejar excepciones y devolver una respuesta adecuada
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> ModificarUsuario(int id, [FromBody] UsuarioDto usuarioDto)
+        {
+            if (usuarioDto == null)
+            {
+                return BadRequest("El usuario no puede ser nulo.");
+            }
+
+            // Buscar el usuario existente en la base de datos
+            var usuarioExistente = await _baseDatos.Usuarios.FindAsync(id);
+            if (usuarioExistente == null)
+            {
+                return NotFound(new { message = "Usuario no encontrado" });
+            }
+
+            // Verificar si el rol proporcionado existe
+            var rol = await _baseDatos.Rols.FindAsync(usuarioDto.IdRol);
+            if (rol == null)
+            {
+                return NotFound(new { message = "Rol no encontrado" });
+            }
+
+            // Actualizar los campos del usuario existente con los valores del DTO
+            usuarioExistente.IdRol = usuarioDto.IdRol;
+            usuarioExistente.Contrasenia = usuarioDto.Contrasenia;
+            usuarioExistente.ApellidoPaterno = usuarioDto.ApellidoPaterno;
+            usuarioExistente.ApellidoMaterno = usuarioDto.ApellidoMaterno;
+            usuarioExistente.IdEmpresa = usuarioDto.IdEmpresa;
+            usuarioExistente.Usuario1 = usuarioDto.Usuario1;
+            usuarioExistente.Nombre = usuarioDto.Nombre;
+            usuarioExistente.Imagen = usuarioDto.Imagen;
+
+            try
+            {
+                // Guardar los cambios en la base de datos
+                _baseDatos.Usuarios.Update(usuarioExistente);
+                await _baseDatos.SaveChangesAsync();
+
+                // Devolver una respuesta exitosa con el usuario actualizado
+                return Ok(usuarioExistente);
+            }
+            catch (Exception ex)
+            {
+                // Manejar excepciones y devolver una respuesta adecuada
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> EliminarUsuario(int id)
+        {
+            // Buscar el usuario existente en la base de datos
+            var usuarioExistente = await _baseDatos.Usuarios.FindAsync(id);
+            if (usuarioExistente == null)
+            {
+                return NotFound(new { message = "Usuario no encontrado" });
+            }
+
+            try
+            {
+                // Eliminar el usuario
+                _baseDatos.Usuarios.Remove(usuarioExistente);
+                await _baseDatos.SaveChangesAsync();
+
+                // Devolver una respuesta exitosa
+                return Ok(new { message = "Usuario eliminado correctamente" });
+            }
+            catch (Exception ex)
+            {
+                // Manejar excepciones y devolver una respuesta adecuada
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
+            }
+        }
+
+
+
+
     }
 }
 
