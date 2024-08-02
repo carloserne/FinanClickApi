@@ -6,6 +6,7 @@ namespace FinanClickApi.Models;
 
 public partial class PersonaMoral
 {
+    [JsonIgnore]
     public int IdPersonaMoral { get; set; }
 
     public string RazonSocial { get; set; } = null!;
