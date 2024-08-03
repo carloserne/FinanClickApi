@@ -6,7 +6,7 @@ namespace FinanClickApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    //[Authorize]
+    [Authorize]
     public class SimulacionController : ControllerBase
     {
         [HttpPost]
@@ -27,7 +27,7 @@ namespace FinanClickApi.Controllers
             return Ok(schedule);
         }
 
-        private List<AmortizacionDto> CalculateAmortizacionDto(
+        public static List<AmortizacionDto> CalculateAmortizacionDto(
             string metodoCalculo,
             string subMetodoCalculo,
             string periodicidad,
@@ -35,7 +35,7 @@ namespace FinanClickApi.Controllers
             decimal interesAnual,
             decimal iva,
             bool ivaExento,
-            DateTime fechaInicio,
+            DateOnly fechaInicio,
             decimal monto)
         {
             List<AmortizacionDto> schedule = new List<AmortizacionDto>();
@@ -43,11 +43,11 @@ namespace FinanClickApi.Controllers
             decimal tasaPeriodica = GetPeriodicInterestRate(interesAnual, periodicidad);
             decimal tasaDeflactada = tasaPeriodica * 1.16m;
             decimal pagoFijo = CalculatePeriodicPayment(monto, tasaDeflactada, numPagos);
-            DateTime fechaPago = fechaInicio;
+            DateOnly fechaPago = fechaInicio;
 
             for (int i = 0; i < numPagos; i++)
             {
-                DateTime fechaPagoFin = GetNextPeriodDate(fechaPago, periodicidad);
+                DateOnly fechaPagoFin = GetNextPeriodDate(fechaPago, periodicidad);
 
                 AmortizacionDto payment = new AmortizacionDto
                 {
@@ -87,7 +87,7 @@ namespace FinanClickApi.Controllers
             return schedule;
         }
 
-        private decimal GetPeriodicInterestRate(decimal interesAnual, string periodicidad)
+        private static decimal GetPeriodicInterestRate(decimal interesAnual, string periodicidad)
         {
             switch (periodicidad.ToLower())
             {
@@ -102,7 +102,7 @@ namespace FinanClickApi.Controllers
             }
         }
 
-        private decimal CalculatePeriodicPayment(decimal monto, decimal tasaPeriodica, int numPagos)
+        private static decimal CalculatePeriodicPayment(decimal monto, decimal tasaPeriodica, int numPagos)
         {
             if (tasaPeriodica == 0)
                 return monto / numPagos;
@@ -110,7 +110,7 @@ namespace FinanClickApi.Controllers
             return monto * (tasaPeriodica * (decimal)Math.Pow(1 + (double)tasaPeriodica, numPagos)) / (decimal)(Math.Pow(1 + (double)tasaPeriodica, numPagos) - 1);
         }
 
-        private DateTime GetNextPeriodDate(DateTime current, string periodicidad)
+        private static DateOnly GetNextPeriodDate(DateOnly current, string periodicidad)
         {
             switch (periodicidad.ToLower())
             {
@@ -124,5 +124,6 @@ namespace FinanClickApi.Controllers
                     throw new ArgumentException("Periodicidad no válida");
             }
         }
+
     }
 }
