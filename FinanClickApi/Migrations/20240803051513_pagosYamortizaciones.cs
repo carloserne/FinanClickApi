@@ -82,14 +82,14 @@ namespace FinanClickApi.Migrations
                 column: "IdCredito");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Obligado_Persona",
+                name: "FK_Obligado_Persona_obp3r",
                 table: "Obligado",
                 column: "idPersona",
                 principalTable: "Persona",
                 principalColumn: "IdPersona");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Obligado_PersonaMoral",
+                name: "FK_Obligado_PersonaMoral_obep3rm",
                 table: "Obligado",
                 column: "idPersonaMoral",
                 principalTable: "PersonaMoral",
@@ -114,14 +114,14 @@ namespace FinanClickApi.Migrations
                 name: "Pago");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Aval_Persona",
+                name: "c",
                 table: "Aval",
                 column: "idPersona",
                 principalTable: "Persona",
                 principalColumn: "IdPersona");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Aval_PersonaMoral",
+                name: "c",
                 table: "Aval",
                 column: "idPersonaMoral",
                 principalTable: "PersonaMoral",
