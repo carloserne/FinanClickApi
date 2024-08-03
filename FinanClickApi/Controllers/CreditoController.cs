@@ -196,7 +196,11 @@ namespace FinanClickApi.Controllers
 
             if (credito.FechaActivacion != null)
             {
-                await ActivarCredito(id);
+                bool resultado = await ActivarCredito(id);
+                if (resultado == false)
+                {
+                    return BadRequest("Error al activar el credito");
+                }
             }
 
             await _baseDatos.SaveChangesAsync();
@@ -221,7 +225,7 @@ namespace FinanClickApi.Controllers
             return NoContent();
         }
 
-        public async Task<IActionResult> ActivarCredito(int id)
+        private async Task<bool> ActivarCredito(int id)
         {
             var credito = await _baseDatos.Creditos
                 .Include(c => c.IdProductoNavigation)
@@ -229,14 +233,14 @@ namespace FinanClickApi.Controllers
 
             if (credito == null)
             {
-                return NotFound();
+                return false;
             }
 
             var producto = await _baseDatos.Productos.FirstOrDefaultAsync(p => p.IdProducto == credito.IdProducto);
 
             if (producto == null)
             {
-                return BadRequest("El producto asociado al crédito no existe.");
+                return false;
             }
 
             DateOnly defaultFechaActivacion = DateOnly.FromDateTime(DateTime.Now);
@@ -279,7 +283,7 @@ namespace FinanClickApi.Controllers
 
             await _baseDatos.SaveChangesAsync();
 
-            return Ok();
+            return true;
         }
 
 
