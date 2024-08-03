@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using FinanClickApi.Models;
 using FinanClickApi.Modelss;
 using Microsoft.EntityFrameworkCore;
 
@@ -52,6 +51,9 @@ public partial class FinanclickDbContext : DbContext
 
     public virtual DbSet<Obligado> Obligados { get; set; }
 
+    public virtual DbSet<Amortizacion> Amortizacions { get; set; }
+   
+    public virtual DbSet<Pago> Pagos { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -483,13 +485,13 @@ public partial class FinanclickDbContext : DbContext
                         .WithMany(p => p.Avals)
                        .HasForeignKey(d => d.IdPersona)
                        .OnDelete(DeleteBehavior.ClientSetNull)
-                       .HasConstraintName("FK_Aval_Persona");
+                       .HasConstraintName("FK_Aval_Persona_avp3r");
 
             entity.HasOne(d => d.IdPersonaMoralNavigation)
                 .WithMany(p => p.Avals)
                 .HasForeignKey(d => d.IdPersonaMoral)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Aval_PersonaMoral");
+                .HasConstraintName("FK_Aval_PersonaMoral_avp3rm");
         });
 
         modelBuilder.Entity<Credito>(entity =>
@@ -531,14 +533,119 @@ public partial class FinanclickDbContext : DbContext
                        .WithMany(p => p.Obligados)
                       .HasForeignKey(d => d.IdPersona)
                       .OnDelete(DeleteBehavior.ClientSetNull)
-                      .HasConstraintName("FK_Obligado_Persona");
+                      .HasConstraintName("FK_Obligado_Persona_obp3r");
 
             entity.HasOne(d => d.IdPersonaMoralNavigation)
                         .WithMany(p => p.Obligados)
                         .HasForeignKey(d => d.IdPersonaMoral)
                         .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_Obligado_PersonaMoral");
+                        .HasConstraintName("FK_Obligado_PersonaMoral_obep3rm");
         });
+
+        modelBuilder.Entity<Amortizacion>(entity =>
+        {
+            entity.HasKey(e => e.IdAmortizacion).HasName("PK__Amortiza__8D928C9884C966EE");
+
+            entity.ToTable("Amortizacion");
+
+            entity.Property(e => e.IdCredito)
+            .HasColumnName("IdCredito")
+            .HasColumnType("INT")
+            .IsRequired();
+
+            entity.Property(e => e.FechaInicio)
+                .HasColumnName("FechaInicio")
+                .HasColumnType("DATE")
+                .IsRequired();
+
+            entity.Property(e => e.FechaFin)
+                .HasColumnName("FechaFin")
+                .HasColumnType("DATE")
+                .IsRequired();
+
+            entity.Property(e => e.Estatus)
+                .HasColumnName("Estatus")
+                .HasColumnType("INT")
+                .IsRequired();
+
+            entity.Property(e => e.SaldoInsoluto)
+                .HasColumnName("SaldoInsoluto")
+                .HasColumnType("DECIMAL(18, 2)")
+                .IsRequired();
+
+            entity.Property(e => e.Capital)
+                .HasColumnName("Capital")
+                .HasColumnType("DECIMAL(18, 2)")
+                .IsRequired();
+
+            entity.Property(e => e.InteresOrdinario)
+                .HasColumnName("InteresOrdinario")
+                .HasColumnType("DECIMAL(18, 2)")
+                .IsRequired();
+
+            entity.Property(e => e.InteresMasIva)
+                .HasColumnName("InteresMasIva")
+                .HasColumnType("DECIMAL(18, 2)")
+                .IsRequired();
+
+            entity.Property(e => e.Iva)
+                .HasColumnName("IVA")
+                .HasColumnType("DECIMAL(18, 2)")
+                .IsRequired();
+
+            entity.Property(e => e.InteresMoratorio)
+                .HasColumnName("InteresMoratorio")
+                .HasColumnType("DECIMAL(18, 2)")
+                .IsRequired();
+
+            entity.Property(e => e.PagoFijo)
+               .HasColumnName("PagoFijo")
+               .HasColumnType("DECIMAL(18, 2)")
+               .IsRequired();
+
+            entity.HasOne(c => c.IdCreditoNavigation)
+                .WithMany(c => c.Amortizacions)
+                .HasForeignKey(e => e.IdCredito)
+                .OnDelete(DeleteBehavior.Restrict).HasConstraintName("FK_Credito_Amortizacion_72C60C4A");
+        });
+
+        modelBuilder.Entity<Pago>(entity =>
+        {
+            entity.HasKey(e => e.IdPago).HasName("PK__Pago__FC851A3A66103805");
+
+            entity.ToTable("Pago");
+
+            entity.Property(e => e.IdCredito)
+                .HasColumnName("IdCredito")
+                .HasColumnType("INT")
+                .IsRequired();
+
+            entity.Property(e => e.FechaPago)
+                .HasColumnName("FechaPago")
+                .HasColumnType("DATE")
+                .IsRequired();
+
+            entity.Property(e => e.MontoPago)
+                .HasColumnName("MontoPago")
+                .HasColumnType("DECIMAL(18, 2)")
+                .IsRequired();
+
+            entity.Property(e => e.FechaAplicacion)
+                .HasColumnName("FechaAplicacion")
+                .HasColumnType("DATE")
+                .IsRequired();
+
+            entity.Property(e => e.Estatus)
+                .HasColumnName("Estatus")
+                .HasColumnType("INT")
+                .IsRequired();
+
+            entity.HasOne(c => c.IdCreditoNavigation)
+                .WithMany(c => c.Pagos)
+                .HasForeignKey(e => e.IdCredito).HasConstraintName("FK_Credito_Pago_72C60C4A");
+
+        });
+
 
         OnModelCreatingPartial(modelBuilder);
     }

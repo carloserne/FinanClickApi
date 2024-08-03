@@ -2,12 +2,15 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using FinanClickApi.Controllers;
+using System;
+using FinanClickApi.Dtos;
 
 namespace FinanClickApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     public class CreditoController : ControllerBase
     {
         private readonly FinanclickDbContext _baseDatos;
@@ -17,12 +20,12 @@ namespace FinanClickApi.Controllers
             _baseDatos = context;
         }
 
-        // Obtener todos los créditos con estatus 1
+        // Obtener todos los créditos con estatus diferente a 0
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var creditos = await _baseDatos.Creditos
-                 .Where(c => c.Estatus == 1)
+                 .Where(c => c.Estatus != 0)
                 .Include(c => c.Avals)
                 .ThenInclude(a => a.IdPersonaNavigation)
                 .Include(c => c.Avals)
@@ -33,6 +36,24 @@ namespace FinanClickApi.Controllers
                 .ThenInclude(o => o.IdPersonaMoralNavigation)
                 .ToListAsync();
             return Ok(creditos);
+        }
+
+        [HttpGet("amortizaciones/{id}")]
+        public async Task<IActionResult> GetAllAmortizaciones(int id)
+        {
+            var amortizaciones = await _baseDatos.Amortizacions
+                .Where(c => c.Estatus != 0 && c.IdCredito == id)
+                .ToListAsync();
+            return Ok(amortizaciones);
+        }
+
+        [HttpGet("pagos/{id}")]
+        public async Task<IActionResult> GetAllPagos(int id)
+        {
+            var pagos = await _baseDatos.Pagos
+                 .Where(c => c.Estatus != 0 && c.IdCredito == id)
+                .ToListAsync();
+            return Ok(pagos);
         }
 
         // Obtener un crédito por ID
@@ -132,6 +153,7 @@ namespace FinanClickApi.Controllers
 
             existingCredito.IdProducto = credito.IdProducto;
             existingCredito.Monto = credito.Monto;
+            existingCredito.Estatus = credito.Estatus;
             existingCredito.Iva = credito.Iva;
             existingCredito.Periodicidad = credito.Periodicidad;
             existingCredito.FechaFirma = credito.FechaFirma;
@@ -173,6 +195,15 @@ namespace FinanClickApi.Controllers
                 }
             }
 
+            if (credito.FechaActivacion != null)
+            {
+                bool resultado = await ActivarCredito(id);
+                if (resultado == false)
+                {
+                    return BadRequest("Error al activar el credito");
+                }
+            }
+
             await _baseDatos.SaveChangesAsync();
 
             return NoContent();
@@ -194,5 +225,121 @@ namespace FinanClickApi.Controllers
 
             return NoContent();
         }
+
+        private async Task<bool> ActivarCredito(int id)
+        {
+            var credito = await _baseDatos.Creditos
+                .Include(c => c.IdProductoNavigation)
+                .FirstOrDefaultAsync(c => c.IdCredito == id && c.Estatus != 0);
+
+            if (credito == null)
+            {
+                return false;
+            }
+
+            var producto = await _baseDatos.Productos.FirstOrDefaultAsync(p => p.IdProducto == credito.IdProducto);
+
+            if (producto == null)
+            {
+                return false;
+            }
+
+            DateOnly defaultFechaActivacion = DateOnly.FromDateTime(DateTime.Now);
+
+            DateOnly FechaActivacionValidate = credito.FechaActivacion ?? defaultFechaActivacion;
+
+            bool ivaExento = false;
+
+            List<AmortizacionDto> amortizaciones = SimulacionController.CalculateAmortizacionDto(
+                producto.MetodoCalculo,
+                producto.SubMetodo,
+                credito.Periodicidad,
+                credito.NumPagos,
+                credito.InteresOrdinario,
+                credito.Iva,
+                ivaExento,
+                FechaActivacionValidate,
+                credito.Monto
+            );
+
+            foreach (var amortizacion in amortizaciones)
+            {
+                var newAmortizacion = new Amortizacion
+                {
+                    IdCredito = credito.IdCredito,
+                    FechaInicio = amortizacion.FechaInicio,
+                    FechaFin = amortizacion.FechaFin,
+                    Estatus = amortizacion.FechaInicio > DateOnly.FromDateTime(DateTime.Now) ? 1 : 2, // 1 = Pendiente, 2 = Vencida
+                    SaldoInsoluto = amortizacion.SaldoInsoluto,
+                    Capital = amortizacion.Capital,
+                    InteresOrdinario = amortizacion.Interes,
+                    InteresMasIva = amortizacion.InteresMasIva,
+                    Iva = amortizacion.IvaSobreInteres,
+                    PagoFijo = amortizacion.PagoFijo,
+                    InteresMoratorio = 0 // Inicialmente sin interés moratorio
+                };
+
+                _baseDatos.Amortizacions.Add(newAmortizacion);
+            }
+
+            await _baseDatos.SaveChangesAsync();
+
+            return true;
+        }
+
+
+        [HttpPut("actualizarInteres/{id}")]
+        public async Task<IActionResult> ActualizarInteresMoratorio(int id)
+        {
+            var credito = await _baseDatos.Creditos
+                .Include(c => c.IdProductoNavigation)
+                .FirstOrDefaultAsync(c => c.IdCredito == id && c.Estatus != 0 && c.Estatus != 4);
+
+            if (credito == null)
+            {
+                return NotFound();
+            }
+
+            var producto = await _baseDatos.Productos.FirstOrDefaultAsync(p => p.IdProducto == credito.IdProducto);
+
+            if (producto == null)
+            {
+                return BadRequest("El producto asociado al crédito no existe.");
+            }
+
+            var amortizacionesVencidas = await _baseDatos.Amortizacions
+                .Where(a => a.IdCredito == id && a.Estatus == 2 && a.FechaFin < DateOnly.FromDateTime(DateTime.Now))
+                .ToListAsync();
+
+            bool tieneMoratorios = false;
+
+            foreach (var amortizacion in amortizacionesVencidas)
+            {
+                DateOnly fechaActual = DateOnly.FromDateTime(DateTime.Now);
+
+                DateTime fechaFinDateTime = amortizacion.FechaFin.ToDateTime(TimeOnly.MinValue);
+                DateTime fechaActualDateTime = fechaActual.ToDateTime(TimeOnly.MinValue);
+
+                int diasVencidos = (fechaActualDateTime - fechaFinDateTime).Days;
+                decimal interesMoratorioDiario = (amortizacion.SaldoInsoluto * producto.InteresMoratorio.Value / 100) / 360;
+                decimal interesMoratorioAcumulado = interesMoratorioDiario * diasVencidos;
+
+                amortizacion.InteresMoratorio += interesMoratorioAcumulado;
+
+                if (interesMoratorioAcumulado > 0)
+                {
+                    amortizacion.Estatus = 3;
+                }
+
+            }
+
+            await _baseDatos.SaveChangesAsync();
+
+            return Ok("Intereses moratorios actualizados correctamente.");
+        }
+
+
+
+
     }
 }

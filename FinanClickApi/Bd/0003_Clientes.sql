@@ -39,7 +39,7 @@ VALUES ( 'ACTA CONSTITUTIVA', 'MORAL', 1, 1);
 INSERT INTO DocumentosCliente ( DocumentoBase64, Estatus, IdDocumento, IdCliente)
 VALUES ( 'JVBERi0xLjQKJeLjz9MKMyAwIG9iaiA8PC9MaW5lYXJpemVkIDEvTCAxNjMzNi9PIDQvRSAxMjM0L04gMS9UIDE1MTI+PnN0cmVhbQpIYWxsbwoKZW5kc3RyZWFtCmVuZG9iago=', 4, 1, 2);
 --- Estatus para los documentosCliente
---- 4.- Pendiente, 3.- Por revisar, 2.- Rechazado, 3.- Aprobado
+--- 4.- Pendiente, 3.- Por revisar, 2.- Rechazado, 1.- Aprobado
 
 
 CREATE TABLE Persona (

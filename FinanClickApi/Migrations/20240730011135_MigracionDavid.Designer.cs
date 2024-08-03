@@ -4,6 +4,7 @@ using FinanClickApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinanClickApi.Migrations
 {
     [DbContext(typeof(FinanclickDbContext))]
-    partial class FinanclickDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240730011135_MigracionDavid")]
+    partial class MigracionDavid
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,99 +39,6 @@ namespace FinanClickApi.Migrations
                     b.HasIndex("IdUsuario");
 
                     b.ToTable("DetalleModuloUsuario", (string)null);
-                });
-
-            modelBuilder.Entity("FinanClickApi.Models.Amortizacion", b =>
-                {
-                    b.Property<int>("IdAmortizacion")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdAmortizacion"));
-
-                    b.Property<decimal>("Capital")
-                        .HasColumnType("DECIMAL(18, 2)")
-                        .HasColumnName("Capital");
-
-                    b.Property<int>("Estatus")
-                        .HasColumnType("INT")
-                        .HasColumnName("Estatus");
-
-                    b.Property<DateOnly>("FechaFin")
-                        .HasColumnType("DATE")
-                        .HasColumnName("FechaFin");
-
-                    b.Property<DateOnly>("FechaInicio")
-                        .HasColumnType("DATE")
-                        .HasColumnName("FechaInicio");
-
-                    b.Property<int>("IdCredito")
-                        .HasColumnType("INT")
-                        .HasColumnName("IdCredito");
-
-                    b.Property<decimal>("InteresMasIva")
-                        .HasColumnType("DECIMAL(18, 2)")
-                        .HasColumnName("InteresMasIva");
-
-                    b.Property<decimal>("InteresMoratorio")
-                        .HasColumnType("DECIMAL(18, 2)")
-                        .HasColumnName("InteresMoratorio");
-
-                    b.Property<decimal>("InteresOrdinario")
-                        .HasColumnType("DECIMAL(18, 2)")
-                        .HasColumnName("InteresOrdinario");
-
-                    b.Property<decimal>("Iva")
-                        .HasColumnType("DECIMAL(18, 2)")
-                        .HasColumnName("IVA");
-
-                    b.Property<decimal>("PagoFijo")
-                        .HasColumnType("DECIMAL(18, 2)")
-                        .HasColumnName("PagoFijo");
-
-                    b.Property<decimal>("SaldoInsoluto")
-                        .HasColumnType("DECIMAL(18, 2)")
-                        .HasColumnName("SaldoInsoluto");
-
-                    b.HasKey("IdAmortizacion")
-                        .HasName("PK__Amortiza__8D928C9884C966EE");
-
-                    b.HasIndex("IdCredito");
-
-                    b.ToTable("Amortizacion", (string)null);
-                });
-
-            modelBuilder.Entity("FinanClickApi.Models.Aval", b =>
-                {
-                    b.Property<int>("IdAval")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("idAval");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdAval"));
-
-                    b.Property<int?>("IdCredito")
-                        .HasColumnType("int")
-                        .HasColumnName("idCredito");
-
-                    b.Property<int?>("IdPersona")
-                        .HasColumnType("int")
-                        .HasColumnName("idPersona");
-
-                    b.Property<int?>("IdPersonaMoral")
-                        .HasColumnType("int")
-                        .HasColumnName("idPersonaMoral");
-
-                    b.HasKey("IdAval")
-                        .HasName("PK__Aval__D8A6A80225CFEA8D");
-
-                    b.HasIndex("IdCredito");
-
-                    b.HasIndex("IdPersona");
-
-                    b.HasIndex("IdPersonaMoral");
-
-                    b.ToTable("Aval", (string)null);
                 });
 
             modelBuilder.Entity("FinanClickApi.Models.CatConcepto", b =>
@@ -229,61 +139,6 @@ namespace FinanClickApi.Migrations
                     b.HasIndex("IdEmpresa");
 
                     b.ToTable("Cliente", (string)null);
-                });
-
-            modelBuilder.Entity("FinanClickApi.Models.Credito", b =>
-                {
-                    b.Property<int>("IdCredito")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdCredito"));
-
-                    b.Property<int>("Estatus")
-                        .HasColumnType("int");
-
-                    b.Property<DateOnly?>("FechaActivacion")
-                        .HasColumnType("date");
-
-                    b.Property<DateOnly?>("FechaFirma")
-                        .HasColumnType("date");
-
-                    b.Property<int?>("IdCliente")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IdProducto")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("IdPromotor")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("InteresMoratorio")
-                        .HasColumnType("decimal(18, 2)");
-
-                    b.Property<decimal>("InteresOrdinario")
-                        .HasColumnType("decimal(18, 2)");
-
-                    b.Property<decimal>("Iva")
-                        .HasColumnType("decimal(18, 2)");
-
-                    b.Property<decimal>("Monto")
-                        .HasColumnType("decimal(18, 2)");
-
-                    b.Property<int>("NumPagos")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Periodicidad")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)");
-
-                    b.HasKey("IdCredito")
-                        .HasName("PK__Credito__EF6108CB209BE43B");
-
-                    b.HasIndex("IdProducto");
-
-                    b.ToTable("Credito", (string)null);
                 });
 
             modelBuilder.Entity("FinanClickApi.Models.DatosClienteFisica", b =>
@@ -518,75 +373,6 @@ namespace FinanClickApi.Migrations
                         .HasName("PK__Modulo__D9F15315EB19A4AB");
 
                     b.ToTable("Modulo", (string)null);
-                });
-
-            modelBuilder.Entity("FinanClickApi.Models.Obligado", b =>
-                {
-                    b.Property<int>("IdObligado")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("idObligado");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdObligado"));
-
-                    b.Property<int?>("IdCredito")
-                        .HasColumnType("int")
-                        .HasColumnName("idCredito");
-
-                    b.Property<int?>("IdPersona")
-                        .HasColumnType("int")
-                        .HasColumnName("idPersona");
-
-                    b.Property<int?>("IdPersonaMoral")
-                        .HasColumnType("int")
-                        .HasColumnName("idPersonaMoral");
-
-                    b.HasKey("IdObligado")
-                        .HasName("PK__Obligado__E088162F78AC3B83");
-
-                    b.HasIndex("IdCredito");
-
-                    b.HasIndex("IdPersona");
-
-                    b.HasIndex("IdPersonaMoral");
-
-                    b.ToTable("Obligado", (string)null);
-                });
-
-            modelBuilder.Entity("FinanClickApi.Models.Pago", b =>
-                {
-                    b.Property<int>("IdPago")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdPago"));
-
-                    b.Property<int>("Estatus")
-                        .HasColumnType("INT")
-                        .HasColumnName("Estatus");
-
-                    b.Property<DateOnly>("FechaAplicacion")
-                        .HasColumnType("DATE")
-                        .HasColumnName("FechaAplicacion");
-
-                    b.Property<DateOnly>("FechaPago")
-                        .HasColumnType("DATE")
-                        .HasColumnName("FechaPago");
-
-                    b.Property<int>("IdCredito")
-                        .HasColumnType("INT")
-                        .HasColumnName("IdCredito");
-
-                    b.Property<decimal>("MontoPago")
-                        .HasColumnType("DECIMAL(18, 2)")
-                        .HasColumnName("MontoPago");
-
-                    b.HasKey("IdPago")
-                        .HasName("PK__Pago__FC851A3A66103805");
-
-                    b.HasIndex("IdCredito");
-
-                    b.ToTable("Pago", (string)null);
                 });
 
             modelBuilder.Entity("FinanClickApi.Models.Persona", b =>
@@ -920,10 +706,8 @@ namespace FinanClickApi.Migrations
                     b.Property<int?>("NumPagos")
                         .HasColumnType("int");
 
-                    b.Property<string>("PagoAnticipado")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)");
+                    b.Property<bool?>("PagoAnticipado")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Periodicidad")
                         .HasMaxLength(255)
@@ -1109,42 +893,6 @@ namespace FinanClickApi.Migrations
                         .HasConstraintName("FK__DetalleMo__IdUsu__4222D4EF");
                 });
 
-            modelBuilder.Entity("FinanClickApi.Models.Amortizacion", b =>
-                {
-                    b.HasOne("FinanClickApi.Models.Credito", "IdCreditoNavigation")
-                        .WithMany("Amortizacions")
-                        .HasForeignKey("IdCredito")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK_Credito_Amortizacion_72C60C4A");
-
-                    b.Navigation("IdCreditoNavigation");
-                });
-
-            modelBuilder.Entity("FinanClickApi.Models.Aval", b =>
-                {
-                    b.HasOne("FinanClickApi.Models.Credito", "IdCreditoNavigation")
-                        .WithMany("Avals")
-                        .HasForeignKey("IdCredito")
-                        .HasConstraintName("FK__Aval__idCredito__32AB8735");
-
-                    b.HasOne("FinanClickApi.Models.Persona", "IdPersonaNavigation")
-                        .WithMany("Avals")
-                        .HasForeignKey("IdPersona")
-                        .HasConstraintName("FK_Aval_Persona");
-
-                    b.HasOne("FinanClickApi.Models.PersonaMoral", "IdPersonaMoralNavigation")
-                        .WithMany("Avals")
-                        .HasForeignKey("IdPersonaMoral")
-                        .HasConstraintName("FK_Aval_PersonaMoral");
-
-                    b.Navigation("IdCreditoNavigation");
-
-                    b.Navigation("IdPersonaMoralNavigation");
-
-                    b.Navigation("IdPersonaNavigation");
-                });
-
             modelBuilder.Entity("FinanClickApi.Models.CatalogoDocumento", b =>
                 {
                     b.HasOne("FinanClickApi.Models.Empresa", "IdEmpresaNavigation")
@@ -1163,17 +911,6 @@ namespace FinanClickApi.Migrations
                         .HasConstraintName("FK__Cliente__idEmpre__44FF419A");
 
                     b.Navigation("IdEmpresaNavigation");
-                });
-
-            modelBuilder.Entity("FinanClickApi.Models.Credito", b =>
-                {
-                    b.HasOne("FinanClickApi.Models.Producto", "IdProductoNavigation")
-                        .WithMany("Creditos")
-                        .HasForeignKey("IdProducto")
-                        .IsRequired()
-                        .HasConstraintName("FK__Credito__IdProdu__2DE6D218");
-
-                    b.Navigation("IdProductoNavigation");
                 });
 
             modelBuilder.Entity("FinanClickApi.Models.DatosClienteFisica", b =>
@@ -1225,42 +962,6 @@ namespace FinanClickApi.Migrations
                     b.Navigation("IdClienteNavigation");
 
                     b.Navigation("IdDocumentoNavigation");
-                });
-
-            modelBuilder.Entity("FinanClickApi.Models.Obligado", b =>
-                {
-                    b.HasOne("FinanClickApi.Models.Credito", "IdCreditoNavigation")
-                        .WithMany("Obligados")
-                        .HasForeignKey("IdCredito")
-                        .HasConstraintName("FK__Obligado__idCred__37703C52");
-
-                    b.HasOne("FinanClickApi.Models.Persona", "IdPersonaNavigation")
-                        .WithMany("Obligados")
-                        .HasForeignKey("IdPersona")
-                        .HasConstraintName("FK_Obligado_Persona");
-
-                    b.HasOne("FinanClickApi.Models.PersonaMoral", "IdPersonaMoralNavigation")
-                        .WithMany("Obligados")
-                        .HasForeignKey("IdPersonaMoral")
-                        .HasConstraintName("FK_Obligado_PersonaMoral");
-
-                    b.Navigation("IdCreditoNavigation");
-
-                    b.Navigation("IdPersonaMoralNavigation");
-
-                    b.Navigation("IdPersonaNavigation");
-                });
-
-            modelBuilder.Entity("FinanClickApi.Models.Pago", b =>
-                {
-                    b.HasOne("FinanClickApi.Models.Credito", "IdCreditoNavigation")
-                        .WithMany("Pagos")
-                        .HasForeignKey("IdCredito")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Credito_Pago_72C60C4A");
-
-                    b.Navigation("IdCreditoNavigation");
                 });
 
             modelBuilder.Entity("FinanClickApi.Models.Usuario", b =>
@@ -1328,17 +1029,6 @@ namespace FinanClickApi.Migrations
                     b.Navigation("UsuarioClientes");
                 });
 
-            modelBuilder.Entity("FinanClickApi.Models.Credito", b =>
-                {
-                    b.Navigation("Amortizacions");
-
-                    b.Navigation("Avals");
-
-                    b.Navigation("Obligados");
-
-                    b.Navigation("Pagos");
-                });
-
             modelBuilder.Entity("FinanClickApi.Models.Empresa", b =>
                 {
                     b.Navigation("CatalogoDocumentos");
@@ -1350,26 +1040,16 @@ namespace FinanClickApi.Migrations
 
             modelBuilder.Entity("FinanClickApi.Models.Persona", b =>
                 {
-                    b.Navigation("Avals");
-
                     b.Navigation("DatosClienteFisicas");
-
-                    b.Navigation("Obligados");
                 });
 
             modelBuilder.Entity("FinanClickApi.Models.PersonaMoral", b =>
                 {
-                    b.Navigation("Avals");
-
                     b.Navigation("DatosClienteMorals");
-
-                    b.Navigation("Obligados");
                 });
 
             modelBuilder.Entity("FinanClickApi.Models.Producto", b =>
                 {
-                    b.Navigation("Creditos");
-
                     b.Navigation("DetalleProductos");
                 });
 

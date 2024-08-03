@@ -38,8 +38,9 @@ public partial class Credito
 
     [JsonIgnore]
     public virtual Producto? IdProductoNavigation { get; set; }
-
-
-
+    [JsonIgnore]
+    public virtual ICollection<Amortizacion>? Amortizacions { get; set; } = new List<Amortizacion>();
+    [JsonIgnore]
+    public virtual ICollection<Pago>? Pagos { get; set; } = new List<Pago>();
 
 }
