@@ -17,12 +17,12 @@ namespace FinanClickApi.Controllers
             _baseDatos = context;
         }
 
-        // Obtener todos los créditos con estatus 1
+        // Obtener todos los créditos con estatus diferente a 0
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var creditos = await _baseDatos.Creditos
-                 .Where(c => c.Estatus == 1)
+                 .Where(c => c.Estatus != 0)
                 .Include(c => c.Avals)
                 .ThenInclude(a => a.IdPersonaNavigation)
                 .Include(c => c.Avals)
@@ -132,6 +132,7 @@ namespace FinanClickApi.Controllers
 
             existingCredito.IdProducto = credito.IdProducto;
             existingCredito.Monto = credito.Monto;
+            existingCredito.Estatus = credito.Estatus;
             existingCredito.Iva = credito.Iva;
             existingCredito.Periodicidad = credito.Periodicidad;
             existingCredito.FechaFirma = credito.FechaFirma;
