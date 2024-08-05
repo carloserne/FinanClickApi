@@ -68,6 +68,12 @@ builder.Services.AddSwaggerGen(c =>
    });
 });
 
+// Configurar el servicio DbContext con el timeout
+builder.Services.AddDbContext<FinanclickDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("cnFinanclick"),
+    sqlServerOptions => sqlServerOptions.CommandTimeout(60)) // Timeout de 60 segundos
+);
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddSqlServer<FinanclickDbContext>(builder.Configuration.GetConnectionString("cnFinanclick"));
 
