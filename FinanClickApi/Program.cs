@@ -76,7 +76,6 @@ builder.Services.AddSwaggerGen();
 
 
 
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("NuevaPolitica", app =>
