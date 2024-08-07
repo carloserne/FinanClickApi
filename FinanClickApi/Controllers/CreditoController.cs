@@ -362,7 +362,7 @@ namespace FinanClickApi.Controllers
             }
 
             var amortizacionesVencidas = await _baseDatos.Amortizacions
-                .Where(a => a.IdCredito == id && a.Estatus == 2 && a.FechaFin < DateOnly.FromDateTime(DateTime.Now))
+                .Where(a => a.IdCredito == id && (a.Estatus == 2 || a.Estatus == 3) && a.FechaFin < DateOnly.FromDateTime(DateTime.Now))
                 .ToListAsync();
 
             bool tieneMoratorios = false;

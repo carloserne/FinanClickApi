@@ -207,6 +207,27 @@ namespace FinanClickApi.Controllers
 
         }
 
+        [HttpGet("PagosRecibidosUltimoMes/{empresaId}")]
+        public async Task<IActionResult> GetPagosRecibidosUltimoMes(int empresaId)
+        {
+            var fechaInicio = DateOnly.FromDateTime(DateTime.Now.AddMonths(-1));
+            var fechaActual = DateOnly.FromDateTime(DateTime.Now);
+
+            var totalMontoPagos = await _baseDatos.Pagos
+                .Where(p => p.FechaPago >= fechaInicio && p.FechaPago <= fechaActual)
+                .Join(_baseDatos.Creditos,
+                    pago => pago.IdCredito,
+                    credito => credito.IdCredito,
+                    (pago, credito) => new { pago, credito })
+                .Join(_baseDatos.Productos,
+                    pc => pc.credito.IdProducto,
+                    producto => producto.IdProducto,
+                    (pc, producto) => new { pc.pago, pc.credito, producto })
+                .Where(pcp => pcp.producto.IdEmpresa == empresaId)
+                .SumAsync(pcp => pcp.pago.MontoPago);
+
+            return Ok(totalMontoPagos);
+        }
 
     }
 }

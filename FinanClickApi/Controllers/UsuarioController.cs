@@ -68,6 +68,7 @@ namespace FinanClickApi.Controllers
             }
 
             var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+            
             if (user == null)
             {
                 return NotFound();
