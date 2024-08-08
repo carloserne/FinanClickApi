@@ -61,6 +61,60 @@ namespace FinanClickApi.Controllers
             return Ok(pagos);
         }
 
+
+        /*[HttpGet("amortizaciones/estatus/{estatus}/empresa/{idEmpresa}")]
+        public async Task<IActionResult> GetAllAmortizacionesByEstatusAndEmpresa(int estatus, int idEmpresa)
+        {
+            var amortizaciones = await (from a in _baseDatos.Amortizacions
+                                        join c in _baseDatos.Creditos on a.IdCredito equals c.IdCredito
+                                        join cl in _baseDatos.Clientes on c.IdCliente equals cl.IdCliente
+                                        where a.Estatus == estatus && cl.IdEmpresa == idEmpresa
+                                        select a).ToListAsync();
+
+            return Ok(amortizaciones);
+        }*/
+        [HttpGet("amortizaciones/empresa/{idEmpresa}")]
+        public async Task<IActionResult> GetAllAmortizacionesByEmpresa(int idEmpresa)
+        {
+            var amortizaciones = await (from a in _baseDatos.Amortizacions
+                                        join c in _baseDatos.Creditos on a.IdCredito equals c.IdCredito
+                                        join cl in _baseDatos.Clientes on c.IdCliente equals cl.IdCliente
+                                        where cl.IdEmpresa == idEmpresa
+                                        select a).ToListAsync();
+
+            return Ok(amortizaciones);
+        }
+
+
+        /*[HttpGet("pagos/estatus/{estatus}/empresa/{idEmpresa}")]
+        public async Task<IActionResult> GetAllPagosByEstatusAndEmpresa(int estatus, int idEmpresa)
+        {
+            var pagos = await (from p in _baseDatos.Pagos
+                               join c in _baseDatos.Creditos on p.IdCredito equals c.IdCredito
+                               join cl in _baseDatos.Clientes on c.IdCliente equals cl.IdCliente
+                               where p.Estatus == estatus && cl.IdEmpresa == idEmpresa
+                               select p).ToListAsync();
+
+            return Ok(pagos);
+        }*/
+        [HttpGet("pagos/empresa/{idEmpresa}")]
+        public async Task<IActionResult> GetAllPagosByEmpresa(int idEmpresa)
+        {
+            var pagos = await (from p in _baseDatos.Pagos
+                               join c in _baseDatos.Creditos on p.IdCredito equals c.IdCredito
+                               join cl in _baseDatos.Clientes on c.IdCliente equals cl.IdCliente
+                               where cl.IdEmpresa == idEmpresa
+                               select p).ToListAsync();
+
+            return Ok(pagos);
+        }
+
+
+
+
+
+
+
         // Obtener un crédito por ID
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
