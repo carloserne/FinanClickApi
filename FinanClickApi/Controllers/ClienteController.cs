@@ -3,6 +3,7 @@ using FinanClickApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace FinanClickApi.Controllers
 {
@@ -22,7 +23,10 @@ namespace FinanClickApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<object>>> GetClientes()
         {
-            var clientes = await _baseDatos.Clientes.ToListAsync();
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+
+            var clientes = await _baseDatos.Clientes.Where(c => c.Estatus != 0 && c.IdEmpresa == user.IdEmpresa).ToListAsync();
 
             var resultado = new List<object>();
 
@@ -125,6 +129,10 @@ namespace FinanClickApi.Controllers
                 return BadRequest("El cliente no puede ser nulo.");
             }
 
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+            cliente.IdEmpresa = user.IdEmpresa;
+
             if (cliente.RegimenFiscal == "FISICA")
             {
                 // Verificar y añadir cliente físico
@@ -158,6 +166,11 @@ namespace FinanClickApi.Controllers
             {
                 return BadRequest("El cliente no puede ser nulo.");
             }
+
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+
+            cliente.IdEmpresa = user.IdEmpresa;
 
             var clienteExistente = await _baseDatos.Clientes
                 .Include(c => c.DatosClienteFisicas)

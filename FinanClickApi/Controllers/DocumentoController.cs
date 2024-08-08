@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace FinanClickApi.Controllers
 {
@@ -21,15 +22,22 @@ namespace FinanClickApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CatalogoDocumento>>> GetEmpresas()
         {
-            return await _baseDatos.CatalogoDocumentos.ToListAsync();
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+            return await _baseDatos.CatalogoDocumentos.Where(d => d.Estatus != 0 && d.IdEmpresa == user.IdEmpresa).ToListAsync();
         }
 
 
         // GET: api/catalogodocumentos/5
-        [HttpGet("/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<CatalogoDocumento>> GetCatalogoDocumento(int id)
         {
-            var catalogoDocumento = await _baseDatos.CatalogoDocumentos.FindAsync(id);
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+            var catalogoDocumento = await _baseDatos.CatalogoDocumentos
+            .Where(d => d.Estatus != 0 && d.IdEmpresa == user.IdEmpresa)
+            .FirstOrDefaultAsync(d => d.IdCatalogoDocumento == id);
+
 
             if (catalogoDocumento == null)
             {
@@ -43,6 +51,10 @@ namespace FinanClickApi.Controllers
         [HttpPost]
         public async Task<ActionResult<CatalogoDocumento>> PostCatalogoDocumento(CatalogoDocumento catalogoDocumento)
         {
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+            catalogoDocumento.IdEmpresa = user.IdEmpresa;
+
             _baseDatos.CatalogoDocumentos.Add(catalogoDocumento);
             await _baseDatos.SaveChangesAsync();
 
@@ -53,6 +65,9 @@ namespace FinanClickApi.Controllers
         public async Task<IActionResult> PutCatalogoDocumento(int id, CatalogoDocumento catalogoDocumento)
         {
             catalogoDocumento.IdCatalogoDocumento = id;
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+            catalogoDocumento.IdEmpresa = user.IdEmpresa;
 
             _baseDatos.Entry(catalogoDocumento).State = EntityState.Modified;
 

@@ -26,7 +26,6 @@ public partial class Usuario
 
     public virtual Empresa? IdEmpresaNavigation { get; set; }
 
-    [JsonIgnore]
     public virtual Rol? IdRolNavigation { get; set; }
 
     public virtual ICollection<Modulo> IdModulos { get; set; } = new List<Modulo>();

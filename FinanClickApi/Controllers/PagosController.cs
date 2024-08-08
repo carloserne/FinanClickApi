@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using FinanClickApi.Controllers;
 using System;
 using FinanClickApi.Dtos;
+using System.Security.Claims;
 
 namespace FinanClickApi.Controllers
 {
@@ -25,8 +26,11 @@ namespace FinanClickApi.Controllers
         [HttpGet("PagosCredito/{id}")]
         public async Task<IActionResult> GetAllPagos(int id)
         {
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+
             var pagos = await _baseDatos.Pagos
-                 .Where(c => c.Estatus != 0 && c.IdCredito == id)
+                 .Where(c => c.Estatus != 0 && c.IdCredito == id && c.IdCreditoNavigation.IdProductoNavigation.IdEmpresa ==user.IdEmpresa)
                 .ToListAsync();
             return Ok(pagos);
         }
@@ -53,9 +57,12 @@ namespace FinanClickApi.Controllers
         [HttpPost("registrarPago")]
         public async Task<IActionResult> RegistrarPago([FromBody] RegistrarPagoDto pagoDto)
         {
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+
             var credito = await _baseDatos.Creditos
                 .Include(c => c.IdProductoNavigation)
-                .FirstOrDefaultAsync(c => c.IdCredito == pagoDto.IdCredito && c.Estatus != 0);
+                .FirstOrDefaultAsync(c => c.IdCredito == pagoDto.IdCredito && c.Estatus != 0 && c.IdProductoNavigation.IdEmpresa == user.IdEmpresa);
 
             if (credito == null)
             {
@@ -82,10 +89,12 @@ namespace FinanClickApi.Controllers
         [HttpPost("aplicarPago/{id}")]
         public async Task<IActionResult> AplicarPago(int id)
         {
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
 
             var pago = await _baseDatos.Pagos
                 .Include(c => c.IdCreditoNavigation)
-                .FirstOrDefaultAsync(c => c.IdPago == id && c.Estatus == 1);
+                .FirstOrDefaultAsync(c => c.IdPago == id && c.Estatus == 1 && c.IdCreditoNavigation.IdProductoNavigation.IdEmpresa == user.IdEmpresa);
 
             if (pago == null)
             {

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 using FinanClickApi.Dtos;
+using System.Security.Claims;
 
 namespace FinanClickApi.Controllers
 {
@@ -79,8 +80,11 @@ namespace FinanClickApi.Controllers
         [HttpGet("cliente/{idCliente}")]
         public async Task<IActionResult> ObtenerDocumentosPorCliente(int idCliente)
         {
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+
             var documentos = await _baseDatos.DocumentosClientes
-                .Where(d => d.IdCliente == idCliente)
+                .Where(d => d.IdCliente == idCliente && d.IdClienteNavigation.IdEmpresa == user.IdEmpresa)
                 .ToListAsync();
 
             return Ok(documentos);

@@ -62,6 +62,8 @@ namespace FinanClickApi.Controllers
         public async Task<ActionResult<Usuario>> GetUserDetail()
         {
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+
             if (currentUserId == null)
             {
                 return Unauthorized();
@@ -137,66 +139,6 @@ namespace FinanClickApi.Controllers
         }
 
 
-        /*
-        [HttpPost]
-        public async Task<ActionResult> CreateUsuario([FromBody] UsuarioDto usuarioDto)
-        {
-            // Validar la entrada
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            // Verificar si el rol existe
-            var rol = await _baseDatos.Rols.FindAsync(usuarioDto.IdRol);
-            if (rol == null)
-            {
-                return NotFound(new { message = "Rol no encontrado" });
-            }
-
-            // Crear el nuevo usuario
-            var usuario = new Usuario
-            {
-                IdRol = usuarioDto.IdRol,
-                Contrasenia = usuarioDto.Contrasenia, // Implementar el método de hashing
-                ApellidoPaterno = usuarioDto.ApellidoPaterno,
-                ApellidoMaterno = usuarioDto.ApellidoMaterno,
-                IdEmpresa = usuarioDto.IdEmpresa,
-                Usuario1 = usuarioDto.Usuario1,
-                Nombre = usuarioDto.Nombre,
-                Imagen = usuarioDto.Imagen
-            };
-
-            try
-            {
-                // Guardar el usuario en la base de datos
-                _baseDatos.Usuarios.Add(usuario);
-                await _baseDatos.SaveChangesAsync();
-
-                // Devolver una respuesta exitosa con el usuario creado
-                return CreatedAtAction(nameof(GetUsuarios), new { id = usuario.IdUsuario }, usuario);
-            }
-            catch (Exception ex)
-            {
-                // Manejar excepciones y devolver una respuesta adecuada
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CrearUsuario([FromBody] UsuarioDto usuario)
-        {
-            if (usuario == null)
-            {
-                return BadRequest("El cliente no puede ser nulo.");
-            } else
-            {
-                _baseDatos.Usuarios.Add(usuario);
-                await _baseDatos.SaveChangesAsync();
-            }
-
-            return 
-        }*/
 
         [HttpPost]
         public async Task<IActionResult> CreateUsuario([FromBody] UsuarioDto usuarioDto)
