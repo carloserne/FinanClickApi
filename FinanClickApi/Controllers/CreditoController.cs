@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using FinanClickApi.Controllers;
 using System;
 using FinanClickApi.Dtos;
+using System.Security.Claims;
 
 namespace FinanClickApi.Controllers
 {
@@ -24,8 +25,12 @@ namespace FinanClickApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
+
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+
             var creditos = await _baseDatos.Creditos
-                 .Where(c => c.Estatus != 0)
+                 .Where(c => c.Estatus != 0 && c.IdProductoNavigation.IdEmpresa == user.IdEmpresa)
                 .Include(c => c.Avals)
                 .ThenInclude(a => a.IdPersonaNavigation)
                 .Include(c => c.Avals)
@@ -114,7 +119,10 @@ namespace FinanClickApi.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var credito = await _baseDatos.Creditos
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+
+            var credito = await _baseDatos.Creditos.Where(c => c.Estatus != 0 && c.IdProductoNavigation.IdEmpresa == user.IdEmpresa)
                 .Include(c => c.Avals)
                 .ThenInclude(a => a.IdPersonaNavigation)
                 .Include(c => c.Avals)
@@ -345,9 +353,11 @@ namespace FinanClickApi.Controllers
         [HttpPut("actualizarInteres/{id}")]
         public async Task<IActionResult> ActualizarInteresMoratorio(int id)
         {
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId)); 
             var credito = await _baseDatos.Creditos
                 .Include(c => c.IdProductoNavigation)
-                .FirstOrDefaultAsync(c => c.IdCredito == id && c.Estatus != 0 && c.Estatus != 4);
+                .FirstOrDefaultAsync(c => c.IdCredito == id && c.Estatus != 0 && c.Estatus != 4 && c.IdProductoNavigation.IdEmpresa == user.IdEmpresa );
 
             if (credito == null)
             {

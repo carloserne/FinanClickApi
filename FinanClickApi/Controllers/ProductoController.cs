@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace FinanClickApi.Controllers
 {
@@ -21,10 +22,13 @@ namespace FinanClickApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+
             var productos = await _baseDatos.Productos
                 .Include(p => p.DetalleProductos)
                 .ThenInclude(dp => dp.IdConceptoNavigation)
-                .Where(p => p.Estatus != 0)
+                .Where(p => p.Estatus != 0 && p.IdEmpresa == user.IdEmpresa)
                 .ToListAsync();
             return Ok(productos);
         }
@@ -33,10 +37,13 @@ namespace FinanClickApi.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+
             var producto = await _baseDatos.Productos
                 .Include(p => p.DetalleProductos)
                 .ThenInclude(dp => dp.IdConceptoNavigation)
-                .FirstOrDefaultAsync(p => p.IdProducto == id && p.Estatus != 0);
+                .FirstOrDefaultAsync(p => p.IdProducto == id && p.Estatus != 0 && p.IdEmpresa == user.IdEmpresa);
 
             if (producto == null)
             {
