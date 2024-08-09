@@ -563,6 +563,10 @@ public partial class FinanclickDbContext : DbContext
                 .HasColumnType("DATE")
                 .IsRequired();
 
+            entity.Property(e => e.FechaMoratorio)
+                .HasColumnName("FechaMoratorio")
+                .HasColumnType("DATE");
+
             entity.Property(e => e.Estatus)
                 .HasColumnName("Estatus")
                 .HasColumnType("INT")

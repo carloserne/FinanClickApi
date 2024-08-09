@@ -11,7 +11,7 @@ namespace FinanClickApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     public class PagosController : Controller
     {
 
