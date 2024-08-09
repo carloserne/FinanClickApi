@@ -146,3 +146,11 @@ CREATE TABLE UsuarioCliente (
  INSERT INTO UsuarioCliente (IdCliente, Usuario, Contrasenia, Estatus) VALUES (1, 'empresaEjemplo', 'empresa123', 1);  
 
  INSERT INTO UsuarioCliente (IdCliente, Usuario, Contrasenia, Estatus) VALUES (2, 'juanp', 'juanpe123', 1);
+
+ -- Asignar un promotor
+   INSERT INTO Rol (nombreRol, estatus, descripcion)
+VALUES ('Promotor', 1, 'Descripción del rol Promotor');
+
+
+INSERT INTO Usuario (idRol, Contrasenia, ApellidoPaterno, ApellidoMaterno, IdEmpresa, Usuario, Nombre, Imagen)
+VALUES (1, 'password123', 'Alvarez', 'Mancilla', 1, 'josef', 'Jose', '');
