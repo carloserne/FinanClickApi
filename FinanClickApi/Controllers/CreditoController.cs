@@ -359,6 +359,10 @@ namespace FinanClickApi.Controllers
                 .Include(c => c.IdProductoNavigation)
                 .FirstOrDefaultAsync(c => c.IdCredito == id && c.Estatus != 0 && c.Estatus != 4 && c.IdProductoNavigation.IdEmpresa == user.IdEmpresa );
 
+            var pagos = await _baseDatos.Pagos
+                .Where(c => c.Estatus != 2 && c.IdCredito == id && c.IdCreditoNavigation.IdProductoNavigation.IdEmpresa == user.IdEmpresa)
+               .ToListAsync();
+
             if (credito == null)
             {
                 return NotFound();
@@ -379,12 +383,17 @@ namespace FinanClickApi.Controllers
 
             foreach (var amortizacion in amortizacionesVencidas)
             {
+                
                 DateOnly fechaActual = DateOnly.FromDateTime(DateTime.Now);
 
-                DateTime fechaFinDateTime = amortizacion.FechaFin.ToDateTime(TimeOnly.MinValue);
+                DateOnly fechaFinDateTime = amortizacion.FechaMoratorio ?? amortizacion.FechaFin;
+                amortizacion.FechaMoratorio = fechaActual;
+
+
+                DateTime fechaFin = fechaFinDateTime.ToDateTime(TimeOnly.MinValue);
                 DateTime fechaActualDateTime = fechaActual.ToDateTime(TimeOnly.MinValue);
 
-                int diasVencidos = (fechaActualDateTime - fechaFinDateTime).Days;
+                int diasVencidos = (fechaActualDateTime - fechaFin).Days;
                 decimal interesMoratorioDiario = (amortizacion.SaldoInsoluto * producto.InteresMoratorio.Value / 100) / 360;
                 decimal interesMoratorioAcumulado = interesMoratorioDiario * diasVencidos;
 
