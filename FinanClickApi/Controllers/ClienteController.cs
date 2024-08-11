@@ -77,47 +77,46 @@ namespace FinanClickApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<object>> GetCliente(int id)
         {
-            var cliente = await _baseDatos.Clientes.FindAsync(id);
+            var cliente = await _baseDatos.Clientes
+                .Include(c => c.DatosClienteFisicas)
+                .ThenInclude(dcf => dcf.IdPersonaNavigation)
+                .Include(c => c.DatosClienteMorals)
+                .ThenInclude(dcm => dcm.IdPersonaMoralNavigation)
+                .FirstOrDefaultAsync(c => c.IdCliente == id);
 
             if (cliente == null)
             {
                 return NotFound();
             }
 
+            var datos = new object();
+
             if (cliente.RegimenFiscal == "MORAL")
             {
-                var datosMoral = await _baseDatos.DatosClienteMorals
-                    .Include(dcm => dcm.IdPersonaMoralNavigation)
-                    .FirstOrDefaultAsync(dcm => dcm.IdCliente == id);
-
+                var datosMoral = cliente.DatosClienteMorals.FirstOrDefault();
                 if (datosMoral != null)
                 {
-                    return Ok(new
+                    datos = new
                     {
-                        Cliente = cliente
-                    });
+                        Cliente = cliente,
+                        Datos = datosMoral
+                    };
                 }
             }
             else if (cliente.RegimenFiscal == "FISICA")
             {
-                var datosFisica = await _baseDatos.DatosClienteFisicas
-                    .Include(dcf => dcf.IdClienteNavigation)
-                    .FirstOrDefaultAsync(dcf => dcf.IdCliente == id);
-
+                var datosFisica = cliente.DatosClienteFisicas.FirstOrDefault();
                 if (datosFisica != null)
                 {
-                    return Ok(new
+                    datos = new
                     {
-                        Cliente = cliente
-                    });
+                        Cliente = cliente,
+                        Datos = datosFisica
+                    };
                 }
             }
 
-            return Ok(new
-            {
-                Cliente = cliente,
-                Datos = (object)null
-            });
+            return Ok(datos);
         }
 
 
