@@ -131,6 +131,7 @@ namespace FinanClickApi.Controllers
                 u.ApellidoMaterno,
                 u.IdEmpresa,
                 u.Usuario1,
+                u.Contrasenia,
                 u.Nombre,
                 u.Imagen
             });
