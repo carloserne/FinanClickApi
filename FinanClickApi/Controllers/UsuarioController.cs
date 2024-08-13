@@ -112,9 +112,24 @@ namespace FinanClickApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<object>>> GetUsuarios()
         {
-            var usuarios = await _baseDatos.Usuarios
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+            var rol = await _baseDatos.Rols.FindAsync(user.IdRol);
+            var usuarios = new List<Usuario>();
+
+            if (rol.NombreRol == "Administrador")
+            {
+                usuarios = await _baseDatos.Usuarios
                 .Include(u => u.IdRolNavigation)
                 .ToListAsync();
+            }
+            else
+            {
+                usuarios = await _baseDatos.Usuarios.Where(u => u.IdEmpresa == user.IdEmpresa)
+               .Include(u => u.IdRolNavigation)
+               .ToListAsync();
+            }
+            
 
             if (!usuarios.Any())
             {

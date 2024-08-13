@@ -22,7 +22,7 @@ namespace FinanClickApi.Controllers
 
         public async Task<ActionResult<IEnumerable<Empresa>>> GetEmpresas()
         {
-            return await _baseDatos.Empresas.ToListAsync();
+            return await _baseDatos.Empresas.Where(e => e.Estatus == 1).ToListAsync();
         }
 
         // GET: api/empresa/5
