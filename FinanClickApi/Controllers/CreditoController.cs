@@ -6,6 +6,7 @@ using FinanClickApi.Controllers;
 using System;
 using FinanClickApi.Dtos;
 using System.Security.Claims;
+using System.Reflection.Metadata.Ecma335;
 
 namespace FinanClickApi.Controllers
 {
@@ -144,7 +145,28 @@ namespace FinanClickApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Credito credito)
         {
+
+            var idCliente = credito.IdCliente;
+
+            var documentos = await _baseDatos.DocumentosClientes
+               .Where(d => d.IdCliente == idCliente)
+               .ToListAsync();
+
             credito.Estatus = 1; // Estatus activo
+            var accept = true;
+            foreach(var document in documentos)
+            {
+                if(document.Estatus != 1)
+                {
+                    accept = false;
+                }
+            }
+
+
+            if (!accept)
+            {
+                Ok(new { error = "Faltan documentos por aprobar" });
+            }
 
             // Agregar personas y personas morales relacionadas con los avales
             foreach (var aval in credito.Avals)
