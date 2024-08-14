@@ -145,7 +145,6 @@ namespace FinanClickApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Credito credito)
         {
-
             var idCliente = credito.IdCliente;
 
             var documentos = await _baseDatos.DocumentosClientes
@@ -153,19 +152,14 @@ namespace FinanClickApi.Controllers
                .ToListAsync();
 
             credito.Estatus = 1; // Estatus activo
-            var accept = true;
-            foreach(var document in documentos)
+
+            // Verificar los estatus de los documentos
+            foreach (var document in documentos)
             {
-                if(document.Estatus != 1)
+                if (document.Estatus != 1)
                 {
-                    accept = false;
+                    return Ok(new { error = "Faltan documentos por aprobar" });
                 }
-            }
-
-
-            if (!accept)
-            {
-                Ok(new { error = "Faltan documentos por aprobar" });
             }
 
             // Agregar personas y personas morales relacionadas con los avales
