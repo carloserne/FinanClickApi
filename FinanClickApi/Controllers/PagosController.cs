@@ -195,6 +195,9 @@ namespace FinanClickApi.Controllers
             {
                 if (amortizacion.Capital == 0 && amortizacion.InteresMasIva == 0 && amortizacion.InteresMoratorio == 0)
                 {
+
+
+
                     amortizacion.Estatus = 4;
                 }
             }
@@ -213,6 +216,144 @@ namespace FinanClickApi.Controllers
 
         private async Task ProcesarPagoAnticipado(Credito credito, decimal montoPagoRestante)
         {
+            var subMetodoCalculo = credito.IdProductoNavigation.SubMetodo;
+            var pagoAnticipado = credito.IdProductoNavigation.PagoAnticipado;
+
+            decimal tasaPeriodica = GetPeriodicInterestRate(credito.InteresOrdinario, credito.Periodicidad);
+            decimal tasaDeflactada = tasaPeriodica * 1.16m;
+
+            var primeraAmortizacion = await _baseDatos.Amortizacions
+    .Where(a => a.IdCredito == credito.IdCredito)
+    .FirstOrDefaultAsync();
+
+            var amortizaciones = await _baseDatos.Amortizacions
+                 .Where(a => a.IdCredito == credito.IdCredito && (a.Estatus == 1))
+                  .OrderByDescending(a => a.FechaFin)
+                 .ToListAsync();
+
+            int cantidadAmortizaciones = await _baseDatos.Amortizacions
+               .Where(a => a.IdCredito == credito.IdCredito && (a.Estatus == 1))
+               .CountAsync();
+
+            if (subMetodoCalculo == "insolutos")
+            {
+                if (pagoAnticipado == "reduccionPlazo")
+                {
+                    foreach(var amor in amortizaciones)
+                    {
+                        if (montoPagoRestante <= 0) break;
+
+                        if (montoPagoRestante > 0) {
+                            amor.SaldoInsoluto = amor.Capital;
+                            var pagoAmortizacion = Math.Min(amor.SaldoInsoluto, montoPagoRestante);
+                            amor.SaldoInsoluto -= pagoAmortizacion;
+                            amor.Capital -= pagoAmortizacion;
+                            montoPagoRestante -= pagoAmortizacion;
+
+                            amor.InteresOrdinario = amor.SaldoInsoluto * tasaPeriodica;
+                            amor.Iva = amor.InteresOrdinario * (credito.Iva / 100);
+                            amor.InteresMasIva = amor.InteresOrdinario + amor.Iva;
+
+                        }
+
+                        if(amor.Capital == 0)
+                        {
+                            amor.Estatus = 4;
+                        }
+
+                    }
+                }
+                if (pagoAnticipado == "reduccionPago")
+                {
+
+                    var pagoAmortizacion = montoPagoRestante / amortizaciones.Count;
+
+                    foreach (var amor in amortizaciones)
+                    {
+                        if (montoPagoRestante <= 0) break;
+                        if (montoPagoRestante > 0)
+                        {
+                            amor.SaldoInsoluto -= pagoAmortizacion;
+                            amor.Capital -= pagoAmortizacion;
+                            montoPagoRestante -= pagoAmortizacion;
+
+                            amor.InteresOrdinario = amor.SaldoInsoluto * tasaPeriodica;
+                            amor.Iva = amor.InteresOrdinario * (credito.Iva / 100);
+                            amor.InteresMasIva = amor.InteresOrdinario + amor.Iva;
+
+                        }
+                        if (amor.Capital == 0)
+                        {
+                            amor.Estatus = 4;
+                        }
+
+                    }
+                }
+
+            }
+            else
+            {
+
+
+                if (pagoAnticipado == "reduccionPlazo")
+                {
+                    foreach (var amor in amortizaciones)
+                    {
+                        if (montoPagoRestante <= 0) break;
+
+                        if (montoPagoRestante > 0)
+                        {
+                            amor.SaldoInsoluto = amor.Capital;
+                            var pagoAmortizacion = Math.Min(amor.SaldoInsoluto, montoPagoRestante);
+                            amor.SaldoInsoluto -= pagoAmortizacion;
+                            primeraAmortizacion.SaldoInsoluto -= pagoAmortizacion;
+                            amor.Capital -= pagoAmortizacion;
+                            montoPagoRestante -= pagoAmortizacion;
+
+                            amor.InteresOrdinario = primeraAmortizacion.SaldoInsoluto * tasaPeriodica;
+                            amor.Iva = amor.InteresOrdinario * (credito.Iva / 100);
+                            amor.InteresMasIva = amor.InteresOrdinario + amor.Iva;
+
+                        }
+
+                        if (amor.Capital == 0)
+                        {
+                            amor.Estatus = 4;
+                        }
+
+                    }
+                }
+                if (pagoAnticipado == "reduccionPago")
+                {
+
+                    var pagoAmortizacion = montoPagoRestante / amortizaciones.Count;
+
+                    foreach (var amor in amortizaciones)
+                    {
+                        if (montoPagoRestante <= 0) break;
+                        if (montoPagoRestante > 0)
+                        {
+                            amor.SaldoInsoluto -= pagoAmortizacion;
+                            amor.Capital -= pagoAmortizacion;
+                            primeraAmortizacion.SaldoInsoluto -= pagoAmortizacion;
+                            montoPagoRestante -= pagoAmortizacion;
+
+                            amor.InteresOrdinario = primeraAmortizacion.SaldoInsoluto * tasaPeriodica;
+                            amor.Iva = amor.InteresOrdinario * (credito.Iva / 100);
+                            amor.InteresMasIva = amor.InteresOrdinario + amor.Iva;
+
+                        }
+                        if (amor.Capital == 0)
+                        {
+                            amor.Estatus = 4;
+                        }
+
+                    }
+                }
+
+            }
+            await _baseDatos.SaveChangesAsync();
+
 
         }
 
@@ -236,6 +377,22 @@ namespace FinanClickApi.Controllers
                 .SumAsync(pcp => pcp.pago.MontoPago);
 
             return Ok(totalMontoPagos);
+        }
+
+
+        private static decimal GetPeriodicInterestRate(decimal interesAnual, string periodicidad)
+        {
+            switch (periodicidad.ToLower())
+            {
+                case "mensual":
+                    return interesAnual / 12 / 100;
+                case "anual":
+                    return interesAnual / 1 / 100;
+                case "quincenal":
+                    return interesAnual / 24 / 100;
+                default:
+                    throw new ArgumentException("Periodicidad no válida");
+            }
         }
 
     }
