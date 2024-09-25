@@ -57,6 +57,11 @@ namespace FinanClickApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Producto producto)
         {
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+
+            producto.IdEmpresa = user.IdEmpresa;
+
             producto.Estatus = 1; // Estatus activo
 
             _baseDatos.Productos.Add(producto);
