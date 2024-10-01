@@ -16,4 +16,8 @@ public partial class Rol
 
     [JsonIgnore]
     public virtual ICollection<Usuario> Usuarios { get; set; } = new List<Usuario>();
+
+    [JsonIgnore]
+    public virtual ICollection<Notificacion> Notificacions { get; set; } = new List<Notificacion>();
+
 }

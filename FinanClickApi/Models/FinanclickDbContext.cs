@@ -16,6 +16,7 @@ public partial class FinanclickDbContext : DbContext
     {
     }
 
+    public virtual DbSet<Notificacion> Notificacions { get; set; }
     public virtual DbSet<CatalogoDocumento> CatalogoDocumentos { get; set; }
 
     public virtual DbSet<Cliente> Clientes { get; set; }
@@ -650,6 +651,23 @@ public partial class FinanclickDbContext : DbContext
 
         });
 
+        modelBuilder.Entity<Notificacion>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Notifica__3214EC0780E02CAF");
+
+            entity.ToTable("Notificacion");
+
+            entity.Property(e => e.FechaCreacion)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Leido).HasDefaultValue(false);
+            entity.Property(e => e.Mensaje).HasMaxLength(255);
+
+            entity.HasOne(d => d.IdRolNavigation).WithMany(p => p.Notificacions)
+                .HasForeignKey(d => d.IdRol)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Notificac__IdRol__6DCC4D03");
+        });
 
         OnModelCreatingPartial(modelBuilder);
     }
