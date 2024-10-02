@@ -16,6 +16,7 @@ public partial class FinanclickDbContext : DbContext
     {
     }
 
+    public virtual DbSet<QuejaSugerencium> QuejaSugerencia { get; set; }
     public virtual DbSet<Notificacion> Notificacions { get; set; }
     public virtual DbSet<CatalogoDocumento> CatalogoDocumentos { get; set; }
 
@@ -667,6 +668,35 @@ public partial class FinanclickDbContext : DbContext
                 .HasForeignKey(d => d.IdRol)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Notificac__IdRol__6DCC4D03");
+        });
+
+        modelBuilder.Entity<QuejaSugerencium>(entity =>
+        {
+            entity.HasKey(e => e.IdQuejaSugerencia).HasName("PK__QuejaSug__8892057E15C34A65");
+
+            entity.Property(e => e.ArchivoAdjunto)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.Comentarios).HasColumnType("text");
+            entity.Property(e => e.Descripcion).HasColumnType("text");
+            entity.Property(e => e.Estado).HasDefaultValue(1);
+            entity.Property(e => e.FechaRegistro)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.FechaResolucion).HasColumnType("datetime");
+            entity.Property(e => e.Tipo)
+                .HasMaxLength(1)
+                .IsUnicode(false)
+                .IsFixedLength();
+
+            entity.HasOne(d => d.IdEmpresaNavigation).WithMany(p => p.QuejaSugerencia)
+                .HasForeignKey(d => d.IdEmpresa)
+                .HasConstraintName("FK_EmpresaQuejaSugerencia");
+
+            entity.HasOne(d => d.ResponsableNavigation).WithMany(p => p.QuejaSugerencia)
+                .HasForeignKey(d => d.Responsable)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_ResponsableUsuario");
         });
 
         OnModelCreatingPartial(modelBuilder);
