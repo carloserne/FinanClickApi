@@ -29,4 +29,8 @@ public partial class Usuario
     public virtual Rol? IdRolNavigation { get; set; }
 
     public virtual ICollection<Modulo> IdModulos { get; set; } = new List<Modulo>();
+
+    [JsonIgnore]
+    public virtual ICollection<QuejaSugerencium> QuejaSugerencia { get; set; } = new List<QuejaSugerencium>();
+
 }
