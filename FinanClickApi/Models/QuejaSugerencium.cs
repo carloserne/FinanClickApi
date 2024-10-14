@@ -27,7 +27,7 @@ public partial class QuejaSugerencium
 
     public string? ArchivoAdjunto { get; set; }
 
-    public virtual Empresa IdEmpresaNavigation { get; set; } = null!;
+    public virtual Empresa? IdEmpresaNavigation { get; set; }
 
     public virtual Usuario? ResponsableNavigation { get; set; }
 }
