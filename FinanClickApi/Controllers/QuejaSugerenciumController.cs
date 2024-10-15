@@ -25,7 +25,7 @@ namespace FinanClickApi.Controllers
             var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
 
             return await _baseDatos.QuejaSugerencia
-                .Where(q => q.IdEmpresa == user.IdEmpresa)
+                .Where(q => q.Estatus != 0)
                 .ToListAsync();
         }
 
@@ -37,7 +37,7 @@ namespace FinanClickApi.Controllers
             var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
 
             var quejaSugerencium = await _baseDatos.QuejaSugerencia
-                .Where(q => q.IdEmpresa == user.IdEmpresa && q.IdQuejaSugerencia == id)
+                .Where(q => q.IdQuejaSugerencia == id && q.Estatus != 0)
                 .FirstOrDefaultAsync();
 
             if (quejaSugerencium == null)
@@ -62,10 +62,11 @@ namespace FinanClickApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutQuejaSugerencium(int id, QuejaSugerencium quejaSugerencium)
         {
-            if (id != quejaSugerencium.IdQuejaSugerencia)
+            /*if (id != quejaSugerencium.IdQuejaSugerencia)
             {
                 return BadRequest();
-            }
+            }*/
+            quejaSugerencium.IdQuejaSugerencia = id;
 
             _baseDatos.Entry(quejaSugerencium).State = EntityState.Modified;
 
@@ -97,8 +98,11 @@ namespace FinanClickApi.Controllers
             {
                 return NotFound();
             }
+            quejaSugerencium.Estatus = 0;
 
-            _baseDatos.QuejaSugerencia.Remove(quejaSugerencium);
+            _baseDatos.Entry(quejaSugerencium).State = EntityState.Modified;
+
+            //_baseDatos.QuejaSugerencia.Remove(quejaSugerencium);
             await _baseDatos.SaveChangesAsync();
 
             return NoContent();

@@ -679,7 +679,7 @@ public partial class FinanclickDbContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.Comentarios).HasColumnType("text");
             entity.Property(e => e.Descripcion).HasColumnType("text");
-            entity.Property(e => e.Estado).HasDefaultValue(1);
+            entity.Property(e => e.Estatus).HasDefaultValue(1);
             entity.Property(e => e.FechaRegistro)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");

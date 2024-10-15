@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace FinanClickApi.Models;
 
@@ -15,7 +16,7 @@ public partial class QuejaSugerencium
 
     public DateTime FechaRegistro { get; set; }
 
-    public int Estado { get; set; }
+    public int Estatus { get; set; }
 
     public DateTime? FechaResolucion { get; set; }
 
@@ -27,7 +28,9 @@ public partial class QuejaSugerencium
 
     public string? ArchivoAdjunto { get; set; }
 
+    [JsonIgnore]
     public virtual Empresa IdEmpresaNavigation { get; set; } = null!;
 
+    [JsonIgnore]
     public virtual Usuario? ResponsableNavigation { get; set; }
 }
