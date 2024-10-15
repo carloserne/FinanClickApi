@@ -17,8 +17,6 @@ namespace FinanClickApi.Migrations
                 table: "Amortizacion",
                 type: "DATE",
                 nullable: true);
-
-     
         }
 
         /// <inheritdoc />
