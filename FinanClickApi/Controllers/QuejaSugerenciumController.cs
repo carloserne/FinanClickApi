@@ -52,6 +52,9 @@ namespace FinanClickApi.Controllers
         [HttpPost]
         public async Task<ActionResult<QuejaSugerencium>> PostQuejaSugerencium(QuejaSugerencium quejaSugerencium)
         {
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+            quejaSugerencium.IdEmpresa = user.IdEmpresa;
             _baseDatos.QuejaSugerencia.Add(quejaSugerencium);
             await _baseDatos.SaveChangesAsync();
 

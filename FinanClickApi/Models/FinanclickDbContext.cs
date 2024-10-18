@@ -689,15 +689,20 @@ public partial class FinanclickDbContext : DbContext
                 .IsUnicode(false)
                 .IsFixedLength();
 
-            entity.HasOne(d => d.IdEmpresaNavigation).WithMany(p => p.QuejaSugerencia)
-                .HasForeignKey(d => d.IdEmpresa)
-                .HasConstraintName("FK_EmpresaQuejaSugerencia");
+            entity.HasOne(d => d.IdEmpresaNavigation)
+             .WithMany(p => p.QuejaSugerencia)
+             .HasForeignKey(d => d.IdEmpresa)
+             .OnDelete(DeleteBehavior.ClientSetNull) 
+             .IsRequired();
+
 
             entity.HasOne(d => d.ResponsableNavigation).WithMany(p => p.QuejaSugerencia)
                 .HasForeignKey(d => d.Responsable)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK_ResponsableUsuario");
         });
+
+
 
         OnModelCreatingPartial(modelBuilder);
     }

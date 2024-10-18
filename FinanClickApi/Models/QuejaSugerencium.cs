@@ -8,7 +8,7 @@ public partial class QuejaSugerencium
 {
     public int IdQuejaSugerencia { get; set; }
 
-    public int IdEmpresa { get; set; }
+    public int? IdEmpresa { get; set; }
 
     public string Tipo { get; set; } = null!;
 
@@ -29,7 +29,7 @@ public partial class QuejaSugerencium
     public string? ArchivoAdjunto { get; set; }
 
     [JsonIgnore]
-    public virtual Empresa IdEmpresaNavigation { get; set; } = null!;
+    public virtual Empresa? IdEmpresaNavigation { get; set; } = null!;
 
     [JsonIgnore]
     public virtual Usuario? ResponsableNavigation { get; set; }
