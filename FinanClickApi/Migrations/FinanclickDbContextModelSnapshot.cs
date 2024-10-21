@@ -1015,7 +1015,8 @@ namespace FinanClickApi.Migrations
                     b.Property<DateTime?>("FechaResolucion")
                         .HasColumnType("datetime");
 
-                    b.Property<int>("IdEmpresa")
+                    b.Property<int?>("IdEmpresa")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<int?>("Prioridad")
@@ -1376,9 +1377,7 @@ namespace FinanClickApi.Migrations
                     b.HasOne("FinanClickApi.Models.Empresa", "IdEmpresaNavigation")
                         .WithMany("QuejaSugerencia")
                         .HasForeignKey("IdEmpresa")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_EmpresaQuejaSugerencia");
+                        .IsRequired();
 
                     b.HasOne("FinanClickApi.Models.Usuario", "ResponsableNavigation")
                         .WithMany("QuejaSugerencia")
