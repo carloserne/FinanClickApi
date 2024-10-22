@@ -167,3 +167,46 @@ VALUES ('Gestor de Cobranza', 1, 'Encargado del proceso post-apertura de un créd
 
 INSERT INTO Usuario (idRol, Contrasenia, ApellidoPaterno, ApellidoMaterno, IdEmpresa, Usuario, Nombre, Imagen)
 VALUES (1, 'password123', 'Alvarez', 'Mancilla', 1, 'josef', 'Jose', '');
+
+-- SCRIPTS DE LA CREACIÓN DE TABLAS
+CREATE TABLE Plan_empresa(
+    IdPlan INT PRIMARY KEY identity,
+    Precio FLOAT NOT NULL,
+    Descripcion VARCHAR(255) NOT NULL,
+    Duracion VARCHAR(255) NOT NULL,
+    Estatus INT NOT NULL
+);
+
+CREATE TABLE VentaProspecto (
+    IdVenta INT PRIMARY KEY identity,
+	IdPlan INT NOT NULL,
+	fechaSolicitud DATE NOT NULL,
+	nombreCliente VARCHAR(50) NOT NULL,
+	nombreEmpresa VARCHAR(60) NOT NULL,
+	correo VARCHAR(50) NOT NULL,
+	domicilio VARCHAR(100) NOT NULL,
+	ciudad VARCHAR(50) NOT NULL,
+	estado VARCHAR(50) NOT NULL,
+	rfc VARCHAR(13) NOT NULL
+	FOREIGN KEY (IdPlan) REFERENCES Plan_empresa(IdPlan)
+);
+
+-- Inserciones para la tabla Plan_empresa
+INSERT INTO Plan_empresa (Precio, Descripcion, Duracion, Estatus)
+VALUES (199.99, 'Plan Básico', '1 mes', 1);
+
+INSERT INTO Plan_empresa (Precio, Descripcion, Duracion, Estatus)
+VALUES (499.99, 'Plan Profesional', '6 meses', 1);
+
+INSERT INTO Plan_empresa (Precio, Descripcion, Duracion, Estatus)
+VALUES (899.99, 'Plan Empresarial', '12 meses', 1);
+
+-- Inserciones para la tabla VentaProspecto
+INSERT INTO VentaProspecto (IdPlan, fechaSolicitud, nombreCliente, nombreEmpresa, correo, domicilio, ciudad, estado, rfc)
+VALUES (1, '2024-10-20', 'Juan Pérez', 'Tecnología Global', 'juan.perez@tecnologiaglobal.com', 'Av. Siempre Viva 123', 'Ciudad de México', 'CDMX', 'JPR1234567890');
+
+INSERT INTO VentaProspecto (IdPlan, fechaSolicitud, nombreCliente, nombreEmpresa, correo, domicilio, ciudad, estado, rfc)
+VALUES (2, '2024-10-21', 'María Gómez', 'Consultoría IT', 'maria.gomez@consultoriait.com', 'Calle Falsa 456', 'Guadalajara', 'Jalisco', 'MGM1234567890');
+
+INSERT INTO VentaProspecto (IdPlan, fechaSolicitud, nombreCliente, nombreEmpresa, correo, domicilio, ciudad, estado, rfc)
+VALUES (3, '2024-10-21', 'Carlos Sánchez', 'Servicios Financieros', 'carlos.sanchez@serviciosfinancieros.com', 'Blvd. de los Héroes 789', 'Monterrey', 'Nuevo León', 'CSN1234567890');

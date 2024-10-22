@@ -56,6 +56,11 @@ public partial class FinanclickDbContext : DbContext
     public virtual DbSet<Amortizacion> Amortizacions { get; set; }
    
     public virtual DbSet<Pago> Pagos { get; set; }
+
+    public virtual DbSet<PlanEmpresa> PlanEmpresas { get; set; }
+
+    public virtual DbSet<VentaProspecto> VentaProspectos { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -703,6 +708,62 @@ public partial class FinanclickDbContext : DbContext
         });
 
 
+        modelBuilder.Entity<PlanEmpresa>(entity =>
+        {
+            entity.HasKey(e => e.IdPlan).HasName("PK__Plan_emp__FB8102AE12F687F1");
+
+            entity.ToTable("Plan_empresa");
+
+            entity.Property(e => e.Descripcion)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.Duracion)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+        });
+
+
+        modelBuilder.Entity<VentaProspecto>(entity =>
+        {
+            entity.HasKey(e => e.IdVenta).HasName("PK__VentaPro__BC1240BDEC9F3DCC");
+
+            entity.ToTable("VentaProspecto");
+
+            entity.Property(e => e.Ciudad)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("ciudad");
+            entity.Property(e => e.Correo)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("correo");
+            entity.Property(e => e.Domicilio)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("domicilio");
+            entity.Property(e => e.Estado)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("estado");
+            entity.Property(e => e.FechaSolicitud).HasColumnName("fechaSolicitud");
+            entity.Property(e => e.NombreCliente)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("nombreCliente");
+            entity.Property(e => e.NombreEmpresa)
+                .HasMaxLength(60)
+                .IsUnicode(false)
+                .HasColumnName("nombreEmpresa");
+            entity.Property(e => e.Rfc)
+                .HasMaxLength(13)
+                .IsUnicode(false)
+                .HasColumnName("rfc");
+
+            entity.HasOne(d => d.IdPlanNavigation).WithMany(p => p.VentaProspectos)
+                .HasForeignKey(d => d.IdPlan)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__VentaProspe__rfc__19DFD96B");
+        });
 
         OnModelCreatingPartial(modelBuilder);
     }
