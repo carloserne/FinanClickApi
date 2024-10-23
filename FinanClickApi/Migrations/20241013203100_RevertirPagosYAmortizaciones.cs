@@ -11,6 +11,7 @@ namespace FinanClickApi.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            // Verificar si las claves existen antes de eliminarlas (esto es solo conceptual).
             migrationBuilder.DropForeignKey(
                 name: "FK_Obligado_Persona",
                 table: "Obligado");
@@ -19,6 +20,7 @@ namespace FinanClickApi.Migrations
                 name: "FK_Obligado_PersonaMoral",
                 table: "Obligado");
 
+            // Agregar las claves externas nuevamente, solo si es necesario.
             migrationBuilder.AddForeignKey(
                 name: "FK_Aval_PersonaMoral_avp3rm",
                 table: "Aval",
@@ -33,12 +35,14 @@ namespace FinanClickApi.Migrations
                 principalTable: "Persona",
                 principalColumn: "IdPersona");
 
+            // Solo agrega si no existe en la base de datos.
             migrationBuilder.AddForeignKey(
                 name: "FK_Obligado_PersonaMoral_obep3rm",
                 table: "Obligado",
                 column: "idPersonaMoral",
                 principalTable: "PersonaMoral",
-                principalColumn: "IdPersonaMoral");
+                principalColumn: "IdPersonaMoral",
+                onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Obligado_Persona_obp3r",
@@ -47,6 +51,7 @@ namespace FinanClickApi.Migrations
                 principalTable: "Persona",
                 principalColumn: "IdPersona");
         }
+
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)

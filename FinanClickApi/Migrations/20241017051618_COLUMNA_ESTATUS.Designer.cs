@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinanClickApi.Migrations
 {
     [DbContext(typeof(FinanclickDbContext))]
-    [Migration("20241015223333_COLUMNA ESTATUS")]
-    partial class COLUMNAESTATUS
+    [Migration("20241017051618_COLUMNA_ESTATUS")]
+    partial class COLUMNA_ESTATUS
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -5,7 +5,7 @@
 namespace FinanClickApi.Migrations
 {
     /// <inheritdoc />
-    public partial class COLUMNAESTATUS : Migration
+    public partial class COLUMNA_ESTATUS : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
