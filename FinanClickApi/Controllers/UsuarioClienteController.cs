@@ -30,13 +30,19 @@ namespace FinanClickApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UsuarioCliente>>> GetUsuarioClientes()
         {
-            return await _baseDatos.UsuarioClientes.ToListAsync();
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+
+            return await _baseDatos.UsuarioClientes.Where(u => u.IdClienteNavigation.IdEmpresa == user.IdEmpresa).ToListAsync();
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<UsuarioCliente>> GetUsuarioCliente(int id)
         {
-            var usuarioCliente = await _baseDatos.UsuarioClientes.FindAsync(id);
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+
+            var usuarioCliente = await _baseDatos.UsuarioClientes.Where(u => u.IdClienteNavigation.IdEmpresa == user.IdEmpresa && u.IdCliente == id).FirstOrDefaultAsync();
 
             if (usuarioCliente == null)
             {

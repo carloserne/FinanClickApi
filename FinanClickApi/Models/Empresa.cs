@@ -59,4 +59,7 @@ public partial class Empresa
 
     [JsonIgnore]
     public virtual ICollection<Usuario> Usuarios { get; set; } = new List<Usuario>();
+
+    [JsonIgnore]
+    public virtual ICollection<QuejaSugerencium> QuejaSugerencia { get; set; } = new List<QuejaSugerencium>();
 }

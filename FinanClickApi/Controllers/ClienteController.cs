@@ -3,6 +3,7 @@ using FinanClickApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace FinanClickApi.Controllers
 {
@@ -22,7 +23,10 @@ namespace FinanClickApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<object>>> GetClientes()
         {
-            var clientes = await _baseDatos.Clientes.ToListAsync();
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+
+            var clientes = await _baseDatos.Clientes.Where(c => c.Estatus != 0 && c.IdEmpresa == user.IdEmpresa).ToListAsync();
 
             var resultado = new List<object>();
 
@@ -73,47 +77,46 @@ namespace FinanClickApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<object>> GetCliente(int id)
         {
-            var cliente = await _baseDatos.Clientes.FindAsync(id);
+            var cliente = await _baseDatos.Clientes
+                .Include(c => c.DatosClienteFisicas)
+                .ThenInclude(dcf => dcf.IdPersonaNavigation)
+                .Include(c => c.DatosClienteMorals)
+                .ThenInclude(dcm => dcm.IdPersonaMoralNavigation)
+                .FirstOrDefaultAsync(c => c.IdCliente == id);
 
             if (cliente == null)
             {
                 return NotFound();
             }
 
+            var datos = new object();
+
             if (cliente.RegimenFiscal == "MORAL")
             {
-                var datosMoral = await _baseDatos.DatosClienteMorals
-                    .Include(dcm => dcm.IdPersonaMoralNavigation)
-                    .FirstOrDefaultAsync(dcm => dcm.IdCliente == id);
-
+                var datosMoral = cliente.DatosClienteMorals.FirstOrDefault();
                 if (datosMoral != null)
                 {
-                    return Ok(new
+                    datos = new
                     {
-                        Cliente = cliente
-                    });
+                        Cliente = cliente,
+                        Datos = datosMoral
+                    };
                 }
             }
             else if (cliente.RegimenFiscal == "FISICA")
             {
-                var datosFisica = await _baseDatos.DatosClienteFisicas
-                    .Include(dcf => dcf.IdClienteNavigation)
-                    .FirstOrDefaultAsync(dcf => dcf.IdCliente == id);
-
+                var datosFisica = cliente.DatosClienteFisicas.FirstOrDefault();
                 if (datosFisica != null)
                 {
-                    return Ok(new
+                    datos = new
                     {
-                        Cliente = cliente
-                    });
+                        Cliente = cliente,
+                        Datos = datosFisica
+                    };
                 }
             }
 
-            return Ok(new
-            {
-                Cliente = cliente,
-                Datos = (object)null
-            });
+            return Ok(datos);
         }
 
 
@@ -124,6 +127,10 @@ namespace FinanClickApi.Controllers
             {
                 return BadRequest("El cliente no puede ser nulo.");
             }
+
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+            cliente.IdEmpresa = user.IdEmpresa;
 
             if (cliente.RegimenFiscal == "FISICA")
             {
@@ -158,6 +165,11 @@ namespace FinanClickApi.Controllers
             {
                 return BadRequest("El cliente no puede ser nulo.");
             }
+
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+
+            cliente.IdEmpresa = user.IdEmpresa;
 
             var clienteExistente = await _baseDatos.Clientes
                 .Include(c => c.DatosClienteFisicas)

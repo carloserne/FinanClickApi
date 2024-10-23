@@ -16,6 +16,8 @@ public partial class FinanclickDbContext : DbContext
     {
     }
 
+    public virtual DbSet<QuejaSugerencium> QuejaSugerencia { get; set; }
+    public virtual DbSet<Notificacion> Notificacions { get; set; }
     public virtual DbSet<CatalogoDocumento> CatalogoDocumentos { get; set; }
 
     public virtual DbSet<Cliente> Clientes { get; set; }
@@ -563,6 +565,10 @@ public partial class FinanclickDbContext : DbContext
                 .HasColumnType("DATE")
                 .IsRequired();
 
+            entity.Property(e => e.FechaMoratorio)
+                .HasColumnName("FechaMoratorio")
+                .HasColumnType("DATE");
+
             entity.Property(e => e.Estatus)
                 .HasColumnName("Estatus")
                 .HasColumnType("INT")
@@ -645,6 +651,57 @@ public partial class FinanclickDbContext : DbContext
                 .HasForeignKey(e => e.IdCredito).HasConstraintName("FK_Credito_Pago_72C60C4A");
 
         });
+
+        modelBuilder.Entity<Notificacion>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Notifica__3214EC0780E02CAF");
+
+            entity.ToTable("Notificacion");
+
+            entity.Property(e => e.FechaCreacion)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Leido).HasDefaultValue(false);
+            entity.Property(e => e.Mensaje).HasMaxLength(255);
+
+            entity.HasOne(d => d.IdRolNavigation).WithMany(p => p.Notificacions)
+                .HasForeignKey(d => d.IdRol)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Notificac__IdRol__6DCC4D03");
+        });
+
+        modelBuilder.Entity<QuejaSugerencium>(entity =>
+        {
+            entity.HasKey(e => e.IdQuejaSugerencia).HasName("PK__QuejaSug__8892057E15C34A65");
+
+            entity.Property(e => e.ArchivoAdjunto)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.Comentarios).HasColumnType("text");
+            entity.Property(e => e.Descripcion).HasColumnType("text");
+            entity.Property(e => e.Estatus).HasDefaultValue(1);
+            entity.Property(e => e.FechaRegistro)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.FechaResolucion).HasColumnType("datetime");
+            entity.Property(e => e.Tipo)
+                .HasMaxLength(1)
+                .IsUnicode(false)
+                .IsFixedLength();
+
+            entity.HasOne(d => d.IdEmpresaNavigation)
+             .WithMany(p => p.QuejaSugerencia)
+             .HasForeignKey(d => d.IdEmpresa)
+             .OnDelete(DeleteBehavior.ClientSetNull) 
+             .IsRequired();
+
+
+            entity.HasOne(d => d.ResponsableNavigation).WithMany(p => p.QuejaSugerencia)
+                .HasForeignKey(d => d.Responsable)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_ResponsableUsuario");
+        });
+
 
 
         OnModelCreatingPartial(modelBuilder);

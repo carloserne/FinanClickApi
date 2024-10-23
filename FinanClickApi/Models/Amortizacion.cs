@@ -14,6 +14,8 @@ public partial class Amortizacion
 
     public DateOnly FechaFin { get; set; }
 
+    public DateOnly? FechaMoratorio { get; set; }
+
     public int Estatus { get; set; }
 
     public decimal SaldoInsoluto { get; set; }

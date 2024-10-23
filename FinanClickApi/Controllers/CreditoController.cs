@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using FinanClickApi.Controllers;
 using System;
 using FinanClickApi.Dtos;
+using System.Security.Claims;
+using System.Reflection.Metadata.Ecma335;
 
 namespace FinanClickApi.Controllers
 {
@@ -24,8 +26,12 @@ namespace FinanClickApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
+
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+
             var creditos = await _baseDatos.Creditos
-                 .Where(c => c.Estatus != 0)
+                 .Where(c => c.Estatus != 0 && c.IdProductoNavigation.IdEmpresa == user.IdEmpresa)
                 .Include(c => c.Avals)
                 .ThenInclude(a => a.IdPersonaNavigation)
                 .Include(c => c.Avals)
@@ -56,11 +62,68 @@ namespace FinanClickApi.Controllers
             return Ok(pagos);
         }
 
+
+        /*[HttpGet("amortizaciones/estatus/{estatus}/empresa/{idEmpresa}")]
+        public async Task<IActionResult> GetAllAmortizacionesByEstatusAndEmpresa(int estatus, int idEmpresa)
+        {
+            var amortizaciones = await (from a in _baseDatos.Amortizacions
+                                        join c in _baseDatos.Creditos on a.IdCredito equals c.IdCredito
+                                        join cl in _baseDatos.Clientes on c.IdCliente equals cl.IdCliente
+                                        where a.Estatus == estatus && cl.IdEmpresa == idEmpresa
+                                        select a).ToListAsync();
+
+            return Ok(amortizaciones);
+        }*/
+        [HttpGet("amortizaciones/empresa/{idEmpresa}")]
+        public async Task<IActionResult> GetAllAmortizacionesByEmpresa(int idEmpresa)
+        {
+            var amortizaciones = await (from a in _baseDatos.Amortizacions
+                                        join c in _baseDatos.Creditos on a.IdCredito equals c.IdCredito
+                                        join cl in _baseDatos.Clientes on c.IdCliente equals cl.IdCliente
+                                        where cl.IdEmpresa == idEmpresa
+                                        select a).ToListAsync();
+
+            return Ok(amortizaciones);
+        }
+
+
+        /*[HttpGet("pagos/estatus/{estatus}/empresa/{idEmpresa}")]
+        public async Task<IActionResult> GetAllPagosByEstatusAndEmpresa(int estatus, int idEmpresa)
+        {
+            var pagos = await (from p in _baseDatos.Pagos
+                               join c in _baseDatos.Creditos on p.IdCredito equals c.IdCredito
+                               join cl in _baseDatos.Clientes on c.IdCliente equals cl.IdCliente
+                               where p.Estatus == estatus && cl.IdEmpresa == idEmpresa
+                               select p).ToListAsync();
+
+            return Ok(pagos);
+        }*/
+        [HttpGet("pagos/empresa/{idEmpresa}")]
+        public async Task<IActionResult> GetAllPagosByEmpresa(int idEmpresa)
+        {
+            var pagos = await (from p in _baseDatos.Pagos
+                               join c in _baseDatos.Creditos on p.IdCredito equals c.IdCredito
+                               join cl in _baseDatos.Clientes on c.IdCliente equals cl.IdCliente
+                               where cl.IdEmpresa == idEmpresa
+                               select p).ToListAsync();
+
+            return Ok(pagos);
+        }
+
+
+
+
+
+
+
         // Obtener un crédito por ID
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var credito = await _baseDatos.Creditos
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+
+            var credito = await _baseDatos.Creditos.Where(c => c.Estatus != 0 && c.IdProductoNavigation.IdEmpresa == user.IdEmpresa)
                 .Include(c => c.Avals)
                 .ThenInclude(a => a.IdPersonaNavigation)
                 .Include(c => c.Avals)
@@ -82,7 +145,22 @@ namespace FinanClickApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Credito credito)
         {
+            var idCliente = credito.IdCliente;
+
+            var documentos = await _baseDatos.DocumentosClientes
+               .Where(d => d.IdCliente == idCliente)
+               .ToListAsync();
+
             credito.Estatus = 1; // Estatus activo
+
+            // Verificar los estatus de los documentos
+            foreach (var document in documentos)
+            {
+                if (document.Estatus != 1)
+                {
+                    return Ok(new { error = "Faltan documentos por aprobar" });
+                }
+            }
 
             // Agregar personas y personas morales relacionadas con los avales
             foreach (var aval in credito.Avals)
@@ -291,9 +369,15 @@ namespace FinanClickApi.Controllers
         [HttpPut("actualizarInteres/{id}")]
         public async Task<IActionResult> ActualizarInteresMoratorio(int id)
         {
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId)); 
             var credito = await _baseDatos.Creditos
                 .Include(c => c.IdProductoNavigation)
-                .FirstOrDefaultAsync(c => c.IdCredito == id && c.Estatus != 0 && c.Estatus != 4);
+                .FirstOrDefaultAsync(c => c.IdCredito == id && c.Estatus != 0 && c.Estatus != 4 && c.IdProductoNavigation.IdEmpresa == user.IdEmpresa );
+
+            var pagos = await _baseDatos.Pagos
+                .Where(c => c.Estatus != 2 && c.IdCredito == id && c.IdCreditoNavigation.IdProductoNavigation.IdEmpresa == user.IdEmpresa)
+               .ToListAsync();
 
             if (credito == null)
             {
@@ -308,19 +392,24 @@ namespace FinanClickApi.Controllers
             }
 
             var amortizacionesVencidas = await _baseDatos.Amortizacions
-                .Where(a => a.IdCredito == id && a.Estatus == 2 && a.FechaFin < DateOnly.FromDateTime(DateTime.Now))
+                .Where(a => a.IdCredito == id && (a.Estatus == 2 || a.Estatus == 3) && a.FechaFin < DateOnly.FromDateTime(DateTime.Now))
                 .ToListAsync();
 
             bool tieneMoratorios = false;
 
             foreach (var amortizacion in amortizacionesVencidas)
             {
+                
                 DateOnly fechaActual = DateOnly.FromDateTime(DateTime.Now);
 
-                DateTime fechaFinDateTime = amortizacion.FechaFin.ToDateTime(TimeOnly.MinValue);
+                DateOnly fechaFinDateTime = amortizacion.FechaMoratorio ?? amortizacion.FechaFin;
+                amortizacion.FechaMoratorio = fechaActual;
+
+
+                DateTime fechaFin = fechaFinDateTime.ToDateTime(TimeOnly.MinValue);
                 DateTime fechaActualDateTime = fechaActual.ToDateTime(TimeOnly.MinValue);
 
-                int diasVencidos = (fechaActualDateTime - fechaFinDateTime).Days;
+                int diasVencidos = (fechaActualDateTime - fechaFin).Days;
                 decimal interesMoratorioDiario = (amortizacion.SaldoInsoluto * producto.InteresMoratorio.Value / 100) / 360;
                 decimal interesMoratorioAcumulado = interesMoratorioDiario * diasVencidos;
 

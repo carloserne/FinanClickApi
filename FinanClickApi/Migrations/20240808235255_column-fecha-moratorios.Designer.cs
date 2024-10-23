@@ -4,6 +4,7 @@ using FinanClickApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinanClickApi.Migrations
 {
     [DbContext(typeof(FinanclickDbContext))]
-    partial class FinanclickDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240808235255_column-fecha-moratorios")]
+    partial class columnfechamoratorios
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -524,40 +527,6 @@ namespace FinanClickApi.Migrations
                     b.ToTable("Modulo", (string)null);
                 });
 
-            modelBuilder.Entity("FinanClickApi.Models.Notificacion", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("FechaCreacion")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<int>("IdRol")
-                        .HasColumnType("int");
-
-                    b.Property<bool?>("Leido")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<string>("Mensaje")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.HasKey("Id")
-                        .HasName("PK__Notifica__3214EC0780E02CAF");
-
-                    b.HasIndex("IdRol");
-
-                    b.ToTable("Notificacion", (string)null);
-                });
-
             modelBuilder.Entity("FinanClickApi.Models.Obligado", b =>
                 {
                     b.Property<int>("IdObligado")
@@ -982,65 +951,6 @@ namespace FinanClickApi.Migrations
                     b.ToTable("Producto", (string)null);
                 });
 
-            modelBuilder.Entity("FinanClickApi.Models.QuejaSugerencium", b =>
-                {
-                    b.Property<int>("IdQuejaSugerencia")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdQuejaSugerencia"));
-
-                    b.Property<string>("ArchivoAdjunto")
-                        .HasMaxLength(255)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("Comentarios")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("Estatus")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(1);
-
-                    b.Property<DateTime>("FechaRegistro")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<DateTime?>("FechaResolucion")
-                        .HasColumnType("datetime");
-
-                    b.Property<int>("IdEmpresa")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Prioridad")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Responsable")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Tipo")
-                        .IsRequired()
-                        .HasMaxLength(1)
-                        .IsUnicode(false)
-                        .HasColumnType("char(1)")
-                        .IsFixedLength();
-
-                    b.HasKey("IdQuejaSugerencia")
-                        .HasName("PK__QuejaSug__8892057E15C34A65");
-
-                    b.HasIndex("IdEmpresa");
-
-                    b.HasIndex("Responsable");
-
-                    b.ToTable("QuejaSugerencia");
-                });
-
             modelBuilder.Entity("FinanClickApi.Models.Rol", b =>
                 {
                     b.Property<int>("IdRol")
@@ -1324,17 +1234,6 @@ namespace FinanClickApi.Migrations
                     b.Navigation("IdDocumentoNavigation");
                 });
 
-            modelBuilder.Entity("FinanClickApi.Models.Notificacion", b =>
-                {
-                    b.HasOne("FinanClickApi.Models.Rol", "IdRolNavigation")
-                        .WithMany("Notificacions")
-                        .HasForeignKey("IdRol")
-                        .IsRequired()
-                        .HasConstraintName("FK__Notificac__IdRol__6DCC4D03");
-
-                    b.Navigation("IdRolNavigation");
-                });
-
             modelBuilder.Entity("FinanClickApi.Models.Obligado", b =>
                 {
                     b.HasOne("FinanClickApi.Models.Credito", "IdCreditoNavigation")
@@ -1369,26 +1268,6 @@ namespace FinanClickApi.Migrations
                         .HasConstraintName("FK_Credito_Pago_72C60C4A");
 
                     b.Navigation("IdCreditoNavigation");
-                });
-
-            modelBuilder.Entity("FinanClickApi.Models.QuejaSugerencium", b =>
-                {
-                    b.HasOne("FinanClickApi.Models.Empresa", "IdEmpresaNavigation")
-                        .WithMany("QuejaSugerencia")
-                        .HasForeignKey("IdEmpresa")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_EmpresaQuejaSugerencia");
-
-                    b.HasOne("FinanClickApi.Models.Usuario", "ResponsableNavigation")
-                        .WithMany("QuejaSugerencia")
-                        .HasForeignKey("Responsable")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("FK_ResponsableUsuario");
-
-                    b.Navigation("IdEmpresaNavigation");
-
-                    b.Navigation("ResponsableNavigation");
                 });
 
             modelBuilder.Entity("FinanClickApi.Models.Usuario", b =>
@@ -1473,8 +1352,6 @@ namespace FinanClickApi.Migrations
 
                     b.Navigation("Clientes");
 
-                    b.Navigation("QuejaSugerencia");
-
                     b.Navigation("Usuarios");
                 });
 
@@ -1505,14 +1382,7 @@ namespace FinanClickApi.Migrations
 
             modelBuilder.Entity("FinanClickApi.Models.Rol", b =>
                 {
-                    b.Navigation("Notificacions");
-
                     b.Navigation("Usuarios");
-                });
-
-            modelBuilder.Entity("FinanClickApi.Models.Usuario", b =>
-                {
-                    b.Navigation("QuejaSugerencia");
                 });
 #pragma warning restore 612, 618
         }

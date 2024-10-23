@@ -146,3 +146,24 @@ CREATE TABLE UsuarioCliente (
  INSERT INTO UsuarioCliente (IdCliente, Usuario, Contrasenia, Estatus) VALUES (1, 'empresaEjemplo', 'empresa123', 1);  
 
  INSERT INTO UsuarioCliente (IdCliente, Usuario, Contrasenia, Estatus) VALUES (2, 'juanp', 'juanpe123', 1);
+
+ -- !!!!!!!INSERTAR EN ESTE ORDEN EN ESPECÍFICO PARA QUE FUNCIONE!!!!!!!!!!!!
+INSERT INTO Rol (nombreRol, estatus, descripcion)
+VALUES ('Promotor', 1, 'Descripción del rol Promotor');
+
+INSERT INTO Rol (nombreRol, estatus, descripcion)
+VALUES ('Administrador Empresa', 1, 'Representante de la empresa con privilegios administrativos');
+
+INSERT INTO Rol (nombreRol, estatus, descripcion)
+VALUES ('Agente de Clientes', 1, 'Encargado de registrar los clientes');
+
+INSERT INTO Rol (nombreRol, estatus, descripcion)
+VALUES ('Agente de Credito', 1, 'Encargado de la apertura de créditos');
+
+INSERT INTO Rol (nombreRol, estatus, descripcion)
+VALUES ('Gestor de Cobranza', 1, 'Encargado del proceso post-apertura de un crédito');
+-- ----------------------------------------------------------------------------------------
+
+
+INSERT INTO Usuario (idRol, Contrasenia, ApellidoPaterno, ApellidoMaterno, IdEmpresa, Usuario, Nombre, Imagen)
+VALUES (1, 'password123', 'Alvarez', 'Mancilla', 1, 'josef', 'Jose', '');
