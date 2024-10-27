@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
-namespace FinanClickApi.Models;
+namespace FinanClickApi.Temp_Models;
 
 public partial class VentaProspecto
 {
@@ -26,6 +25,5 @@ public partial class VentaProspecto
 
     public string Rfc { get; set; } = null!;
 
-    [JsonIgnore]
-    public virtual PlanEmpresa? IdPlanNavigation { get; set; }
+    public string NumeroContacto { get; set; } = null!;
 }

@@ -1,5 +1,6 @@
 ﻿using FinanClickApi.Dtos;
 using FinanClickApi.Models;
+using FinanClickApi.Temp_Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -45,6 +46,7 @@ namespace FinanClickApi.Controllers
                     v.FechaSolicitud,
                     v.NombreCliente,
                     v.NombreEmpresa,
+                    v.NumeroContacto,
                     v.Correo,
                     v.Domicilio,
                     v.Ciudad,

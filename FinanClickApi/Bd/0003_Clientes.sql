@@ -148,6 +148,7 @@ CREATE TABLE UsuarioCliente (
  INSERT INTO UsuarioCliente (IdCliente, Usuario, Contrasenia, Estatus) VALUES (2, 'juanp', 'juanpe123', 1);
 
  -- !!!!!!!INSERTAR EN ESTE ORDEN EN ESPECÍFICO PARA QUE FUNCIONE!!!!!!!!!!!!
+
 INSERT INTO Rol (nombreRol, estatus, descripcion)
 VALUES ('Promotor', 1, 'Descripción del rol Promotor');
 
@@ -202,11 +203,15 @@ INSERT INTO Plan_empresa (Precio, Descripcion, Duracion, Estatus)
 VALUES (899.99, 'Plan Empresarial', '12 meses', 1);
 
 -- Inserciones para la tabla VentaProspecto
-INSERT INTO VentaProspecto (IdPlan, fechaSolicitud, nombreCliente, nombreEmpresa, correo, domicilio, ciudad, estado, rfc)
-VALUES (1, '2024-10-20', 'Juan Pérez', 'Tecnología Global', 'juan.perez@tecnologiaglobal.com', 'Av. Siempre Viva 123', 'Ciudad de México', 'CDMX', 'JPR1234567890');
+INSERT INTO VentaProspecto (IdPlan, fechaSolicitud, nombreCliente, nombreEmpresa, correo, domicilio, ciudad, estado, rfc, numeroContacto)
+VALUES (1, '2024-10-20', 'Juan Pérez', 'Tecnología Global', 'juan.perez@tecnologiaglobal.com', 'Av. Siempre Viva 123', 'Ciudad de México', 'CDMX', 'JPR1234567890', '4776009669');
 
-INSERT INTO VentaProspecto (IdPlan, fechaSolicitud, nombreCliente, nombreEmpresa, correo, domicilio, ciudad, estado, rfc)
-VALUES (2, '2024-10-21', 'María Gómez', 'Consultoría IT', 'maria.gomez@consultoriait.com', 'Calle Falsa 456', 'Guadalajara', 'Jalisco', 'MGM1234567890');
+INSERT INTO VentaProspecto (IdPlan, fechaSolicitud, nombreCliente, nombreEmpresa, correo, domicilio, ciudad, estado, rfc, numeroContacto)
+VALUES (2, '2024-10-21', 'María Gómez', 'Consultoría IT', 'maria.gomez@consultoriait.com', 'Calle Falsa 456', 'Guadalajara', 'Jalisco', 'MGM1234567890', '4776009669');
 
-INSERT INTO VentaProspecto (IdPlan, fechaSolicitud, nombreCliente, nombreEmpresa, correo, domicilio, ciudad, estado, rfc)
-VALUES (3, '2024-10-21', 'Carlos Sánchez', 'Servicios Financieros', 'carlos.sanchez@serviciosfinancieros.com', 'Blvd. de los Héroes 789', 'Monterrey', 'Nuevo León', 'CSN1234567890');
+INSERT INTO VentaProspecto (IdPlan, fechaSolicitud, nombreCliente, nombreEmpresa, correo, domicilio, ciudad, estado, rfc, numeroContacto)
+VALUES (3, '2024-10-21', 'Carlos Sánchez', 'Servicios Financieros', 'carlos.sanchez@serviciosfinancieros.com', 'Blvd. de los Héroes 789', 'Monterrey', 'Nuevo León', 'CSN1234567890', '4776009669');
+
+ALTER TABLE VentaProspecto
+ADD numeroContacto VARCHAR(10) NOT NULL;
+

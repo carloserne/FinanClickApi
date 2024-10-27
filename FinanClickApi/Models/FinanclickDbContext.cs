@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using FinanClickApi.Modelss;
+using FinanClickApi.Temp_Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanClickApi.Models;
@@ -58,7 +59,7 @@ public partial class FinanclickDbContext : DbContext
     public virtual DbSet<Pago> Pagos { get; set; }
 
     public virtual DbSet<PlanEmpresa> PlanEmpresas { get; set; }
-
+    
     public virtual DbSet<VentaProspecto> VentaProspectos { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
@@ -754,15 +755,14 @@ public partial class FinanclickDbContext : DbContext
                 .HasMaxLength(60)
                 .IsUnicode(false)
                 .HasColumnName("nombreEmpresa");
+            entity.Property(e => e.NumeroContacto)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("numeroContacto");
             entity.Property(e => e.Rfc)
                 .HasMaxLength(13)
                 .IsUnicode(false)
                 .HasColumnName("rfc");
-
-            entity.HasOne(d => d.IdPlanNavigation).WithMany(p => p.VentaProspectos)
-                .HasForeignKey(d => d.IdPlan)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__VentaProspe__rfc__19DFD96B");
         });
 
         OnModelCreatingPartial(modelBuilder);

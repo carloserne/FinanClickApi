@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FinanClickApi.Temp_Models;
+using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
