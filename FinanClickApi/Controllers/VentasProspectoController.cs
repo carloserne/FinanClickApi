@@ -51,7 +51,8 @@ namespace FinanClickApi.Controllers
                     v.Domicilio,
                     v.Ciudad,
                     v.Estado,
-                    v.Rfc
+                    v.Rfc,
+                    v.IdUsuario
                 })
                 .ToListAsync();
 
@@ -79,6 +80,37 @@ namespace FinanClickApi.Controllers
             return CreatedAtAction(nameof(PostVenta), new { id = venta.IdVenta }, venta);
         }
 
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateVenta(int id, [FromBody] Dictionary<string, int> fields)
+        {
+            // Verificar si el campo `idUsuario` está presente en los datos
+            if (!fields.ContainsKey("idUsuario"))
+            {
+                return BadRequest("El campo 'idUsuario' es obligatorio.");
+            }
+
+            // Obtener la venta existente
+            var ventaExistente = await _baseDatos.VentaProspectos.FindAsync(id);
+            if (ventaExistente == null)
+            {
+                return NotFound("La venta no fue encontrada.");
+            }
+
+            // Actualizar el campo `IdUsuarioEncargado` en lugar de `IdUsuario`
+            if (fields["idUsuario"] is int idUsuario)
+            {
+                ventaExistente.IdUsuario = idUsuario;
+            }
+
+            // Mostrar el valor de `ventaExistente` en la consola antes de guardarlo
+            Console.WriteLine($"Venta antes de guardar: IdVenta = {ventaExistente.IdVenta}, IdUsuario = {ventaExistente.IdUsuario}");
+
+            // Guardar los cambios
+            await _baseDatos.SaveChangesAsync();
+
+            return NoContent(); // Retornar 204 No Content en caso de éxito
+        }
 
     }
 }

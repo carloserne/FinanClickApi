@@ -19,7 +19,7 @@ namespace FinanClickApi.Controllers
             _baseDatos = baseDatos;
         }
 
-        // GET: api/planempresa
+        //// GET: api/planempresa
         [HttpGet]
         public async Task<ActionResult<IEnumerable<object>>> GetPlanes()
         {

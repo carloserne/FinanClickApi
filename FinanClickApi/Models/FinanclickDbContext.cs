@@ -59,7 +59,7 @@ public partial class FinanclickDbContext : DbContext
     public virtual DbSet<Pago> Pagos { get; set; }
 
     public virtual DbSet<PlanEmpresa> PlanEmpresas { get; set; }
-    
+
     public virtual DbSet<VentaProspecto> VentaProspectos { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
@@ -711,7 +711,7 @@ public partial class FinanclickDbContext : DbContext
 
         modelBuilder.Entity<PlanEmpresa>(entity =>
         {
-            entity.HasKey(e => e.IdPlan).HasName("PK__Plan_emp__FB8102AE12F687F1");
+            entity.HasKey(e => e.IdPlan).HasName("PK__Plan_emp__FB8102AEC98D798A");
 
             entity.ToTable("Plan_empresa");
 
@@ -723,11 +723,9 @@ public partial class FinanclickDbContext : DbContext
                 .IsUnicode(false);
         });
 
-
         modelBuilder.Entity<VentaProspecto>(entity =>
         {
-            entity.HasKey(e => e.IdVenta).HasName("PK__VentaPro__BC1240BDEC9F3DCC");
-
+            entity.HasKey(e => e.IdVenta).HasName("PK__VentaPro__BC1240BD2D33906A");
             entity.ToTable("VentaProspecto");
 
             entity.Property(e => e.Ciudad)
@@ -763,7 +761,20 @@ public partial class FinanclickDbContext : DbContext
                 .HasMaxLength(13)
                 .IsUnicode(false)
                 .HasColumnName("rfc");
+
+            entity.HasOne(d => d.IdPlanNavigation)
+                .WithMany(p => p.VentaProspectos)
+                .HasForeignKey(d => d.IdPlan)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__VentaPros__numer__31B762FC");
+
+            entity.HasOne(v => v.IdUsuarioNavigation)
+                .WithMany(u => u.VentaProspectos) 
+                .HasForeignKey(v => v.IdUsuario)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_VentaProspecto_Usuario");
         });
+
 
         OnModelCreatingPartial(modelBuilder);
     }

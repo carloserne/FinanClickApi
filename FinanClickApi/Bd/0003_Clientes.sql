@@ -181,6 +181,7 @@ CREATE TABLE Plan_empresa(
 CREATE TABLE VentaProspecto (
     IdVenta INT PRIMARY KEY identity,
 	IdPlan INT NOT NULL,
+	IdUsuario INT,
 	fechaSolicitud DATE NOT NULL,
 	nombreCliente VARCHAR(50) NOT NULL,
 	nombreEmpresa VARCHAR(60) NOT NULL,
@@ -188,8 +189,10 @@ CREATE TABLE VentaProspecto (
 	domicilio VARCHAR(100) NOT NULL,
 	ciudad VARCHAR(50) NOT NULL,
 	estado VARCHAR(50) NOT NULL,
-	rfc VARCHAR(13) NOT NULL
-	FOREIGN KEY (IdPlan) REFERENCES Plan_empresa(IdPlan)
+	rfc VARCHAR(13) NOT NULL,
+	numeroContacto VARCHAR(10) NOT NULL
+	FOREIGN KEY (IdPlan) REFERENCES Plan_empresa(IdPlan),
+	FOREIGN KEY (IdUsuario) REFERENCES Usuario(IdUsuario)
 );
 
 -- Inserciones para la tabla Plan_empresa
@@ -203,15 +206,44 @@ INSERT INTO Plan_empresa (Precio, Descripcion, Duracion, Estatus)
 VALUES (899.99, 'Plan Empresarial', '12 meses', 1);
 
 -- Inserciones para la tabla VentaProspecto
-INSERT INTO VentaProspecto (IdPlan, fechaSolicitud, nombreCliente, nombreEmpresa, correo, domicilio, ciudad, estado, rfc, numeroContacto)
-VALUES (1, '2024-10-20', 'Juan Pérez', 'Tecnología Global', 'juan.perez@tecnologiaglobal.com', 'Av. Siempre Viva 123', 'Ciudad de México', 'CDMX', 'JPR1234567890', '4776009669');
+INSERT INTO VentaProspecto (IdPlan, IdUsuario, fechaSolicitud, nombreCliente, nombreEmpresa, correo, domicilio, ciudad, estado, rfc, numeroContacto)
+VALUES (1, 4, '2024-10-20', 'Juan Pérez', 'Tecnología Global', 'juan.perez@tecnologiaglobal.com', 'Av. Siempre Viva 123', 'Ciudad de México', 'CDMX', 'JPR1234567890', '4776009669');
 
-INSERT INTO VentaProspecto (IdPlan, fechaSolicitud, nombreCliente, nombreEmpresa, correo, domicilio, ciudad, estado, rfc, numeroContacto)
-VALUES (2, '2024-10-21', 'María Gómez', 'Consultoría IT', 'maria.gomez@consultoriait.com', 'Calle Falsa 456', 'Guadalajara', 'Jalisco', 'MGM1234567890', '4776009669');
+INSERT INTO VentaProspecto (IdPlan, IdUsuario, fechaSolicitud, nombreCliente, nombreEmpresa, correo, domicilio, ciudad, estado, rfc, numeroContacto)
+VALUES (2, 4, '2024-10-21', 'María Gómez', 'Consultoría IT', 'maria.gomez@consultoriait.com', 'Calle Falsa 456', 'Guadalajara', 'Jalisco', 'MGM1234567890', '4776009669');
 
-INSERT INTO VentaProspecto (IdPlan, fechaSolicitud, nombreCliente, nombreEmpresa, correo, domicilio, ciudad, estado, rfc, numeroContacto)
-VALUES (3, '2024-10-21', 'Carlos Sánchez', 'Servicios Financieros', 'carlos.sanchez@serviciosfinancieros.com', 'Blvd. de los Héroes 789', 'Monterrey', 'Nuevo León', 'CSN1234567890', '4776009669');
+INSERT INTO VentaProspecto (IdPlan, IdUsuario, fechaSolicitud, nombreCliente, nombreEmpresa, correo, domicilio, ciudad, estado, rfc, numeroContacto)
+VALUES (3, 5, '2024-10-21', 'Carlos Sánchez', 'Servicios Financieros', 'carlos.sanchez@serviciosfinancieros.com', 'Blvd. de los Héroes 789', 'Monterrey', 'Nuevo León', 'CSN1234567890', '4776009669');
 
-ALTER TABLE VentaProspecto
-ADD numeroContacto VARCHAR(10) NOT NULL;
+--- Actualizar el IdRol y NombreRol de cada registro para corregir el orden y eliminar duplicados
+UPDATE Rol
+SET NombreRol = 'Promotor', Descripcion = 'Descripción del rol Promotor'
+WHERE IdRol = 2;
+
+UPDATE Rol
+SET NombreRol = 'Administrador Empresa', Descripcion = 'Representante de la empresa con privilegios administrativos'
+WHERE IdRol = 3;
+
+UPDATE Rol
+SET NombreRol = 'Agente de Clientes', Descripcion = 'Encargado de registrar los clientes'
+WHERE IdRol = 4;
+
+UPDATE Rol
+SET NombreRol = 'Agente de Crédito', Descripcion = 'Encargado de la apertura de créditos'
+WHERE IdRol = 5;
+
+UPDATE Rol
+SET NombreRol = 'Gestor de Cobranza', Descripcion = 'Encargado del proceso post-apertura de un crédito'
+WHERE IdRol = 6;
+
+-- Nuevo rol para IdRol = 7
+UPDATE Rol
+SET NombreRol = 'Encargado Ventas', Descripcion = 'Encargado de llamar a los clientes interesados'
+WHERE IdRol = 7;
+
+INSERT INTO Usuario (IdRol, Contrasenia, ApellidoPaterno, ApellidoMaterno, IdEmpresa, Usuario, Nombre, Imagen)
+VALUES (7, 'contraseña123', 'Perez', 'Garcia', 1, 'usuario.prueba', 'Juan', NULL);
+
+INSERT INTO VentaProspecto (IdPlan, IdUsuario, fechaSolicitud, nombreCliente, nombreEmpresa, correo, domicilio, ciudad, estado, rfc, numeroContacto)
+VALUES (3, null, '2024-10-21', 'Carlos Sánchez', 'Servicios Financieros', 'carlos.sanchez@serviciosfinancieros.com', 'Blvd. de los Héroes 789', 'Monterrey', 'Nuevo León', 'CSN1234567890', '4776009669');
 

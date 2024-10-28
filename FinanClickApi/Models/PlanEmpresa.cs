@@ -1,9 +1,8 @@
-﻿using FinanClickApi.Temp_Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace FinanClickApi.Models;
+namespace FinanClickApi.Temp_Models;
 
 public partial class PlanEmpresa
 {
