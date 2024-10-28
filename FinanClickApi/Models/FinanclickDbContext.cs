@@ -56,6 +56,9 @@ public partial class FinanclickDbContext : DbContext
     public virtual DbSet<Amortizacion> Amortizacions { get; set; }
    
     public virtual DbSet<Pago> Pagos { get; set; }
+
+    public virtual DbSet<QuejaSugerencium> QuejaSugerencias { get; set; }
+    public virtual DbSet<ContactoPersona> ContactoPersonas { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -700,6 +703,36 @@ public partial class FinanclickDbContext : DbContext
                 .HasForeignKey(d => d.Responsable)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK_ResponsableUsuario");
+        });
+        
+        modelBuilder.Entity<ContactoPersona>(entity =>
+        {
+            entity.HasKey(e => e.IdContacto).HasName("PK__Contacto__4B1329C75B1C17DD");
+
+            entity.ToTable("ContactoPersona");
+
+            entity.Property(e => e.IdContacto).HasColumnName("idContacto");
+            entity.Property(e => e.Apellido)
+                .HasMaxLength(100)
+                .HasColumnName("apellido");
+            entity.Property(e => e.Email)
+                .HasMaxLength(100)
+                .HasColumnName("email");
+            entity.Property(e => e.IdEmpresa).HasColumnName("idEmpresa");
+            entity.Property(e => e.Nombre)
+                .HasMaxLength(100)
+                .HasColumnName("nombre");
+            entity.Property(e => e.Puesto)
+                .HasMaxLength(100)
+                .HasColumnName("puesto");
+            entity.Property(e => e.Telefono)
+                .HasMaxLength(20)
+                .HasColumnName("telefono");
+
+            entity.HasOne(d => d.IdEmpresaNavigation).WithMany(p => p.ContactoPersonas)
+                .HasForeignKey(d => d.IdEmpresa)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__ContactoP__idEmp__1B9317B3");
         });
 
 
