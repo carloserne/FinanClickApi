@@ -18,7 +18,7 @@ public partial class VentaProspecto
     public string NumeroContacto { get; set; } = null!;
 
     [JsonIgnore]
-    public virtual PlanEmpresa IdPlanNavigation { get; set; } = null!;
+    public virtual PlanEmpresa? IdPlanNavigation { get; set; } = null!;
 
     [JsonIgnore]
     public virtual Usuario? IdUsuarioNavigation { get; set; }

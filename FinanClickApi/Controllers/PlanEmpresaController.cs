@@ -21,20 +21,10 @@ namespace FinanClickApi.Controllers
 
         //// GET: api/planempresa
         [HttpGet]
+        [AllowAnonymous] // Permite el acceso sin autenticación
         public async Task<ActionResult<IEnumerable<object>>> GetPlanes()
         {
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (currentUserId == null)
-            {
-                return Unauthorized();
-            }
-
-            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
-            if (user == null)
-            {
-                return NotFound("Usuario no encontrado");
-            }
-
+            // Elimina la verificación del usuario actual ya que no se requiere autenticación aquí
             var planes = await _baseDatos.PlanEmpresas
                 .Where(c => c.Estatus != 0)
                 .Select(c => new

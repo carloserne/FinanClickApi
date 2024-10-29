@@ -766,7 +766,8 @@ public partial class FinanclickDbContext : DbContext
                 .WithMany(p => p.VentaProspectos)
                 .HasForeignKey(d => d.IdPlan)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__VentaPros__numer__31B762FC");
+                .IsRequired(false)
+                .HasConstraintName("FK__VentaPros__IdPlan__31B762FC");
 
             entity.HasOne(v => v.IdUsuarioNavigation)
                 .WithMany(u => u.VentaProspectos) 
