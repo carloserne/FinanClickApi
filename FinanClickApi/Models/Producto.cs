@@ -1,5 +1,4 @@
-﻿using FinanClickApi.Modelss;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 

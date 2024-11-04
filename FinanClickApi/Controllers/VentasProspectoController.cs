@@ -1,6 +1,5 @@
 ﻿using FinanClickApi.Dtos;
 using FinanClickApi.Models;
-using FinanClickApi.Temp_Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
