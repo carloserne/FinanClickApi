@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using FinanClickApi.Modelss;
-using FinanClickApi.Temp_Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanClickApi.Models;
