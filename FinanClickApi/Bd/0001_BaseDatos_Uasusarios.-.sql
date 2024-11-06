@@ -66,3 +66,5 @@ INSERT INTO Usuario ( IdRol, Contrasenia, ApellidoPaterno, ApellidoMaterno, IdEm
 -- Insertar registros en la tabla DetalleModuloUsuario
 INSERT INTO DetalleModuloUsuario (IdModulo, IdUsuario) VALUES
 (1, 1);
+
+SELECT name FROM sys.foreign_keys WHERE parent_object_id = OBJECT_ID('OBLIGADO_personaMoral');

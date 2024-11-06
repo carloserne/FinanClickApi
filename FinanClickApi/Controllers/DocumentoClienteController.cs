@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 using FinanClickApi.Dtos;
 using System.Security.Claims;
+using System.Net.NetworkInformation;
+using Azure.Core;
 
 namespace FinanClickApi.Controllers
 {
@@ -122,6 +124,102 @@ namespace FinanClickApi.Controllers
             await _baseDatos.SaveChangesAsync();
 
             return Ok(documentoCliente);
+        }
+
+        [HttpPost("asignar-todos-fisica/{idCliente}")]
+        public async Task<IActionResult> AsignarTodosDocumentosFisica(int idCliente)
+        {
+            var cliente = await _baseDatos.Clientes.FindAsync(idCliente);
+            if (cliente == null)
+            {
+                return NotFound("Cliente no encontrado");
+            }
+
+            var documentosFisica = await _baseDatos.CatalogoDocumentos
+                .Where(d => d.Tipo == "FISICA")
+                .ToListAsync();
+
+            // Crear asignaciones para cada documento de tipo "FISICA"
+            foreach (var documento in documentosFisica)
+            {
+                var documentoCliente = new DocumentosCliente
+                {
+                    IdCliente = idCliente,
+                    IdDocumento = documento.IdCatalogoDocumento,
+                    DocumentoBase64 = " ",
+                    Estatus = 4 // Estado "Pendiente"
+                };
+                _baseDatos.DocumentosClientes.Add(documentoCliente);
+            }
+
+            await _baseDatos.SaveChangesAsync();
+            return Ok(new { message = "Documentos asignados correctamente" });
+        }
+
+        [HttpPost("asignar-todos-moral/{idCliente}")]
+        public async Task<IActionResult> AsignarTodosDocumentosMoral(int idCliente)
+        {
+            var cliente = await _baseDatos.Clientes.FindAsync(idCliente);
+            if (cliente == null)
+            {
+                return NotFound("Cliente no encontrado");
+            }
+
+            // Obtener todos los documentos de tipo "MORAL"
+            var documentosMoral = await _baseDatos.CatalogoDocumentos
+                .Where(d => d.Tipo == "MORAL")
+                .ToListAsync();
+
+            // Crear asignaciones para cada documento de tipo "MORAL"
+            foreach (var documento in documentosMoral)
+            {
+                var documentoCliente = new DocumentosCliente
+                {
+                    IdCliente = idCliente,
+                    IdDocumento = documento.IdCatalogoDocumento,
+                    DocumentoBase64 = " ",
+                    Estatus = 4 // Estado "Pendiente"
+                };
+                _baseDatos.DocumentosClientes.Add(documentoCliente);
+            }
+
+            await _baseDatos.SaveChangesAsync();
+            return Ok(new { message = "Documentos asignados correctamente" });
+        }
+
+        [HttpPost("asignar-a-todos/{tipo}")]
+        public async Task<IActionResult> AsignarDocumentoATodosClientes(string tipo, [FromBody] int idDocumento)
+        {
+            // Obtener el IdEmpresa del usuario actual
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+            if (user == null)
+            {
+                return Unauthorized("Usuario no autorizado.");
+            }
+
+            var idEmpresaUsuario = user.IdEmpresa;
+
+            // Filtrar clientes por IdEmpresa y RegimenFiscal
+            var clientes = await _baseDatos.Clientes
+                .Where(c => c.RegimenFiscal == tipo && c.IdEmpresa == idEmpresaUsuario)
+                .ToListAsync();
+
+            // Asignar el documento a cada cliente con estatus "Pendiente" y DocumentoBase64 vacío
+            foreach (var cliente in clientes)
+            {
+                var documentoCliente = new DocumentosCliente
+                {
+                    IdCliente = cliente.IdCliente,
+                    IdDocumento = idDocumento,
+                    DocumentoBase64 = "", // Cadena vacía para el documento
+                    Estatus = 4 // "Pendiente"
+                };
+                _baseDatos.DocumentosClientes.Add(documentoCliente);
+            }
+
+            await _baseDatos.SaveChangesAsync();
+            return Ok("Documento asignado a todos los clientes del tipo especificado y empresa del usuario.");
         }
 
     }

@@ -3,6 +3,7 @@ using FinanClickApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net.NetworkInformation;
 using System.Security.Claims;
 
 namespace FinanClickApi.Controllers
@@ -269,6 +270,8 @@ namespace FinanClickApi.Controllers
 
             return NoContent();
         }
+
+
 
         private bool ClienteExists(int id)
         {

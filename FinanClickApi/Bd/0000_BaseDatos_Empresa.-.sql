@@ -1,6 +1,6 @@
 create database FinanclickDB;
-
-use FinanclickDB;
+drop database FinanclickDB;
+use Financlick_DB;
 
 
 CREATE TABLE Empresa (
