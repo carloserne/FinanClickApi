@@ -1,5 +1,5 @@
 create database FinanclickDB;
-
+drop database FinanclickDB;
 use FinanclickDB;
 
 
@@ -79,5 +79,5 @@ INSERT INTO Empresa (
     'prueba' -- Logo (asumiendo que no se tiene un logo para insertar)
 );
 
-
+select * from Empresa;
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using FinanClickApi.Modelss;
+using FinanClickApi.Temp_Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanClickApi.Models;
@@ -56,6 +57,15 @@ public partial class FinanclickDbContext : DbContext
     public virtual DbSet<Amortizacion> Amortizacions { get; set; }
    
     public virtual DbSet<Pago> Pagos { get; set; }
+    public virtual DbSet<PlanEmpresa> PlanEmpresas { get; set; }
+
+    public virtual DbSet<VentaProspecto> VentaProspectos { get; set; }
+
+    public virtual DbSet<QuejaSugerencium> QuejaSugerencias { get; set; }
+    public virtual DbSet<ContactoPersona> ContactoPersonas { get; set; }
+
+    public virtual DbSet<Campania> Campanias { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -701,10 +711,148 @@ public partial class FinanclickDbContext : DbContext
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK_ResponsableUsuario");
         });
+        modelBuilder.Entity<PlanEmpresa>(entity =>
+        {
+            entity.HasKey(e => e.IdPlan).HasName("PK__Plan_emp__FB8102AEC98D798A");
+
+            entity.ToTable("Plan_empresa");
+
+            entity.Property(e => e.Descripcion)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.Duracion)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<VentaProspecto>(entity =>
+        {
+            entity.HasKey(e => e.IdVenta).HasName("PK__VentaPro__BC1240BD2D33906A");
+            entity.ToTable("VentaProspecto");
+
+            entity.Property(e => e.Ciudad)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("ciudad");
+            entity.Property(e => e.Correo)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("correo");
+            entity.Property(e => e.Domicilio)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("domicilio");
+            entity.Property(e => e.Estado)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("estado");
+            entity.Property(e => e.FechaSolicitud).HasColumnName("fechaSolicitud");
+            entity.Property(e => e.NombreCliente)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("nombreCliente");
+            entity.Property(e => e.NombreEmpresa)
+                .HasMaxLength(60)
+                .IsUnicode(false)
+                .HasColumnName("nombreEmpresa");
+            entity.Property(e => e.NumeroContacto)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("numeroContacto");
+            entity.Property(e => e.Rfc)
+                .HasMaxLength(13)
+                .IsUnicode(false)
+                .HasColumnName("rfc");
+
+            entity.HasOne(d => d.IdPlanNavigation)
+                .WithMany(p => p.VentaProspectos)
+                .HasForeignKey(d => d.IdPlan)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__VentaPros__numer__31B762FC");
+
+            entity.HasOne(v => v.IdUsuarioNavigation)
+                .WithMany(u => u.VentaProspectos)
+                .HasForeignKey(v => v.IdUsuario)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_VentaProspecto_Usuario");
+        });
+
+        modelBuilder.Entity<ContactoPersona>(entity =>
+        {
+            entity.HasKey(e => e.IdContacto).HasName("PK__Contacto__4B1329C75B1C17DD");
+
+            entity.ToTable("ContactoPersona");
+
+            entity.Property(e => e.IdContacto).HasColumnName("idContacto");
+            entity.Property(e => e.Apellido)
+                .HasMaxLength(100)
+                .HasColumnName("apellido");
+            entity.Property(e => e.Email)
+                .HasMaxLength(100)
+                .HasColumnName("email");
+            entity.Property(e => e.IdEmpresa).HasColumnName("idEmpresa");
+            entity.Property(e => e.Nombre)
+                .HasMaxLength(100)
+                .HasColumnName("nombre");
+            entity.Property(e => e.Puesto)
+                .HasMaxLength(100)
+                .HasColumnName("puesto");
+            entity.Property(e => e.Telefono)
+                .HasMaxLength(20)
+                .HasColumnName("telefono");
+
+            entity.HasOne(d => d.IdEmpresaNavigation).WithMany(p => p.ContactoPersonas)
+                .HasForeignKey(d => d.IdEmpresa)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__ContactoP__idEmp__1B9317B3");
+        });
+
+        modelBuilder.Entity<Campania>(entity =>
+        {
+            // Configuración de la llave primaria
+            entity.HasKey(e => e.IdCampania);
+
+            // Configuración de propiedades
+            entity.Property(e => e.Nombre)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(e => e.Asunto)
+                .HasMaxLength(150);
+
+            entity.Property(e => e.Contenido)
+                .IsRequired();
+
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("GETDATE()");
+
+            entity.Property(e => e.ScheduleDate)
+                .HasColumnType("datetime");
+
+            entity.Property(e => e.Tipo)
+                .HasMaxLength(50);
+
+            entity.Property(e => e.Estatus)
+                .IsRequired();
+
+            entity.Property(e => e.Destinatarios)
+                .IsRequired()
+                .HasColumnType("nvarchar(max)");
+
+            entity.Property(e => e.IdEmpresa)
+                .IsRequired(false);
+
+            // Opcional: Configuración de índices
+            entity.HasIndex(e => e.Nombre)
+                .HasDatabaseName("IX_Campania_Nombre");
+
+            entity.HasIndex(e => e.IdEmpresa)
+                .HasDatabaseName("IX_Campania_IdEmpresa");
+        });
 
 
-
-        OnModelCreatingPartial(modelBuilder);
+    OnModelCreatingPartial(modelBuilder);
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

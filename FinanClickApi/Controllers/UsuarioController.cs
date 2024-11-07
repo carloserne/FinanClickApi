@@ -273,9 +273,34 @@ namespace FinanClickApi.Controllers
             }
         }
 
+        [HttpGet("usuariosPorRol")]
+        public async Task<ActionResult<IEnumerable<object>>> GetUsuariosPorRol(int idRol = 7)
+        {
+            var usuarios = await _baseDatos.Usuarios
+                .Where(u => u.IdRol == idRol)
+                .Include(u => u.IdRolNavigation)
+                .ToListAsync();
 
+            if (!usuarios.Any())
+            {
+                return NotFound(new { message = "No se encontraron usuarios con el rol especificado." });
+            }
 
+            var resultado = usuarios.Select(u => new
+            {
+                u.IdUsuario,
+                u.IdRol,
+                Rol = u.IdRolNavigation?.NombreRol,
+                u.ApellidoPaterno,
+                u.ApellidoMaterno,
+                u.IdEmpresa,
+                u.Usuario1,
+                u.Nombre,
+                u.Imagen
+            });
 
+            return Ok(resultado);
+        }
     }
 }
 
