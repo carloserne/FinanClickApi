@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using FinanClickApi.Modelss;
-using FinanClickApi.Temp_Models;
+//using FinanClickApi.Temp_Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanClickApi.Models;
@@ -61,6 +61,13 @@ public partial class FinanclickDbContext : DbContext
     public virtual DbSet<PlanEmpresa> PlanEmpresas { get; set; }
 
     public virtual DbSet<VentaProspecto> VentaProspectos { get; set; }
+
+    public virtual DbSet<IngresosEgreso> IngresosEgresos { get; set; }
+
+    //Vistas para Modulo de Finanzas
+    public DbSet<TotalesMensuales> TotalesMensuales { get; set; }
+
+    public DbSet<AcumuladoAnual> AcumuladoAnual { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
 
@@ -711,7 +718,7 @@ public partial class FinanclickDbContext : DbContext
 
         modelBuilder.Entity<PlanEmpresa>(entity =>
         {
-            entity.HasKey(e => e.IdPlan).HasName("PK__Plan_emp__FB8102AEC98D798A");
+            entity.HasKey(e => e.IdPlan).HasName("PK_Plan_emp_FB8102AE15FD51B9");
 
             entity.ToTable("Plan_empresa");
 
@@ -721,6 +728,7 @@ public partial class FinanclickDbContext : DbContext
             entity.Property(e => e.Duracion)
                 .HasMaxLength(255)
                 .IsUnicode(false);
+            entity.Property(e => e.NumeroMeses).HasColumnName("numero_meses");
         });
 
         modelBuilder.Entity<VentaProspecto>(entity =>
@@ -774,6 +782,31 @@ public partial class FinanclickDbContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_VentaProspecto_Usuario");
         });
+
+        //MODIFICACIONES DAVID PLAN_EMPRESA Y INGRESOS_EGRESO
+        modelBuilder.Entity<IngresosEgreso>(entity =>
+        {
+            entity.HasKey(e => e.IdIngresosEgresos).HasName("PK__Ingresos__28C0110C36D631C4");
+
+            entity.ToTable("Ingresos_Egresos");
+
+            entity.Property(e => e.IdIngresosEgresos).HasColumnName("Id_Ingresos_Egresos");
+            entity.Property(e => e.Categoria)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.Descripcion).HasMaxLength(255);
+            entity.Property(e => e.Monto).HasColumnType("decimal(18, 2)");
+        });
+
+        //Vista de TotalesMensuales
+        modelBuilder.Entity<TotalesMensuales>()
+            .HasNoKey() // Esto indica que la entidad no tiene una clave primaria
+            .ToView("TotalesMensuales"); // Indica que se mapea a la vista en la base de datos
+
+        //Vista de Acumulado Anual
+        modelBuilder.Entity<AcumuladoAnual>()
+            .HasNoKey()
+            .ToView("AcumuladoAnual");
 
 
         OnModelCreatingPartial(modelBuilder);
