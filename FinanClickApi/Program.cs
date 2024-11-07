@@ -84,19 +84,26 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.Configure<MailgunSettings>(builder.Configuration.GetSection("MailgunSettings"));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+/*if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+}*/
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 //Activar la nueva politica
 app.UseCors("NuevaPolitica");
 
+
 app.UseHttpsRedirection();
+
 
 app.UseAuthorization();
 

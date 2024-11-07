@@ -57,10 +57,14 @@ public partial class FinanclickDbContext : DbContext
     public virtual DbSet<Amortizacion> Amortizacions { get; set; }
    
     public virtual DbSet<Pago> Pagos { get; set; }
-
     public virtual DbSet<PlanEmpresa> PlanEmpresas { get; set; }
 
     public virtual DbSet<VentaProspecto> VentaProspectos { get; set; }
+
+    public virtual DbSet<QuejaSugerencium> QuejaSugerencias { get; set; }
+    public virtual DbSet<ContactoPersona> ContactoPersonas { get; set; }
+
+    public virtual DbSet<Campania> Campanias { get; set; }
 
     public virtual DbSet<IngresosEgreso> IngresosEgresos { get; set; }
 
@@ -714,8 +718,6 @@ public partial class FinanclickDbContext : DbContext
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK_ResponsableUsuario");
         });
-
-
         modelBuilder.Entity<PlanEmpresa>(entity =>
         {
             entity.HasKey(e => e.IdPlan).HasName("PK_Plan_emp_FB8102AE15FD51B9");
@@ -777,10 +779,84 @@ public partial class FinanclickDbContext : DbContext
                 .HasConstraintName("FK__VentaPros__numer__31B762FC");
 
             entity.HasOne(v => v.IdUsuarioNavigation)
-                .WithMany(u => u.VentaProspectos) 
+                .WithMany(u => u.VentaProspectos)
                 .HasForeignKey(v => v.IdUsuario)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_VentaProspecto_Usuario");
+        });
+
+        modelBuilder.Entity<ContactoPersona>(entity =>
+        {
+            entity.HasKey(e => e.IdContacto).HasName("PK__Contacto__4B1329C75B1C17DD");
+
+            entity.ToTable("ContactoPersona");
+
+            entity.Property(e => e.IdContacto).HasColumnName("idContacto");
+            entity.Property(e => e.Apellido)
+                .HasMaxLength(100)
+                .HasColumnName("apellido");
+            entity.Property(e => e.Email)
+                .HasMaxLength(100)
+                .HasColumnName("email");
+            entity.Property(e => e.IdEmpresa).HasColumnName("idEmpresa");
+            entity.Property(e => e.Nombre)
+                .HasMaxLength(100)
+                .HasColumnName("nombre");
+            entity.Property(e => e.Puesto)
+                .HasMaxLength(100)
+                .HasColumnName("puesto");
+            entity.Property(e => e.Telefono)
+                .HasMaxLength(20)
+                .HasColumnName("telefono");
+
+            entity.HasOne(d => d.IdEmpresaNavigation).WithMany(p => p.ContactoPersonas)
+                .HasForeignKey(d => d.IdEmpresa)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__ContactoP__idEmp__1B9317B3");
+        });
+
+        modelBuilder.Entity<Campania>(entity =>
+        {
+            // Configuración de la llave primaria
+            entity.HasKey(e => e.IdCampania);
+
+            // Configuración de propiedades
+            entity.Property(e => e.Nombre)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(e => e.Asunto)
+                .HasMaxLength(150);
+
+            entity.Property(e => e.Contenido)
+                .IsRequired();
+
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("GETDATE()");
+
+            entity.Property(e => e.ScheduleDate)
+                .HasColumnType("datetime");
+
+            entity.Property(e => e.Tipo)
+                .HasMaxLength(50);
+
+            entity.Property(e => e.Estatus)
+                .IsRequired();
+
+            entity.Property(e => e.Destinatarios)
+                .IsRequired()
+                .HasColumnType("nvarchar(max)");
+
+            entity.Property(e => e.IdEmpresa)
+                .IsRequired(false);
+
+            // Opcional: Configuración de índices
+            entity.HasIndex(e => e.Nombre)
+                .HasDatabaseName("IX_Campania_Nombre");
+
+            entity.HasIndex(e => e.IdEmpresa)
+                .HasDatabaseName("IX_Campania_IdEmpresa");
         });
 
         //MODIFICACIONES DAVID PLAN_EMPRESA Y INGRESOS_EGRESO
@@ -809,7 +885,7 @@ public partial class FinanclickDbContext : DbContext
             .ToView("AcumuladoAnual");
 
 
-        OnModelCreatingPartial(modelBuilder);
+    OnModelCreatingPartial(modelBuilder);
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

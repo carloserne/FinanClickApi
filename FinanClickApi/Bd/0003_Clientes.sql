@@ -195,6 +195,8 @@ CREATE TABLE VentaProspecto (
 	FOREIGN KEY (IdUsuario) REFERENCES Usuario(IdUsuario)
 );
 
+select * from Usuario;
+
 -- Inserciones para la tabla Plan_empresa
 INSERT INTO Plan_empresa (Precio, Descripcion, Duracion, Estatus)
 VALUES (199.99, 'Plan Básico', '1 mes', 1);
