@@ -4,6 +4,7 @@ using FinanClickApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinanClickApi.Migrations
 {
     [DbContext(typeof(FinanclickDbContext))]
-    partial class FinanclickDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241107030322_migracion_complementaria")]
+    partial class migracion_complementaria
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -133,62 +136,6 @@ namespace FinanClickApi.Migrations
                     b.HasIndex("IdPersonaMoral");
 
                     b.ToTable("Aval", (string)null);
-                });
-
-            modelBuilder.Entity("FinanClickApi.Models.Campania", b =>
-                {
-                    b.Property<int>("IdCampania")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdCampania"));
-
-                    b.Property<string>("Asunto")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<string>("Contenido")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<string>("Destinatarios")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Estatus")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("IdEmpresa")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("ScheduleDate")
-                        .HasColumnType("datetime");
-
-                    b.Property<string>("Tipo")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("IdCampania");
-
-                    b.HasIndex("IdEmpresa")
-                        .HasDatabaseName("IX_Campania_IdEmpresa");
-
-                    b.HasIndex("Nombre")
-                        .HasDatabaseName("IX_Campania_Nombre");
-
-                    b.ToTable("Campanias");
                 });
 
             modelBuilder.Entity("FinanClickApi.Models.CatConcepto", b =>

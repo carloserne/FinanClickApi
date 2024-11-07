@@ -63,6 +63,9 @@ public partial class FinanclickDbContext : DbContext
 
     public virtual DbSet<QuejaSugerencium> QuejaSugerencias { get; set; }
     public virtual DbSet<ContactoPersona> ContactoPersonas { get; set; }
+
+    public virtual DbSet<Campania> Campanias { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -804,9 +807,52 @@ public partial class FinanclickDbContext : DbContext
                 .HasConstraintName("FK__ContactoP__idEmp__1B9317B3");
         });
 
+        modelBuilder.Entity<Campania>(entity =>
+        {
+            // Configuración de la llave primaria
+            entity.HasKey(e => e.IdCampania);
+
+            // Configuración de propiedades
+            entity.Property(e => e.Nombre)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(e => e.Asunto)
+                .HasMaxLength(150);
+
+            entity.Property(e => e.Contenido)
+                .IsRequired();
+
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("GETDATE()");
+
+            entity.Property(e => e.ScheduleDate)
+                .HasColumnType("datetime");
+
+            entity.Property(e => e.Tipo)
+                .HasMaxLength(50);
+
+            entity.Property(e => e.Estatus)
+                .IsRequired();
+
+            entity.Property(e => e.Destinatarios)
+                .IsRequired()
+                .HasColumnType("nvarchar(max)");
+
+            entity.Property(e => e.IdEmpresa)
+                .IsRequired(false);
+
+            // Opcional: Configuración de índices
+            entity.HasIndex(e => e.Nombre)
+                .HasDatabaseName("IX_Campania_Nombre");
+
+            entity.HasIndex(e => e.IdEmpresa)
+                .HasDatabaseName("IX_Campania_IdEmpresa");
+        });
 
 
-        OnModelCreatingPartial(modelBuilder);
+    OnModelCreatingPartial(modelBuilder);
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
