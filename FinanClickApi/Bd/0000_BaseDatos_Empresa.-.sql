@@ -1,6 +1,6 @@
 create database FinanclickDB;
 drop database FinanclickDB;
-use Financlick_DB;
+use FinanclickDB;
 
 
 CREATE TABLE Empresa (
@@ -79,5 +79,5 @@ INSERT INTO Empresa (
     'prueba' -- Logo (asumiendo que no se tiene un logo para insertar)
 );
 
-
+select * from Empresa;
 

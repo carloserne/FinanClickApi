@@ -195,6 +195,8 @@ CREATE TABLE VentaProspecto (
 	FOREIGN KEY (IdUsuario) REFERENCES Usuario(IdUsuario)
 );
 
+select * from Usuario;
+
 -- Inserciones para la tabla Plan_empresa
 INSERT INTO Plan_empresa (Precio, Descripcion, Duracion, Estatus)
 VALUES (199.99, 'Plan Básico', '1 mes', 1);
@@ -246,4 +248,55 @@ VALUES (7, 'contraseña123', 'Perez', 'Garcia', 1, 'usuario.prueba', 'Juan', NULL
 
 INSERT INTO VentaProspecto (IdPlan, IdUsuario, fechaSolicitud, nombreCliente, nombreEmpresa, correo, domicilio, ciudad, estado, rfc, numeroContacto)
 VALUES (3, null, '2024-10-21', 'Carlos Sánchez', 'Servicios Financieros', 'carlos.sanchez@serviciosfinancieros.com', 'Blvd. de los Héroes 789', 'Monterrey', 'Nuevo León', 'CSN1234567890', '4776009669');
+
+
+
+
+-- TABLA DE INGRESOS_EGRESOS Y LAS VISTAS CORRESPONDIENTES PARA EL DASHBOARD
+CREATE TABLE Ingresos_Egresos (
+    [Id_Ingresos_Egresos] [int] IDENTITY(1,1) NOT NULL,
+	[Fecha] [date] NOT NULL,
+	[TipoTransaccion] [int] NULL,
+	[Monto] [decimal](18, 2) NOT NULL,
+	[Descripcion] [nvarchar](255) NULL,
+	[Categoria] [varchar](100) NULL,
+	[Estatus] [int] NULL,
+);
+
+INSERT INTO Ingresos_Egresos (Fecha, TipoTransaccion, Monto, Descripcion, Categoria, Estatus)
+VALUES
+    ('2023-11-01', 1, 1500.00, 'Venta de producto X', 'Ventas',1),
+    ('2023-11-05', 2, 500.00, 'Pago de alquiler', 'Gastos Operativos',1),
+    ('2023-11-10', 1, 800.00, 'Servicio de consultoría', 'Ventas',1),
+    ('2023-11-15', 2, 200.00, 'Compra de suministros de oficina', 'Gastos Operativos',1),
+    ('2023-11-20', 1, 3000.00, 'Venta de servicio Y', 'Ventas',1);
+/*
+CREATE VIEW TotalesMensuales AS
+SELECT 
+    YEAR(Fecha) AS Anio,
+    MONTH(Fecha) AS Mes,
+    SUM(CASE WHEN TipoTransaccion = 1 AND Estatus = 1 THEN Monto ELSE 0 END) AS TotalIngresos,
+    SUM(CASE WHEN TipoTransaccion = 2 AND Estatus = 1 THEN Monto ELSE 0 END) AS TotalEgresos
+FROM 
+    Ingresos_Egresos
+WHERE 
+    Estatus = 1
+GROUP BY 
+    YEAR(Fecha), MONTH(Fecha);
+
+    
+  CREATE VIEW AcumuladoAnual AS
+SELECT 
+    Fecha,
+    SUM(CASE WHEN TipoTransaccion = 1 AND Estatus = 1 THEN Monto ELSE 0 END) 
+        OVER (ORDER BY Fecha ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS IngresosAcumulados,
+    SUM(CASE WHEN TipoTransaccion = 2 AND Estatus = 1 THEN Monto ELSE 0 END) 
+        OVER (ORDER BY Fecha ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS EgresosAcumulados
+FROM 
+    Ingresos_Egresos
+WHERE 
+    Estatus = 1;
+
+  
+ */
 

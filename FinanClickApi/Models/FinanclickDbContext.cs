@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+//using FinanClickApi.Modelss;
+//using FinanClickApi.Temp_Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanClickApi.Models;
@@ -55,10 +57,21 @@ public partial class FinanclickDbContext : DbContext
     public virtual DbSet<Amortizacion> Amortizacions { get; set; }
    
     public virtual DbSet<Pago> Pagos { get; set; }
-
     public virtual DbSet<PlanEmpresa> PlanEmpresas { get; set; }
 
     public virtual DbSet<VentaProspecto> VentaProspectos { get; set; }
+
+    public virtual DbSet<QuejaSugerencium> QuejaSugerencias { get; set; }
+    public virtual DbSet<ContactoPersona> ContactoPersonas { get; set; }
+
+    public virtual DbSet<Campania> Campanias { get; set; }
+
+    public virtual DbSet<IngresosEgreso> IngresosEgresos { get; set; }
+
+    //Vistas para Modulo de Finanzas
+    public DbSet<TotalesMensuales> TotalesMensuales { get; set; }
+
+    public DbSet<AcumuladoAnual> AcumuladoAnual { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
 
@@ -705,11 +718,9 @@ public partial class FinanclickDbContext : DbContext
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK_ResponsableUsuario");
         });
-
-
         modelBuilder.Entity<PlanEmpresa>(entity =>
         {
-            entity.HasKey(e => e.IdPlan).HasName("PK__Plan_emp__FB8102AEC98D798A");
+            entity.HasKey(e => e.IdPlan).HasName("PK_Plan_emp_FB8102AE15FD51B9");
 
             entity.ToTable("Plan_empresa");
 
@@ -719,6 +730,7 @@ public partial class FinanclickDbContext : DbContext
             entity.Property(e => e.Duracion)
                 .HasMaxLength(255)
                 .IsUnicode(false);
+            entity.Property(e => e.NumeroMeses).HasColumnName("numero_meses");
         });
 
         modelBuilder.Entity<VentaProspecto>(entity =>
@@ -768,14 +780,113 @@ public partial class FinanclickDbContext : DbContext
                 .HasConstraintName("FK__VentaPros__IdPlan__31B762FC");
 
             entity.HasOne(v => v.IdUsuarioNavigation)
-                .WithMany(u => u.VentaProspectos) 
+                .WithMany(u => u.VentaProspectos)
                 .HasForeignKey(v => v.IdUsuario)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_VentaProspecto_Usuario");
         });
 
+        modelBuilder.Entity<ContactoPersona>(entity =>
+        {
+            entity.HasKey(e => e.IdContacto).HasName("PK__Contacto__4B1329C75B1C17DD");
 
-        OnModelCreatingPartial(modelBuilder);
+            entity.ToTable("ContactoPersona");
+
+            entity.Property(e => e.IdContacto).HasColumnName("idContacto");
+            entity.Property(e => e.Apellido)
+                .HasMaxLength(100)
+                .HasColumnName("apellido");
+            entity.Property(e => e.Email)
+                .HasMaxLength(100)
+                .HasColumnName("email");
+            entity.Property(e => e.IdEmpresa).HasColumnName("idEmpresa");
+            entity.Property(e => e.Nombre)
+                .HasMaxLength(100)
+                .HasColumnName("nombre");
+            entity.Property(e => e.Puesto)
+                .HasMaxLength(100)
+                .HasColumnName("puesto");
+            entity.Property(e => e.Telefono)
+                .HasMaxLength(20)
+                .HasColumnName("telefono");
+
+            entity.HasOne(d => d.IdEmpresaNavigation).WithMany(p => p.ContactoPersonas)
+                .HasForeignKey(d => d.IdEmpresa)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__ContactoP__idEmp__1B9317B3");
+        });
+
+        modelBuilder.Entity<Campania>(entity =>
+        {
+            // Configuración de la llave primaria
+            entity.HasKey(e => e.IdCampania);
+
+            // Configuración de propiedades
+            entity.Property(e => e.Nombre)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(e => e.Asunto)
+                .HasMaxLength(150);
+
+            entity.Property(e => e.Contenido)
+                .IsRequired();
+
+            entity.Property(e => e.CreatedDate)
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("GETDATE()");
+
+            entity.Property(e => e.ScheduleDate)
+                .HasColumnType("datetime");
+
+            entity.Property(e => e.Tipo)
+                .HasMaxLength(50);
+
+            entity.Property(e => e.Estatus)
+                .IsRequired();
+
+            entity.Property(e => e.Destinatarios)
+                .IsRequired()
+                .HasColumnType("nvarchar(max)");
+
+            entity.Property(e => e.IdEmpresa)
+                .IsRequired(false);
+
+            // Opcional: Configuración de índices
+            entity.HasIndex(e => e.Nombre)
+                .HasDatabaseName("IX_Campania_Nombre");
+
+            entity.HasIndex(e => e.IdEmpresa)
+                .HasDatabaseName("IX_Campania_IdEmpresa");
+        });
+
+        //MODIFICACIONES DAVID PLAN_EMPRESA Y INGRESOS_EGRESO
+        modelBuilder.Entity<IngresosEgreso>(entity =>
+        {
+            entity.HasKey(e => e.IdIngresosEgresos).HasName("PK__Ingresos__28C0110C36D631C4");
+
+            entity.ToTable("Ingresos_Egresos");
+
+            entity.Property(e => e.IdIngresosEgresos).HasColumnName("Id_Ingresos_Egresos");
+            entity.Property(e => e.Categoria)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.Descripcion).HasMaxLength(255);
+            entity.Property(e => e.Monto).HasColumnType("decimal(18, 2)");
+        });
+
+        //Vista de TotalesMensuales
+        modelBuilder.Entity<TotalesMensuales>()
+            .HasNoKey() // Esto indica que la entidad no tiene una clave primaria
+            .ToView("TotalesMensuales"); // Indica que se mapea a la vista en la base de datos
+
+        //Vista de Acumulado Anual
+        modelBuilder.Entity<AcumuladoAnual>()
+            .HasNoKey()
+            .ToView("AcumuladoAnual");
+
+
+    OnModelCreatingPartial(modelBuilder);
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

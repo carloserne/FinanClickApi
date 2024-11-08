@@ -392,34 +392,38 @@ namespace FinanClickApi.Controllers
             }
 
             var amortizacionesVencidas = await _baseDatos.Amortizacions
-                .Where(a => a.IdCredito == id && (a.Estatus == 2 || a.Estatus == 3) && a.FechaFin < DateOnly.FromDateTime(DateTime.Now))
+                .Where(a => a.IdCredito == id && (a.Estatus != 4) && a.FechaFin < DateOnly.FromDateTime(DateTime.Now))
                 .ToListAsync();
+            var amortizacionesCorriendo = await _baseDatos.Amortizacions.Where(a => a.FechaFin > DateOnly.FromDateTime(DateTime.Now) && a.FechaInicio < DateOnly.FromDateTime(DateTime.Now)).ToListAsync();
 
             bool tieneMoratorios = false;
 
             foreach (var amortizacion in amortizacionesVencidas)
             {
-                
-                DateOnly fechaActual = DateOnly.FromDateTime(DateTime.Now);
-
-                DateOnly fechaFinDateTime = amortizacion.FechaMoratorio ?? amortizacion.FechaFin;
-                amortizacion.FechaMoratorio = fechaActual;
-
-
-                DateTime fechaFin = fechaFinDateTime.ToDateTime(TimeOnly.MinValue);
-                DateTime fechaActualDateTime = fechaActual.ToDateTime(TimeOnly.MinValue);
-
-                int diasVencidos = (fechaActualDateTime - fechaFin).Days;
-                decimal interesMoratorioDiario = (amortizacion.SaldoInsoluto * producto.InteresMoratorio.Value / 100) / 360;
-                decimal interesMoratorioAcumulado = interesMoratorioDiario * diasVencidos;
-
-                amortizacion.InteresMoratorio += interesMoratorioAcumulado;
-
-                if (interesMoratorioAcumulado > 0)
+                if (amortizacion.Estatus != 4)
                 {
+                    DateOnly fechaActual = DateOnly.FromDateTime(DateTime.Now);
+
+                    DateOnly fechaFinDateTime = amortizacion.FechaMoratorio ?? amortizacion.FechaFin;
+                    amortizacion.FechaMoratorio = fechaActual;
+
+
+                    DateTime fechaFin = fechaFinDateTime.ToDateTime(TimeOnly.MinValue);
+                    DateTime fechaActualDateTime = fechaActual.ToDateTime(TimeOnly.MinValue);
+
+                    int diasVencidos = (fechaActualDateTime - fechaFin).Days;
+                    decimal interesMoratorioDiario = (amortizacion.SaldoInsoluto * producto.InteresMoratorio.Value / 100) / 360;
+                    decimal interesMoratorioAcumulado = interesMoratorioDiario * diasVencidos;
+
+                    amortizacion.InteresMoratorio += interesMoratorioAcumulado;
                     amortizacion.Estatus = 3;
                 }
+                
 
+            }
+            foreach (var amortizacion in amortizacionesCorriendo)
+            {
+                amortizacion.Estatus = 2;
             }
 
             await _baseDatos.SaveChangesAsync();

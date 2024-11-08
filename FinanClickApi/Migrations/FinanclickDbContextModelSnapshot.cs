@@ -38,6 +38,22 @@ namespace FinanClickApi.Migrations
                     b.ToTable("DetalleModuloUsuario", (string)null);
                 });
 
+            modelBuilder.Entity("FinanClickApi.Models.AcumuladoAnual", b =>
+                {
+                    b.Property<decimal>("EgresosAcumulados")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("IngresosAcumulados")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("AcumuladoAnual", (string)null);
+                });
+
             modelBuilder.Entity("FinanClickApi.Models.Amortizacion", b =>
                 {
                     b.Property<int>("IdAmortizacion")
@@ -133,6 +149,62 @@ namespace FinanClickApi.Migrations
                     b.HasIndex("IdPersonaMoral");
 
                     b.ToTable("Aval", (string)null);
+                });
+
+            modelBuilder.Entity("FinanClickApi.Models.Campania", b =>
+                {
+                    b.Property<int>("IdCampania")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdCampania"));
+
+                    b.Property<string>("Asunto")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Contenido")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("Destinatarios")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Estatus")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("IdEmpresa")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ScheduleDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("IdCampania");
+
+                    b.HasIndex("IdEmpresa")
+                        .HasDatabaseName("IX_Campania_IdEmpresa");
+
+                    b.HasIndex("Nombre")
+                        .HasDatabaseName("IX_Campania_Nombre");
+
+                    b.ToTable("Campanias");
                 });
 
             modelBuilder.Entity("FinanClickApi.Models.CatConcepto", b =>
@@ -233,6 +305,54 @@ namespace FinanClickApi.Migrations
                     b.HasIndex("IdEmpresa");
 
                     b.ToTable("Cliente", (string)null);
+                });
+
+            modelBuilder.Entity("FinanClickApi.Models.ContactoPersona", b =>
+                {
+                    b.Property<int>("IdContacto")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("idContacto");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdContacto"));
+
+                    b.Property<string>("Apellido")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("apellido");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("email");
+
+                    b.Property<int>("IdEmpresa")
+                        .HasColumnType("int")
+                        .HasColumnName("idEmpresa");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("nombre");
+
+                    b.Property<string>("Puesto")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("puesto");
+
+                    b.Property<string>("Telefono")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("telefono");
+
+                    b.HasKey("IdContacto")
+                        .HasName("PK__Contacto__4B1329C75B1C17DD");
+
+                    b.HasIndex("IdEmpresa");
+
+                    b.ToTable("ContactoPersona", (string)null);
                 });
 
             modelBuilder.Entity("FinanClickApi.Models.Credito", b =>
@@ -495,6 +615,42 @@ namespace FinanClickApi.Migrations
                         .HasName("PK__Empresa__5EF4033EED026D14");
 
                     b.ToTable("Empresa", (string)null);
+                });
+
+            modelBuilder.Entity("FinanClickApi.Models.IngresosEgreso", b =>
+                {
+                    b.Property<int>("IdIngresosEgresos")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("Id_Ingresos_Egresos");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdIngresosEgresos"));
+
+                    b.Property<string>("Categoria")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("Descripcion")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<int?>("Estatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly>("Fecha")
+                        .HasColumnType("date");
+
+                    b.Property<decimal>("Monto")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<int?>("TipoTransaccion")
+                        .HasColumnType("int");
+
+                    b.HasKey("IdIngresosEgresos")
+                        .HasName("PK__Ingresos__28C0110C36D631C4");
+
+                    b.ToTable("Ingresos_Egresos", (string)null);
                 });
 
             modelBuilder.Entity("FinanClickApi.Models.Modulo", b =>
@@ -909,6 +1065,42 @@ namespace FinanClickApi.Migrations
                     b.ToTable("PersonaMoral", (string)null);
                 });
 
+            modelBuilder.Entity("FinanClickApi.Models.PlanEmpresa", b =>
+                {
+                    b.Property<int>("IdPlan")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdPlan"));
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Duracion")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<int>("Estatus")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("NumeroMeses")
+                        .HasColumnType("int")
+                        .HasColumnName("numero_meses");
+
+                    b.Property<double>("Precio")
+                        .HasColumnType("float");
+
+                    b.HasKey("IdPlan")
+                        .HasName("PK_Plan_emp_FB8102AE15FD51B9");
+
+                    b.ToTable("Plan_empresa", (string)null);
+                });
+
             modelBuilder.Entity("FinanClickApi.Models.Producto", b =>
                 {
                     b.Property<int>("IdProducto")
@@ -1039,7 +1231,7 @@ namespace FinanClickApi.Migrations
 
                     b.HasIndex("Responsable");
 
-                    b.ToTable("QuejaSugerencia");
+                    b.ToTable("QuejaSugerencium");
                 });
 
             modelBuilder.Entity("FinanClickApi.Models.Rol", b =>
@@ -1069,56 +1261,23 @@ namespace FinanClickApi.Migrations
                     b.ToTable("Rol", (string)null);
                 });
 
-            modelBuilder.Entity("FinanClickApi.Models.Usuario", b =>
+            modelBuilder.Entity("FinanClickApi.Models.TotalesMensuales", b =>
                 {
-                    b.Property<int>("IdUsuario")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("Anio")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdUsuario"));
-
-                    b.Property<string>("ApellidoMaterno")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("ApellidoPaterno")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Contrasenia")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<int?>("IdEmpresa")
+                    b.Property<int>("Mes")
                         .HasColumnType("int");
 
-                    b.Property<int?>("IdRol")
-                        .HasColumnType("int");
+                    b.Property<decimal>("TotalEgresos")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Imagen")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal>("TotalIngresos")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Nombre")
-                        .HasMaxLength(35)
-                        .HasColumnType("nvarchar(35)");
+                    b.ToTable((string)null);
 
-                    b.Property<string>("Usuario1")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
-                        .HasColumnName("Usuario");
-
-                    b.HasKey("IdUsuario")
-                        .HasName("PK__Usuario__5B65BF975403CE1B");
-
-                    b.HasIndex("IdEmpresa");
-
-                    b.HasIndex("IdRol");
-
-                    b.ToTable("Usuario", (string)null);
+                    b.ToView("TotalesMensuales", (string)null);
                 });
 
             modelBuilder.Entity("FinanClickApi.Models.UsuarioCliente", b =>
@@ -1192,6 +1351,142 @@ namespace FinanClickApi.Migrations
                     b.ToTable("DetalleProductos");
                 });
 
+            modelBuilder.Entity("Usuario", b =>
+                {
+                    b.Property<int>("IdUsuario")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdUsuario"));
+
+                    b.Property<string>("ApellidoMaterno")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("ApellidoPaterno")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Contrasenia")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<int?>("IdEmpresa")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("IdRol")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Imagen")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nombre")
+                        .HasMaxLength(35)
+                        .HasColumnType("nvarchar(35)");
+
+                    b.Property<string>("Usuario1")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("Usuario");
+
+                    b.HasKey("IdUsuario")
+                        .HasName("PK__Usuario__5B65BF975403CE1B");
+
+                    b.HasIndex("IdEmpresa");
+
+                    b.HasIndex("IdRol");
+
+                    b.ToTable("Usuario", (string)null);
+                });
+
+            modelBuilder.Entity("VentaProspecto", b =>
+                {
+                    b.Property<int>("IdVenta")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdVenta"));
+
+                    b.Property<string>("Ciudad")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("ciudad");
+
+                    b.Property<string>("Correo")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("correo");
+
+                    b.Property<string>("Domicilio")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("domicilio");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("estado");
+
+                    b.Property<DateOnly>("FechaSolicitud")
+                        .HasColumnType("date")
+                        .HasColumnName("fechaSolicitud");
+
+                    b.Property<int>("IdPlan")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("IdUsuario")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NombreCliente")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("nombreCliente");
+
+                    b.Property<string>("NombreEmpresa")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(60)")
+                        .HasColumnName("nombreEmpresa");
+
+                    b.Property<string>("NumeroContacto")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(10)")
+                        .HasColumnName("numeroContacto");
+
+                    b.Property<string>("Rfc")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(13)")
+                        .HasColumnName("rfc");
+
+                    b.HasKey("IdVenta")
+                        .HasName("PK__VentaPro__BC1240BD2D33906A");
+
+                    b.HasIndex("IdPlan");
+
+                    b.HasIndex("IdUsuario");
+
+                    b.ToTable("VentaProspecto", (string)null);
+                });
+
             modelBuilder.Entity("DetalleModuloUsuario", b =>
                 {
                     b.HasOne("FinanClickApi.Models.Modulo", null)
@@ -1200,7 +1495,7 @@ namespace FinanClickApi.Migrations
                         .IsRequired()
                         .HasConstraintName("FK__DetalleMo__IdMod__412EB0B6");
 
-                    b.HasOne("FinanClickApi.Models.Usuario", null)
+                    b.HasOne("Usuario", null)
                         .WithMany()
                         .HasForeignKey("IdUsuario")
                         .IsRequired()
@@ -1259,6 +1554,17 @@ namespace FinanClickApi.Migrations
                         .WithMany("Clientes")
                         .HasForeignKey("IdEmpresa")
                         .HasConstraintName("FK__Cliente__idEmpre__44FF419A");
+
+                    b.Navigation("IdEmpresaNavigation");
+                });
+
+            modelBuilder.Entity("FinanClickApi.Models.ContactoPersona", b =>
+                {
+                    b.HasOne("FinanClickApi.Models.Empresa", "IdEmpresaNavigation")
+                        .WithMany("ContactoPersonas")
+                        .HasForeignKey("IdEmpresa")
+                        .IsRequired()
+                        .HasConstraintName("FK__ContactoP__idEmp__1B9317B3");
 
                     b.Navigation("IdEmpresaNavigation");
                 });
@@ -1379,7 +1685,7 @@ namespace FinanClickApi.Migrations
                         .HasForeignKey("IdEmpresa")
                         .IsRequired();
 
-                    b.HasOne("FinanClickApi.Models.Usuario", "ResponsableNavigation")
+                    b.HasOne("Usuario", "ResponsableNavigation")
                         .WithMany("QuejaSugerencia")
                         .HasForeignKey("Responsable")
                         .OnDelete(DeleteBehavior.SetNull)
@@ -1388,23 +1694,6 @@ namespace FinanClickApi.Migrations
                     b.Navigation("IdEmpresaNavigation");
 
                     b.Navigation("ResponsableNavigation");
-                });
-
-            modelBuilder.Entity("FinanClickApi.Models.Usuario", b =>
-                {
-                    b.HasOne("FinanClickApi.Models.Empresa", "IdEmpresaNavigation")
-                        .WithMany("Usuarios")
-                        .HasForeignKey("IdEmpresa")
-                        .HasConstraintName("FK__Usuario__IdEmpre__3E52440B");
-
-                    b.HasOne("FinanClickApi.Models.Rol", "IdRolNavigation")
-                        .WithMany("Usuarios")
-                        .HasForeignKey("IdRol")
-                        .HasConstraintName("FK__Usuario__IdRol__3D5E1FD2");
-
-                    b.Navigation("IdEmpresaNavigation");
-
-                    b.Navigation("IdRolNavigation");
                 });
 
             modelBuilder.Entity("FinanClickApi.Models.UsuarioCliente", b =>
@@ -1432,6 +1721,41 @@ namespace FinanClickApi.Migrations
                     b.Navigation("IdConceptoNavigation");
 
                     b.Navigation("IdProductoNavigation");
+                });
+
+            modelBuilder.Entity("Usuario", b =>
+                {
+                    b.HasOne("FinanClickApi.Models.Empresa", "IdEmpresaNavigation")
+                        .WithMany("Usuarios")
+                        .HasForeignKey("IdEmpresa")
+                        .HasConstraintName("FK__Usuario__IdEmpre__3E52440B");
+
+                    b.HasOne("FinanClickApi.Models.Rol", "IdRolNavigation")
+                        .WithMany("Usuarios")
+                        .HasForeignKey("IdRol")
+                        .HasConstraintName("FK__Usuario__IdRol__3D5E1FD2");
+
+                    b.Navigation("IdEmpresaNavigation");
+
+                    b.Navigation("IdRolNavigation");
+                });
+
+            modelBuilder.Entity("VentaProspecto", b =>
+                {
+                    b.HasOne("FinanClickApi.Models.PlanEmpresa", "IdPlanNavigation")
+                        .WithMany("VentaProspectos")
+                        .HasForeignKey("IdPlan")
+                        .IsRequired()
+                        .HasConstraintName("FK__VentaPros__numer__31B762FC");
+
+                    b.HasOne("Usuario", "IdUsuarioNavigation")
+                        .WithMany("VentaProspectos")
+                        .HasForeignKey("IdUsuario")
+                        .HasConstraintName("FK_VentaProspecto_Usuario");
+
+                    b.Navigation("IdPlanNavigation");
+
+                    b.Navigation("IdUsuarioNavigation");
                 });
 
             modelBuilder.Entity("FinanClickApi.Models.CatConcepto", b =>
@@ -1472,6 +1796,8 @@ namespace FinanClickApi.Migrations
 
                     b.Navigation("Clientes");
 
+                    b.Navigation("ContactoPersonas");
+
                     b.Navigation("QuejaSugerencia");
 
                     b.Navigation("Usuarios");
@@ -1495,6 +1821,11 @@ namespace FinanClickApi.Migrations
                     b.Navigation("Obligados");
                 });
 
+            modelBuilder.Entity("FinanClickApi.Models.PlanEmpresa", b =>
+                {
+                    b.Navigation("VentaProspectos");
+                });
+
             modelBuilder.Entity("FinanClickApi.Models.Producto", b =>
                 {
                     b.Navigation("Creditos");
@@ -1509,9 +1840,11 @@ namespace FinanClickApi.Migrations
                     b.Navigation("Usuarios");
                 });
 
-            modelBuilder.Entity("FinanClickApi.Models.Usuario", b =>
+            modelBuilder.Entity("Usuario", b =>
                 {
                     b.Navigation("QuejaSugerencia");
+
+                    b.Navigation("VentaProspectos");
                 });
 #pragma warning restore 612, 618
         }

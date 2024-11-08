@@ -16,6 +16,8 @@ public partial class PlanEmpresa
 
     public int Estatus { get; set; }
 
+    public int? NumeroMeses { get; set; }
+
     [JsonIgnore]
     public virtual ICollection<VentaProspecto> VentaProspectos { get; set; } = new List<VentaProspecto>();
 }
