@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace FinanClickApi.Temp_Models;
+namespace FinanClickApi.Models;
 
 public partial class PlanEmpresa
 {
@@ -15,6 +15,8 @@ public partial class PlanEmpresa
     public string Duracion { get; set; } = null!;
 
     public int Estatus { get; set; }
+
+    public int? NumeroMeses { get; set; }
 
     [JsonIgnore]
     public virtual ICollection<VentaProspecto> VentaProspectos { get; set; } = new List<VentaProspecto>();

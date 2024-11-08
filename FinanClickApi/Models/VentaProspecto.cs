@@ -1,5 +1,4 @@
 ﻿using FinanClickApi.Models;
-using FinanClickApi.Temp_Models;
 using System.Text.Json.Serialization;
 
 public partial class VentaProspecto
