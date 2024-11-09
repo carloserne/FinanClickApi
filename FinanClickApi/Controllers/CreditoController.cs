@@ -156,7 +156,7 @@ namespace FinanClickApi.Controllers
             // Verificar los estatus de los documentos
             foreach (var document in documentos)
             {
-                if (document.Estatus != 1)
+                if (document.Estatus != 1 && document.Estatus != 0)
                 {
                     return Ok(new { error = "Faltan documentos por aprobar" });
                 }

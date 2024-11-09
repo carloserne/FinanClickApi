@@ -395,5 +395,26 @@ namespace FinanClickApi.Controllers
             }
         }
 
+        [HttpGet("ProximasAVencer")]
+        public async Task<IActionResult> GetAmortizacionesProximasAVencer()
+        {
+            var fechaActual = DateOnly.FromDateTime(DateTime.Now);
+            var fechaLimite = DateOnly.FromDateTime(DateTime.Now.AddDays(5));
+
+            var amortizacionesProximas = await _baseDatos.Amortizacions
+                .Where(a => a.FechaFin >= fechaActual
+                            && a.FechaFin <= fechaLimite
+                            && a.Estatus != 0)
+                .Select(a => new
+                {
+                    a.IdAmortizacion,
+                    a.IdCredito,
+                    a.FechaFin
+                })
+                .ToListAsync();
+
+            return Ok(amortizacionesProximas);
+        }
+
     }
 }

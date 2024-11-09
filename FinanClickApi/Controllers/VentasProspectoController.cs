@@ -60,6 +60,7 @@ namespace FinanClickApi.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> PostVenta([FromBody] VentaProspecto venta)
         {
             if (venta == null)
