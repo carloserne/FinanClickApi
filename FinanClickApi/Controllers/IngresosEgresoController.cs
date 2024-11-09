@@ -87,19 +87,25 @@ namespace FinanClickApi.Controllers
             return Ok(ingresos);
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IngresosEgreso>> GetIngresosEgresos(int id)
+        [HttpGet("IngresosEgresosGetAll")]
+        public async Task<ActionResult<IEnumerable<IngresosEgreso>>> GetIngresosEgresos()
         {
-            var ingresoEgreso = await _baseDatos.IngresosEgresos.FindAsync(id);
+            var ingresos = await _baseDatos.IngresosEgresos
+                .Where(c => c.Estatus == 1)
+                .Select(c => new
+                {
+                    c.IdIngresosEgresos,
+                    c.Monto,
+                    c.TipoTransaccion,
+                    c.Fecha,
+                    c.Descripcion,
+                    c.Categoria
+                })
+                .ToListAsync();
 
-            if (ingresoEgreso == null)
-            {
-                return NotFound();
-            }
-
-            return ingresoEgreso;
+            return Ok(ingresos);
         }
-        
+
         //POST INGRESOS
         /*
          NOTA: EL MANEJO DEL TIPO DE TRANSACCION SE DEBE DE MANEJAR DEL LADO DEL FRONTEND
