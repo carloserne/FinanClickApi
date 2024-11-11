@@ -18,4 +18,6 @@ public partial class IngresosEgreso
     public string? Categoria { get; set; }
 
     public int? Estatus { get; set; }
+
+    public int? IdEmpresa { get; set; }
 }

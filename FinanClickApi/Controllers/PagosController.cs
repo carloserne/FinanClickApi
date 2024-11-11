@@ -402,8 +402,8 @@ namespace FinanClickApi.Controllers
             var fechaLimite = DateOnly.FromDateTime(DateTime.Now.AddDays(5));
 
             var amortizacionesProximas = await _baseDatos.Amortizacions
-                .Where(a => a.FechaFin >= fechaActual
-                            && a.FechaFin <= fechaLimite
+                .Where(a => a.FechaFin >= fechaActual 
+                            && a.FechaFin <= fechaLimite 
                             && a.Estatus != 0)
                 .Select(a => new
                 {
@@ -415,6 +415,7 @@ namespace FinanClickApi.Controllers
 
             return Ok(amortizacionesProximas);
         }
+
 
     }
 }

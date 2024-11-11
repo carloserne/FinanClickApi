@@ -40,5 +40,30 @@ namespace FinanClickApi.Controllers
             return Ok(planes);
         }
 
+        [HttpGet("{idPlan}")]
+        [AllowAnonymous]
+        public async Task<ActionResult<object>> GetPlanById(int idPlan)
+        {
+            var plan = await _baseDatos.PlanEmpresas
+                .Where(c => c.IdPlan == idPlan && c.Estatus != 0)
+                .Select(c => new
+                {
+                    c.IdPlan,
+                    c.Precio,
+                    c.Descripcion,
+                    c.Duracion,
+                    c.Estatus
+                })
+                .FirstOrDefaultAsync();
+
+            if (plan == null)
+            {
+                return NotFound("Plan no encontrado");
+            }
+
+            return Ok(plan);
+        }
+
+
     }
 }
