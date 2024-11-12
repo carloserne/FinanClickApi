@@ -112,5 +112,44 @@ namespace FinanClickApi.Controllers
             return NoContent(); // Retornar 204 No Content en caso de éxito
         }
 
+        [HttpGet("pendientes")]
+        public async Task<ActionResult<IEnumerable<object>>> GetVentasPendientes()
+        {
+            // Obtener el ID del usuario actual
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (currentUserId == null)
+            {
+                return Unauthorized();
+            }
+
+            // Verificar si el usuario existe en la base de datos
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+            if (user == null)
+            {
+                return NotFound("Usuario no encontrado");
+            }
+
+            var ventasPendientes = await _baseDatos.VentaProspectos
+                .Where(v => v.IdIngresoEgreso == null)
+                .Select(v => new
+                {
+                    v.IdVenta,
+                    v.IdPlan,
+                    v.FechaSolicitud,
+                    v.NombreCliente,
+                    v.NombreEmpresa,
+                    v.NumeroContacto,
+                    v.Correo,
+                    v.Domicilio,
+                    v.Ciudad,
+                    v.Estado,
+                    v.Rfc,
+                    v.IdUsuario
+                })
+                .ToListAsync();
+
+            return Ok(ventasPendientes);
+        }
+
     }
 }

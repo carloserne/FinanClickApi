@@ -15,10 +15,14 @@ public partial class VentaProspecto
     public string Estado { get; set; } = null!;
     public string Rfc { get; set; } = null!;
     public string NumeroContacto { get; set; } = null!;
+    public int? IdIngresoEgreso { get; set; }
 
     [JsonIgnore]
     public virtual PlanEmpresa? IdPlanNavigation { get; set; } = null!;
 
     [JsonIgnore]
     public virtual Usuario? IdUsuarioNavigation { get; set; }
+
+    [JsonIgnore]
+    public virtual IngresosEgreso IngresoEgreso { get; set; }
 }
