@@ -784,7 +784,14 @@ public partial class FinanclickDbContext : DbContext
                 .HasForeignKey(v => v.IdUsuario)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_VentaProspecto_Usuario");
+
+            entity.HasOne(d => d.IngresoEgreso)
+                .WithMany()
+                .HasForeignKey(d => d.IdIngresoEgreso)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .IsRequired(false);
         });
+
 
         modelBuilder.Entity<ContactoPersona>(entity =>
         {

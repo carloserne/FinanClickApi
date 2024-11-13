@@ -4,6 +4,7 @@ using FinanClickApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinanClickApi.Migrations
 {
     [DbContext(typeof(FinanclickDbContext))]
-    partial class FinanclickDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241110215429_AddIdEmpresaToIngresosEgresos")]
+    partial class AddIdEmpresaToIngresosEgresos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1446,9 +1449,6 @@ namespace FinanClickApi.Migrations
                         .HasColumnType("date")
                         .HasColumnName("fechaSolicitud");
 
-                    b.Property<int?>("IdIngresoEgreso")
-                        .HasColumnType("int");
-
                     b.Property<int>("IdPlan")
                         .HasColumnType("int");
 
@@ -1485,8 +1485,6 @@ namespace FinanClickApi.Migrations
 
                     b.HasKey("IdVenta")
                         .HasName("PK__VentaPro__BC1240BD2D33906A");
-
-                    b.HasIndex("IdIngresoEgreso");
 
                     b.HasIndex("IdPlan");
 
@@ -1750,10 +1748,6 @@ namespace FinanClickApi.Migrations
 
             modelBuilder.Entity("VentaProspecto", b =>
                 {
-                    b.HasOne("FinanClickApi.Models.IngresosEgreso", "IngresoEgreso")
-                        .WithMany()
-                        .HasForeignKey("IdIngresoEgreso");
-
                     b.HasOne("FinanClickApi.Models.PlanEmpresa", "IdPlanNavigation")
                         .WithMany("VentaProspectos")
                         .HasForeignKey("IdPlan")
@@ -1767,8 +1761,6 @@ namespace FinanClickApi.Migrations
                     b.Navigation("IdPlanNavigation");
 
                     b.Navigation("IdUsuarioNavigation");
-
-                    b.Navigation("IngresoEgreso");
                 });
 
             modelBuilder.Entity("FinanClickApi.Models.CatConcepto", b =>
