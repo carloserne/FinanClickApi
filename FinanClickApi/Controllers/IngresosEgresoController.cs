@@ -99,19 +99,29 @@ namespace FinanClickApi.Controllers
 
             return ingresoEgreso;
         }
-        
+
         //POST INGRESOS
         /*
          NOTA: EL MANEJO DEL TIPO DE TRANSACCION SE DEBE DE MANEJAR DEL LADO DEL FRONTEND
          */
         [HttpPost("ingresos")]
-        public async Task<ActionResult<IngresosEgreso>> CrearIngreso(IngresosEgreso ingresoEgreso)
+        public async Task<ActionResult<IngresosEgreso>> CrearIngreso(IngresosEgreso ingresoEgreso, int idVentaProspecto)
         {
+            // Guardar el nuevo ingreso
             _baseDatos.IngresosEgresos.Add(ingresoEgreso);
             await _baseDatos.SaveChangesAsync();
 
+            // Actualizar VentaProspecto con el ID del ingreso creado
+            var venta = await _baseDatos.VentaProspectos.FindAsync(idVentaProspecto);
+            if (venta != null)
+            {
+                venta.IdIngresoEgreso = ingresoEgreso.IdIngresosEgresos;
+                await _baseDatos.SaveChangesAsync();
+            }
+
             return CreatedAtAction(nameof(GetIngresosEgresos), new { id = ingresoEgreso.IdIngresosEgresos }, ingresoEgreso);
         }
+
 
         //POST EGRESOS
         [HttpPost("egresos")]

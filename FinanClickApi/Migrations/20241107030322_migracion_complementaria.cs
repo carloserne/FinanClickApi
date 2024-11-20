@@ -52,7 +52,7 @@ namespace FinanClickApi.Migrations
                         principalColumn: "IdEmpresa");
                 });
 
-            migrationBuilder.CreateTable(
+            /*migrationBuilder.CreateTable(
                 name: "Plan_empresa",
                 columns: table => new
                 {
@@ -66,9 +66,9 @@ namespace FinanClickApi.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK__Plan_emp__FB8102AEC98D798A", x => x.IdPlan);
-                });
+                });*/
 
-            migrationBuilder.CreateTable(
+            /*migrationBuilder.CreateTable(
                 name: "VentaProspecto",
                 columns: table => new
                 {
@@ -99,7 +99,7 @@ namespace FinanClickApi.Migrations
                         column: x => x.IdPlan,
                         principalTable: "Plan_empresa",
                         principalColumn: "IdPlan");
-                });
+                });*/
 
             migrationBuilder.CreateIndex(
                 name: "IX_ContactoPersona_idEmpresa",
@@ -134,11 +134,11 @@ namespace FinanClickApi.Migrations
             migrationBuilder.DropTable(
                 name: "ContactoPersona");
 
-            migrationBuilder.DropTable(
-                name: "VentaProspecto");
+            /*migrationBuilder.DropTable(
+                name: "VentaProspecto");*/
 
-            migrationBuilder.DropTable(
-                name: "Plan_empresa");
+            /*migrationBuilder.DropTable(
+                name: "Plan_empresa");*/
 
             migrationBuilder.RenameTable(
                 name: "QuejaSugerencium",

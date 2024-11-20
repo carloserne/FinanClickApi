@@ -11,9 +11,11 @@ namespace FinanClickApi.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            /*
             migrationBuilder.DropPrimaryKey(
                 name: "PK__Plan_emp__FB8102AEC98D798A",
                 table: "Plan_empresa");
+            */
 
             migrationBuilder.AddColumn<int>(
                 name: "numero_meses",
@@ -21,10 +23,12 @@ namespace FinanClickApi.Migrations
                 type: "int",
                 nullable: true);
 
+            /*
             migrationBuilder.AddPrimaryKey(
                 name: "PK_Plan_emp_FB8102AE15FD51B9",
                 table: "Plan_empresa",
                 column: "IdPlan");
+            */
 
             migrationBuilder.CreateTable(
                 name: "Ingresos_Egresos",
@@ -51,18 +55,22 @@ namespace FinanClickApi.Migrations
             migrationBuilder.DropTable(
                 name: "Ingresos_Egresos");
 
+            /*
             migrationBuilder.DropPrimaryKey(
                 name: "PK_Plan_emp_FB8102AE15FD51B9",
                 table: "Plan_empresa");
+            */
 
             migrationBuilder.DropColumn(
                 name: "numero_meses",
                 table: "Plan_empresa");
 
+            /*
             migrationBuilder.AddPrimaryKey(
                 name: "PK__Plan_emp__FB8102AEC98D798A",
                 table: "Plan_empresa",
                 column: "IdPlan");
+            */
         }
     }
 }

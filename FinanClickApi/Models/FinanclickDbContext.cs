@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+//using FinanClickApi.Modelss;
 using FinanClickApi.Modelss;
 
 //using FinanClickApi.Temp_Models;
@@ -780,14 +781,22 @@ public partial class FinanclickDbContext : DbContext
                 .WithMany(p => p.VentaProspectos)
                 .HasForeignKey(d => d.IdPlan)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__VentaPros__numer__31B762FC");
+                .IsRequired(false)
+                .HasConstraintName("FK__VentaPros__IdPlan__31B762FC");
 
             entity.HasOne(v => v.IdUsuarioNavigation)
                 .WithMany(u => u.VentaProspectos)
                 .HasForeignKey(v => v.IdUsuario)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_VentaProspecto_Usuario");
+
+            entity.HasOne(d => d.IngresoEgreso)
+                .WithMany()
+                .HasForeignKey(d => d.IdIngresoEgreso)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .IsRequired(false);
         });
+
 
         modelBuilder.Entity<ContactoPersona>(entity =>
         {

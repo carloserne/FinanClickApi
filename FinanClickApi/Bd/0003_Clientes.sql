@@ -300,3 +300,17 @@ WHERE
   
  */
 
+ ALTER TABLE Ingresos_Egresos
+ADD idEmpresa INT NULL;
+
+ALTER TABLE Ingresos_Egresos
+ADD CONSTRAINT FK_Ingresos_Egresos_Empresa
+FOREIGN KEY (idEmpresa) REFERENCES Empresa(IdEmpresa);
+
+
+ALTER TABLE VentaProspecto
+ADD idIngresoEgreso INT NULL;
+
+ALTER TABLE VentaProspecto
+ADD CONSTRAINT FK_VentaProspecto_IngresosEgresos
+FOREIGN KEY (idIngresoEgreso) REFERENCES Ingresos_Egresos(Id_Ingresos_Egresos);
