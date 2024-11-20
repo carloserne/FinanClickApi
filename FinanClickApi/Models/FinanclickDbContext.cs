@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using FinanClickApi.Modelss;
+
 //using FinanClickApi.Temp_Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -72,6 +73,9 @@ public partial class FinanclickDbContext : DbContext
     public DbSet<TotalesMensuales> TotalesMensuales { get; set; }
 
     public DbSet<AcumuladoAnual> AcumuladoAnual { get; set; }
+
+    public virtual DbSet<Actividad> Actividads { get; set; }
+
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
 
@@ -872,6 +876,30 @@ public partial class FinanclickDbContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.Descripcion).HasMaxLength(255);
             entity.Property(e => e.Monto).HasColumnType("decimal(18, 2)");
+        });
+
+
+        modelBuilder.Entity<Actividad>(entity =>
+        {
+            entity.HasKey(e => e.IdActividad).HasName("PK__Activida__5EAF86A4864D3F7C");
+
+            entity.ToTable("Actividad");
+
+            entity.Property(e => e.Estatus)
+                .HasMaxLength(20)
+                .HasDefaultValue("Pendiente");
+            entity.Property(e => e.FechaActualizacion)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.FechaCreacion)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Nombre).HasMaxLength(255);
+
+            entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.Actividads)
+                .HasForeignKey(d => d.IdUsuario)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Actividad__IdUsu__2CF2ADDF");
         });
 
         //Vista de TotalesMensuales
