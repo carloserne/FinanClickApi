@@ -41,7 +41,7 @@ namespace FinanClickApi.Controllers
                 .Select(v => new
                 {
                     v.IdVenta,
-                    v.IdPlan,
+                    v.IdPlan,   
                     v.FechaSolicitud,
                     v.NombreCliente,
                     v.NombreEmpresa,
