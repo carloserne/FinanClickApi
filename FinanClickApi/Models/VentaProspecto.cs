@@ -6,7 +6,7 @@ public partial class VentaProspecto
     public int IdVenta { get; set; }
     public int IdPlan { get; set; }
     public int? IdUsuario { get; set; }
-    public DateOnly FechaSolicitud { get; set; }
+    public DateTime FechaSolicitud { get; set; }
     public string NombreCliente { get; set; } = null!;
     public string NombreEmpresa { get; set; } = null!;
     public string Correo { get; set; } = null!;
@@ -24,5 +24,5 @@ public partial class VentaProspecto
     public virtual Usuario? IdUsuarioNavigation { get; set; }
 
     [JsonIgnore]
-    public virtual IngresosEgreso IngresoEgreso { get; set; }
+    public virtual IngresosEgreso? IngresoEgreso { get; set; }
 }

@@ -21,10 +21,13 @@ namespace FinanClickApi.Controllers
     {
 
         private readonly FinanclickDbContext _baseDatos;
+        private readonly EmailService _emailService;
 
-        public CampaniaController(FinanclickDbContext baseDatos)
+
+        public CampaniaController(FinanclickDbContext baseDatos, EmailService emailService)
         {
             _baseDatos = baseDatos;
+            _emailService = emailService;
         }
 
         // GET: api/Campania
@@ -112,7 +115,7 @@ namespace FinanClickApi.Controllers
         }
 
         [HttpPost("{id}/sendEmails")]
-        public async Task<IActionResult> SendCampaignEmails(int id, [FromBody] SendEmailRequest request, [FromServices] IOptions<MailgunSettings> mailgunSettings)
+        public async Task<IActionResult> SendCampaignEmails(int id, [FromBody] SendEmailRequest request)
         {
             // Buscar la campaña en la base de datos
             var campaign = await _baseDatos.Campanias.FindAsync(id);
@@ -122,37 +125,37 @@ namespace FinanClickApi.Controllers
             }
 
             // Configuración de Mailgun
-            var mailgun = mailgunSettings.Value;
             var failedEmails = new List<string>(); // Lista para almacenar correos fallidos
+            var emails = new List<String>(); // Lista para almacenar correos a enviar>
 
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($"api:{mailgun.ApiKey}")));
 
-            foreach (var email in request.Emails)
+            foreach (var empresa in request.idsEmpresas)
             {
-                var formContent = new FormUrlEncodedContent(new[]
+                var Usuarios = await _baseDatos.ContactoPersonas.Where(cp => cp.IdEmpresa == empresa).ToListAsync();
+                foreach (var usuario in Usuarios)
                 {
-            new KeyValuePair<string, string>("from", $"{mailgun.SenderName} <{mailgun.SenderEmail}>"),
-            new KeyValuePair<string, string>("to", email),
-            new KeyValuePair<string, string>("subject", campaign.Asunto),
-            new KeyValuePair<string, string>("html", campaign.Contenido)
-        });
-
-                try
-                {
-                    var response = await client.PostAsync($"https://api.mailgun.net/v3/{mailgun.Domain}/messages", formContent);
-                    if (!response.IsSuccessStatusCode)
+                    if(usuario.Email != null)
                     {
-                        failedEmails.Add(email); // Agrega el correo a la lista de fallidos si hubo un error en la respuesta
+                        emails.Add(usuario.Email);
+
                     }
-                }
-                catch
-                {
-                    failedEmails.Add(email); // Agrega el correo a la lista de fallidos si ocurre una excepción
                 }
             }
 
-            // Verifica si hubo correos fallidos y responde en consecuencia
+            foreach (var email in emails)
+            {
+                try
+                {
+                    await _emailService.SendEmailAsync(email, campaign.Asunto, campaign.Contenido);
+
+                }
+                catch
+                {
+                    failedEmails.Add(email);
+                }
+            }
+
+
             if (failedEmails.Count > 0)
             {
                 campaign.Estatus = 4;

@@ -66,4 +66,8 @@ public partial class Empresa
     [JsonIgnore]
     public virtual ICollection<ContactoPersona> ContactoPersonas { get; set; } = new List<ContactoPersona>();
 
+    [JsonIgnore]
+    public virtual ICollection<DocumentosEmpresa> DocumentosEmpresas { get; set; } = new List<DocumentosEmpresa>();
+
+
 }

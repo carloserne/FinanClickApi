@@ -22,4 +22,8 @@ public partial class Usuario
 
     [JsonIgnore]
     public virtual ICollection<VentaProspecto> VentaProspectos { get; set; } = new List<VentaProspecto>();
+
+    [JsonIgnore]
+    public virtual ICollection<Actividad> Actividads { get; set; } = new List<Actividad>();
+
 }

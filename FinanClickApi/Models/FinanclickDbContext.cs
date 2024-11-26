@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 //using FinanClickApi.Modelss;
+using FinanClickApi.Models;
+
 //using FinanClickApi.Temp_Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -72,6 +74,14 @@ public partial class FinanclickDbContext : DbContext
     public DbSet<TotalesMensuales> TotalesMensuales { get; set; }
 
     public DbSet<AcumuladoAnual> AcumuladoAnual { get; set; }
+
+    public virtual DbSet<Actividad> Actividads { get; set; }
+
+    public virtual DbSet<Documento> Documentos { get; set; }
+
+    public virtual DbSet<DocumentosEmpresa> DocumentosEmpresas { get; set; }
+
+
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
 
@@ -880,6 +890,59 @@ public partial class FinanclickDbContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.Descripcion).HasMaxLength(255);
             entity.Property(e => e.Monto).HasColumnType("decimal(18, 2)");
+        });
+
+
+        modelBuilder.Entity<Actividad>(entity =>
+        {
+            entity.HasKey(e => e.IdActividad).HasName("PK__Activida__5EAF86A4864D3F7C");
+
+            entity.ToTable("Actividad");
+
+            entity.Property(e => e.Estatus)
+                .HasMaxLength(20)
+                .HasDefaultValue("Pendiente");
+            entity.Property(e => e.FechaActualizacion)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.FechaCreacion)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Nombre).HasMaxLength(255);
+
+            entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.Actividads)
+                .HasForeignKey(d => d.IdUsuario)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Actividad__IdUsu__2CF2ADDF");
+        });
+
+        modelBuilder.Entity<Documento>(entity =>
+        {
+            entity.HasKey(e => e.IdDocumento).HasName("PK__Document__E520734746846EF9");
+
+            entity.Property(e => e.EsObligatorio).HasDefaultValue(true);
+            entity.Property(e => e.NombreDocumento).HasMaxLength(255);
+        });
+
+        modelBuilder.Entity<DocumentosEmpresa>(entity =>
+        {
+            entity.HasKey(e => e.IdDocumentoEmpresa).HasName("PK__Document__D8E796008CB5341B");
+
+            entity.ToTable("DocumentosEmpresa");
+
+            entity.Property(e => e.EstadoDocumento).HasMaxLength(20);
+            entity.Property(e => e.FechaSubida).HasColumnType("datetime");
+            entity.Property(e => e.RutaArchivo).HasMaxLength(255);
+
+            entity.HasOne(d => d.IdDocumentoNavigation).WithMany(p => p.DocumentosEmpresas)
+                .HasForeignKey(d => d.IdDocumento)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Documento__IdDoc__40F9A68C");
+
+            entity.HasOne(d => d.IdEmpresaNavigation).WithMany(p => p.DocumentosEmpresas)
+                .HasForeignKey(d => d.IdEmpresa)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Documento__IdEmp__40058253");
         });
 
         //Vista de TotalesMensuales
