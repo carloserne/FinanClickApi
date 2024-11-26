@@ -111,6 +111,23 @@ public class ContactoPersonaController : ControllerBase
         return NoContent();
     }
 
+
+
+    [HttpGet("porEmpresa/{idEmpresa}")]
+    public async Task<ActionResult<IEnumerable<ContactoPersona>>> GetContactosPorEmpresa(int idEmpresa)
+    {
+        var contactos = await _baseDatos.ContactoPersonas
+            .Where(c => c.IdEmpresa == idEmpresa)
+            .ToListAsync();
+
+        if (contactos == null || !contactos.Any())
+        {
+            return NotFound($"No se encontraron contactos para la empresa con ID {idEmpresa}");
+        }
+
+        return contactos;
+    }
+
     private bool ContactoPersonaExists(int id)
     {
         return _baseDatos.ContactoPersonas.Any(c => c.IdContacto == id);

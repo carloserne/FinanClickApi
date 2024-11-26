@@ -2,6 +2,6 @@
 {
     public class SendEmailRequest
     {
-        public List<string> Emails { get; set; }
+        public List<int> idsEmpresas { get; set; }
     }
 }

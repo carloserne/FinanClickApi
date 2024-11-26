@@ -21,28 +21,28 @@ public class DocumentosEmpresasController : ControllerBase
     }
 
     [HttpPost("subir")]
-    public async Task<IActionResult> SubirDocumento([FromForm] int idEmpresa, [FromForm] int idDocumento, [FromForm] IFormFile archivo)
+    public async Task<IActionResult> SubirDocumento([FromBody] SubidaDocumentoRequest request)
     {
-        if (archivo == null || archivo.Length == 0)
+        if (request.Archivo == null || request.Archivo.Length == 0)
             return BadRequest("Archivo no proporcionado o vacío.");
 
-        var empresa = await _context.Empresas.FindAsync(idEmpresa);
+        var empresa = await _context.Empresas.FindAsync(request.IdEmpresa);
         if (empresa == null)
             return NotFound("Empresa no encontrada.");
 
-        var documento = await _context.Documentos.FindAsync(idDocumento);
+        var documento = await _context.Documentos.FindAsync(request.IdDocumento);
         if (documento == null)
             return NotFound("Tipo de documento no encontrado.");
 
         var documentoEmpresa = await _context.DocumentosEmpresas
-            .FirstOrDefaultAsync(de => de.IdEmpresa == idEmpresa && de.IdDocumento == idDocumento);
+            .FirstOrDefaultAsync(de => de.IdEmpresa == request.IdEmpresa && de.IdDocumento == request.IdDocumento);
 
         if (documentoEmpresa == null)
         {
             documentoEmpresa = new DocumentosEmpresa
             {
-                IdEmpresa = idEmpresa,
-                IdDocumento = idDocumento,
+                IdEmpresa = request.IdEmpresa,
+                IdDocumento = request.IdDocumento,
                 EstadoDocumento = "Subido"
             };
             _context.DocumentosEmpresas.Add(documentoEmpresa);
@@ -56,12 +56,12 @@ public class DocumentosEmpresasController : ControllerBase
         if (!Directory.Exists(uploadsFolder))
             Directory.CreateDirectory(uploadsFolder);
 
-        string uniqueFileName = Guid.NewGuid().ToString() + "_" + archivo.FileName;
+        string uniqueFileName = Guid.NewGuid().ToString() + "_" + request.Archivo.FileName;
         string filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
         using (var fileStream = new FileStream(filePath, FileMode.Create))
         {
-            await archivo.CopyToAsync(fileStream);
+            await request.Archivo.CopyToAsync(fileStream);
         }
 
         documentoEmpresa.RutaArchivo = filePath;
@@ -72,30 +72,36 @@ public class DocumentosEmpresasController : ControllerBase
         return Ok("Documento subido exitosamente.");
     }
 
+
     [HttpPut("modificar/{idDocumentoEmpresa}")]
-    public async Task<IActionResult> ModificarDocumento(int idDocumentoEmpresa, [FromForm] IFormFile archivo)
+    public async Task<IActionResult> ModificarDocumento(int idDocumentoEmpresa, [FromForm] SubidaDocumentoRequest request)
     {
         var documentoEmpresa = await _context.DocumentosEmpresas.FindAsync(idDocumentoEmpresa);
         if (documentoEmpresa == null)
             return NotFound("Documento de empresa no encontrado.");
 
-        if (archivo == null || archivo.Length == 0)
+        if (request.Archivo == null || request.Archivo.Length == 0)
             return BadRequest("Archivo no proporcionado o vacío.");
 
+        // Eliminar el archivo anterior si existe
         if (System.IO.File.Exists(documentoEmpresa.RutaArchivo))
             System.IO.File.Delete(documentoEmpresa.RutaArchivo);
 
-        string uniqueFileName = Guid.NewGuid().ToString() + "_" + archivo.FileName;
+        // Generar un nuevo nombre para el archivo y determinar la ruta
+        string uniqueFileName = Guid.NewGuid().ToString() + "_" + request.Archivo.FileName;
         string filePath = Path.Combine(_environment.WebRootPath, "uploads", uniqueFileName);
 
+        // Guardar el archivo en el servidor
         using (var fileStream = new FileStream(filePath, FileMode.Create))
         {
-            await archivo.CopyToAsync(fileStream);
+            await request.Archivo.CopyToAsync(fileStream);
         }
 
+        // Actualizar los detalles del documento
         documentoEmpresa.RutaArchivo = filePath;
         documentoEmpresa.FechaSubida = DateTime.Now;
 
+        // Guardar los cambios en la base de datos
         await _context.SaveChangesAsync();
 
         return Ok("Documento modificado exitosamente.");
@@ -150,4 +156,12 @@ public class DocumentosEmpresasController : ControllerBase
 
         return Ok("Documento eliminado exitosamente.");
     }
+}
+
+
+public class SubidaDocumentoRequest
+{
+    public int IdEmpresa { get; set; }
+    public int IdDocumento { get; set; }
+    public IFormFile Archivo { get; set; }
 }

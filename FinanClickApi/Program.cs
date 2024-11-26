@@ -8,7 +8,9 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+Stripe.StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:ApiKey").Value;
 // Add services to the container.
+builder.Services.AddSingleton<EmailService>();
 
 builder.Services.AddControllers();
 
