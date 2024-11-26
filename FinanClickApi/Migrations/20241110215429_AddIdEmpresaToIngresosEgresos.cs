@@ -10,15 +10,15 @@ namespace FinanClickApi.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
+            /*migrationBuilder.DropForeignKey(
                 name: "FK__VentaPros__numer__31B762FC",
-                table: "VentaProspecto");
+                table: "VentaProspecto");*/
 
-            /*migrationBuilder.AddColumn<int>(
+            migrationBuilder.AddColumn<int>(
                 name: "IdEmpresa",
                 table: "Ingresos_Egresos",
                 type: "int",
-                nullable: true);*/
+                nullable: true);
 
             migrationBuilder.AddForeignKey(
                 name: "FK__VentaPros__IdPlan__31B762FC",
@@ -35,9 +35,9 @@ namespace FinanClickApi.Migrations
                 name: "FK__VentaPros__IdPlan__31B762FC",
                 table: "VentaProspecto");
 
-            /*migrationBuilder.DropColumn(
+            migrationBuilder.DropColumn(
                 name: "IdEmpresa",
-                table: "Ingresos_Egresos");*/
+                table: "Ingresos_Egresos");
 
             migrationBuilder.AddForeignKey(
                 name: "FK__VentaPros__numer__31B762FC",

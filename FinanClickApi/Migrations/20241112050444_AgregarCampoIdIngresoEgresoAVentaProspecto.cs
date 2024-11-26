@@ -32,9 +32,9 @@ namespace FinanClickApi.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
+            /*migrationBuilder.DropForeignKey(
                 name: "FK_VentaProspecto_Ingresos_Egresos_IdIngresoEgreso",
-                table: "VentaProspecto");
+                table: "VentaProspecto");*/
 
             migrationBuilder.DropIndex(
                 name: "IX_VentaProspecto_IdIngresoEgreso",
