@@ -81,6 +81,8 @@ public partial class FinanclickDbContext : DbContext
 
     public virtual DbSet<DocumentosEmpresa> DocumentosEmpresas { get; set; }
 
+    public virtual DbSet<PaymentRequest> PaymentRequests { get; set; }
+
 
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
@@ -719,7 +721,7 @@ public partial class FinanclickDbContext : DbContext
             entity.HasOne(d => d.IdEmpresaNavigation)
              .WithMany(p => p.QuejaSugerencia)
              .HasForeignKey(d => d.IdEmpresa)
-             .OnDelete(DeleteBehavior.ClientSetNull) 
+             .OnDelete(DeleteBehavior.ClientSetNull)
              .IsRequired();
 
 
@@ -943,6 +945,47 @@ public partial class FinanclickDbContext : DbContext
                 .HasForeignKey(d => d.IdEmpresa)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Documento__IdEmp__40058253");
+        });
+
+
+        modelBuilder.Entity<PaymentRequest>(entity =>
+        {
+            entity.ToTable("PaymentRequests");
+
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedOnAdd();
+
+            entity.Property(e => e.IdEmpresa).HasColumnName("idEmpresa");
+
+            entity.HasOne(d => d.IdEmpresaNavigation).WithMany(p => p.PaymentRequests)
+                .HasForeignKey(d => d.IdEmpresa)
+                .HasConstraintName("FK__Cliente__idEmpre__44FF419A");
+
+            entity.Property(e => e.Amount)
+                .IsRequired() // Obligatoria
+                .HasColumnType("decimal(18, 2)"); // Precisión decimal
+
+            entity.Property(e => e.StripePaymentIntentId)
+                .IsRequired() // Obligatoria
+                .HasMaxLength(100); // Longitud máxima
+
+            entity.Property(e => e.Status)
+                .IsRequired() // Obligatoria
+                .HasMaxLength(50) // Longitud máxima
+                .HasDefaultValue("Pending"); // Valor por defecto
+
+            entity.Property(e => e.CreatedAt)
+                .IsRequired() // Obligatoria
+                .HasDefaultValueSql("GETUTCDATE()"); // Fecha automática UTC
+
+            entity.Property(e => e.PaidAt)
+                .IsRequired(false); // Puede ser nula
+
+            // Índices
+            entity.HasIndex(e => e.StripePaymentIntentId)
+                .IsUnique(); // Índice único para evitar duplicados
         });
 
         //Vista de TotalesMensuales
