@@ -42,7 +42,7 @@ namespace FinanClickApi.Migrations
 
             migrationBuilder.DropColumn(
                 name: "IdIngresoEgreso",
-                table: "VentaProspecto");*/
+                table: "VentaProspecto");
         }
     }
 }
