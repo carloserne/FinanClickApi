@@ -10,7 +10,7 @@ namespace FinanClickApi.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
+            /*migrationBuilder.AddColumn<int>(
                 name: "IdIngresoEgreso",
                 table: "VentaProspecto",
                 type: "int",
@@ -26,7 +26,7 @@ namespace FinanClickApi.Migrations
                 table: "VentaProspecto",
                 column: "IdIngresoEgreso",
                 principalTable: "Ingresos_Egresos",
-                principalColumn: "Id_Ingresos_Egresos");
+                principalColumn: "Id_Ingresos_Egresos");*/
         }
 
         /// <inheritdoc />
@@ -42,7 +42,7 @@ namespace FinanClickApi.Migrations
 
             migrationBuilder.DropColumn(
                 name: "IdIngresoEgreso",
-                table: "VentaProspecto");
+                table: "VentaProspecto");*/
         }
     }
 }

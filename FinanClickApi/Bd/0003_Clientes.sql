@@ -314,3 +314,19 @@ ADD idIngresoEgreso INT NULL;
 ALTER TABLE VentaProspecto
 ADD CONSTRAINT FK_VentaProspecto_IngresosEgresos
 FOREIGN KEY (idIngresoEgreso) REFERENCES Ingresos_Egresos(Id_Ingresos_Egresos);
+
+
+-- Pagos
+
+
+
+CREATE TABLE PaymentRequests (
+    Id INT IDENTITY(1,1) PRIMARY KEY, -- Clave primaria con incremento automático
+    Email NVARCHAR(255) NOT NULL, -- Correo electrónico obligatorio, longitud máxima de 255
+    Amount DECIMAL(18, 2) NOT NULL, -- Monto obligatorio con precisión decimal
+    StripePaymentIntentId NVARCHAR(100) NOT NULL, -- ID de Stripe obligatorio, longitud máxima de 100
+    Status NVARCHAR(50) NOT NULL DEFAULT 'Pending', -- Estado obligatorio con valor por defecto 'Pending'
+    CreatedAt DATETIME NOT NULL DEFAULT GETUTCDATE(), -- Fecha de creación obligatoria con valor por defecto UTC
+    PaidAt DATETIME NULL, -- Fecha de pago opcional
+    CONSTRAINT UQ_StripePaymentIntentId UNIQUE (StripePaymentIntentId) -- Índice único para evitar duplicados en StripePaymentIntentId
+);

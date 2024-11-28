@@ -69,5 +69,8 @@ public partial class Empresa
     [JsonIgnore]
     public virtual ICollection<DocumentosEmpresa> DocumentosEmpresas { get; set; } = new List<DocumentosEmpresa>();
 
+    [JsonIgnore]
+    public virtual ICollection<PaymentRequest> PaymentRequests { get; set; } = new List<PaymentRequest>();
+
 
 }

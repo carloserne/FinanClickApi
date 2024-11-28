@@ -1,4 +1,5 @@
 using FinanClickApi.Models;
+using FinanClickApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -11,6 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 Stripe.StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:ApiKey").Value;
 // Add services to the container.
 builder.Services.AddSingleton<EmailService>();
+builder.Services.AddSingleton<StripeService>();
+
 
 builder.Services.AddControllers();
 

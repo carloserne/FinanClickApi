@@ -151,5 +151,65 @@ namespace FinanClickApi.Controllers
             return Ok(ventasPendientes);
         }
 
+        [HttpGet("realizadas")]
+        public async Task<ActionResult<IEnumerable<object>>> GetVentasRealizadas()
+        {
+            // Obtener el ID del usuario actual
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (currentUserId == null)
+            {
+                return Unauthorized();
+            }
+
+            // Verificar si el usuario existe en la base de datos
+            var user = await _baseDatos.Usuarios.FindAsync(int.Parse(currentUserId));
+            if (user == null)
+            {
+                return NotFound("Usuario no encontrado");
+            }
+
+            // Obtener las ventas con un IdIngresoEgreso válido
+            var ventasConIngresoEgreso = await _baseDatos.VentaProspectos
+                .Where(v => v.IdIngresoEgreso != null)
+                .ToListAsync();
+
+            // Obtener los Ids de IngresosEgreso necesarios
+            var idsIngresoEgreso = ventasConIngresoEgreso
+                .Select(v => v.IdIngresoEgreso.Value)
+                .ToList();
+
+            // Obtener los detalles de IngresosEgreso para esos IDs
+            var detallesIngresoEgreso = await _baseDatos.IngresosEgresos
+                .Where(i => idsIngresoEgreso.Contains(i.IdIngresosEgresos))
+                .ToListAsync();
+
+            // Combinar los datos de las ventas con los detalles de ingresos
+            var ventasConDetalles = ventasConIngresoEgreso.Select(venta =>
+            {
+                var ingresoEgreso = detallesIngresoEgreso.FirstOrDefault(i => i.IdIngresosEgresos == venta.IdIngresoEgreso);
+
+                return new
+                {
+                    venta.IdVenta,
+                    venta.IdPlan,
+                    venta.FechaSolicitud,
+                    venta.NombreCliente,
+                    venta.NombreEmpresa,
+                    venta.NumeroContacto,
+                    venta.Correo,
+                    venta.Domicilio,
+                    venta.Ciudad,
+                    venta.Estado,
+                    venta.Rfc,
+                    venta.IdUsuario,
+                    Monto = ingresoEgreso?.Monto ?? 0, // Valor predeterminado si es nulo
+                    Descripcion = ingresoEgreso?.Descripcion ?? "Sin descripción" // Valor predeterminado si es nulo
+                };
+            });
+
+            return Ok(ventasConDetalles);
+        }
+
+
     }
 }
