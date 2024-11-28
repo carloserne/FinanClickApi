@@ -20,7 +20,7 @@ public class DocumentosEmpresasController : ControllerBase
         _environment = environment;
     }
 
-    [ApiExplorerSettings(IgnoreApi = true)]
+    //[ApiExplorerSettings(IgnoreApi = true)]
     [HttpPost("subir")]
     public async Task<IActionResult> SubirDocumento([FromForm] int idEmpresa, [FromForm] int idDocumento, [FromForm] IFormFile archivo)
     {
@@ -73,7 +73,7 @@ public class DocumentosEmpresasController : ControllerBase
         return Ok("Documento subido exitosamente.");
     }
 
-    [ApiExplorerSettings(IgnoreApi = true)]
+    //[ApiExplorerSettings(IgnoreApi = true)]
     [HttpPut("modificar/{idDocumentoEmpresa}")]
     public async Task<IActionResult> ModificarDocumento(int idDocumentoEmpresa, [FromForm] IFormFile archivo)
     {
