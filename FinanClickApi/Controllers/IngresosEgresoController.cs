@@ -169,7 +169,7 @@ namespace FinanClickApi.Controllers
             try
             {
                 await _baseDatos.SaveChangesAsync();
-            }
+            } 
             catch
             {
                 if (!IngresoEgresosExist(id))
