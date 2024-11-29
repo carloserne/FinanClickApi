@@ -1,4 +1,5 @@
-﻿using FinanClickApi.Models;
+﻿using FinanClickApi.Migrations;
+using FinanClickApi.Models;
 using FinanClickApi.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Stripe;
 using Stripe.V2;
+using System.Net.NetworkInformation;
 
 namespace FinanClickApi.Controllers
 {
@@ -57,6 +59,21 @@ namespace FinanClickApi.Controllers
                     if (paymentRequest != null)
                     {
                         // Actualizar el estado del pago
+                        var ingresosBody = new IngresosEgreso
+                        {
+                            Fecha = DateOnly.FromDateTime(DateTime.UtcNow),
+                            TipoTransaccion = 1,
+                            Monto = paymentRequest.Amount > 0 ? paymentRequest.Amount : throw new ArgumentException("El monto debe ser mayor que 0."),
+                            Descripcion = "Pago por Suscripción Prueba",
+                            Categoria = "Ingresos",
+                            Estatus = 1,
+                            IdEmpresa = paymentRequest.IdEmpresa
+                        };
+
+
+                        _context.IngresosEgresos.Add(ingresosBody);
+                        await _context.SaveChangesAsync();
+
                         paymentRequest.Status = "Paid";
                         paymentRequest.PaidAt = DateTime.UtcNow; // Marca la fecha de pago
                         await _context.SaveChangesAsync();
